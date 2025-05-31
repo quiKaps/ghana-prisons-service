@@ -13,6 +13,51 @@ return new class extends Migration
     {
         Schema::create('inmates', function (Blueprint $table) {
             $table->id();
+            $table->string('serial_number')->unique();
+            $table->string('surname');
+            $table->string('first_name');
+            $table->string('middle_name')->nullable();
+            $table->enum('gender', ['male', 'female']);
+            $table->enum('married_status', ['single', 'married', 'divorced', 'widowed']);
+            $table->integer('age_on_admission')->unsigned();
+            $table->date('date_of_birth')->nullable();
+            $table->longText('offence');
+            $table->string('sentence');
+            $table->date('admission_date');
+            $table->date('date_sentenced');
+            $table->boolean('previously_convicted')->default(false);
+            // $table->foreignId('previous_conviction_id')->nullable()->constrained('previous_convictions')->onDelete('set null');
+            $table->foreignId('previous_conviction_id')->nullable()->constrained('stations')->onDelete('set null');
+            $table->foreignId('cell_id')->constrained('cells')->onDelete('cascade');
+            $table->string('court_of_committal');
+            $table->string('EPD');
+            $table->string('LPD');
+            $table->string('photo')->nullable();
+            $table->string('fingerprint')->nullable();
+            $table->string('signature')->nullable();
+            $table->string('next_of_kin_name')->nullable();
+            $table->string('next_of_kin_relationship')->nullable();
+            $table->string('next_of_kin_contact')->nullable();
+            $table->string('medical_conditions')->nullable();
+            $table->string('allergies')->nullable();
+            $table->string('religion')->nullable();
+            $table->string('nationality')->nullable();
+            $table->string('education_level')->nullable();
+            $table->string('occupation')->nullable();
+            $table->string('hometown')->nullable();
+            $table->string('tribe')->nullable();
+            $table->string('distinctive_marks')->nullable();
+            $table->string('languages_spoken');
+            $table->boolean('disability')->nullable();
+            $table->string('disability_type')->nullable();
+            $table->string('police_name');
+            $table->string('police_station');
+            $table->string('police_contact')->nullable();
+            $table->boolean('goaler')->nullable();
+            $table->string('goaler_document')->nullable();
+            $table->string('warrant_document')->nullable();
+            //transferedin
+            //transferedout
             $table->timestamps();
         });
     }

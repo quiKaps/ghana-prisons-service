@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cells', function (Blueprint $table) {
+        Schema::create('sentences', function (Blueprint $table) {
             $table->id();
-            $table->string('cell_number')->unique();
-            $table->string('block')->nullable();
-            $table->foreignId('station_id')->constrained('stations')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -25,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cells');
+        Schema::dropIfExists('sentences');
     }
 };

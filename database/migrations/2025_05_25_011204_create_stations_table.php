@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('slug')->unique();
-            $table->string('serial_number')->unique();
+            $table->string('code')->unique();
+            $table->enum('category', ['male', 'female'])->nullable();
             $table->string('region')->nullable();
             $table->string('city')->nullable();
             $table->timestamps();
