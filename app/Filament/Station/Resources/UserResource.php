@@ -10,10 +10,10 @@ use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -26,13 +26,19 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    protected static ?string $navigationGroup = 'User Management';
+
+    protected static ?string $navigationLabel = 'All Users';
+
+
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Group::make()
                     ->schema([
-                        Section::make('User Details')
+                Forms\Components\Section::make('User Details')
                             ->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->label("Officer's Name")
@@ -84,9 +90,8 @@ class UserResource extends Resource
                                     ->placeholder('Select User Type')
                                     ->options([
                                         'officer' => 'Prison Officer',
-                                        'prison_admin' => 'Prison Administrator',
-                                        'hq_admin' => 'Headquarters Administrator',
-                                    ]),
+                        'prison_admin' => 'Prison Administrator',
+                        ]),
                                 Forms\Components\Select::make('station_id')
                                     ->label('Prison Facility')
                                     ->relationship('station', 'name')
@@ -100,7 +105,7 @@ class UserResource extends Resource
                     ]),
                 Group::make()
                     ->schema([
-                        Section::make('')
+                Forms\Components\Section::make('')
                             ->schema([
                                 FileUpload::make('photo')
                                     ->label('Officer Photo')
@@ -134,14 +139,14 @@ class UserResource extends Resource
                     ->color(fn(string $state): string => match ($state) {
                         'officer' => 'info',
                         'prison_admin' => 'warning',
-                        'hq_admin' => 'success',
-                        default => 'danger',
+
+                default => 'danger',
                     })
                     ->formatStateUsing(fn($state) => match ($state) {
                         'officer' => 'Prison Officer',
                         'prison_admin' => 'Prison Administrator',
-                        'hq_admin' => 'Headquarters Administrator',
-                        default => 'Unknown',
+
+                default => 'Unknown',
                     }),
                 // ToggleColumn::make('is_active')
                 //     ->label('Active Status'),
@@ -226,14 +231,14 @@ class UserResource extends Resource
                             ->color(fn(string $state): string => match ($state) {
                                 'officer' => 'info',
                                 'prison_admin' => 'warning',
-                                'hq_admin' => 'success',
-                                default => 'danger',
+
+                    default => 'danger',
                             })
                             ->formatStateUsing(fn($state) => match ($state) {
                                 'officer' => 'Prison Officer',
                                 'prison_admin' => 'Prison Administrator',
-                                'hq_admin' => 'Headquarters Administrator',
-                                default => 'Unknown',
+
+                    default => 'Unknown',
                             }),
                         TextEntry::make('is_active')
                             ->label('User Status')

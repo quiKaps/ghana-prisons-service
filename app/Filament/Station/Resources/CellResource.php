@@ -19,19 +19,55 @@ class CellResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-table-cells';
 
+    protected static ?string $navigationGroup = 'Cell Management';
+
+
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+            Forms\Components\TextInput::make('cell_number')
+                ->label('Cell Number')
+                ->required()
+                ->numeric()
+                ->minValue(1)
+                ->unique(Cell::class, 'cell_number', ignoreRecord: true)
+                ->maxLength(255),
+            Forms\Components\TextInput::make('block')
+                ->label('Identifier (Block/Floor etc.)')
+                ->required()
+                ->maxLength(255)
+                ->required(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->emptyStateHeading('No Cells Found')
+            ->emptyStateIcon('heroicon-o-table-cells')
+            ->emptyStateDescription('You can create a add cell by clicking the button below.')
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make('Add A Cell')
+                    ->label('Add A Cell')
+                    ->icon('heroicon-o-plus-circle')
+                    ->color('primary'),
+            ])
             ->columns([
-                //
+            Tables\Columns\TextColumn::make('cell_number')
+                ->label('Cell Number')
+                ->searchable()
+                ->formatStateUsing(fn($record) => 'CELL' . $record->cell_number)
+                ->searchable()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('block')
+                ->label('Identifier (Block/Floor etc.)')
+                ->searchable()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('station.name')
+                ->label('Station')
+                ->searchable()
             ])
             ->filters([
                 //

@@ -2,21 +2,27 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\AuthenticateSession;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use App\Filament\Station\Resources\InmateResource;
 use Filament\Pages;
 use Filament\Panel;
-use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Routing\Middleware\SubstituteBindings;
+use Filament\PanelProvider;
+use Filament\Pages\Dashboard;
+use Filament\Support\Colors\Color;
+use Filament\Navigation\NavigationItem;
+use Filament\Navigation\NavigationGroup;
+use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Filament\Http\Middleware\AuthenticateSession;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use App\Filament\Station\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Station\Resources\InmateResource\Pages\CreateInmate;
 
 class StationPanelProvider extends PanelProvider
 {
@@ -27,6 +33,33 @@ class StationPanelProvider extends PanelProvider
             ->path('station')
             ->colors([
                 'primary' => Color::Amber,
+            ])
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('General Management'),
+                NavigationGroup::make()
+                    ->label('Inmate Management'),
+                NavigationGroup::make()
+                    ->label('Cell Management'),
+                NavigationGroup::make()
+                    ->label('User Management'),
+            ])
+            ->navigationItems([
+                NavigationItem::make('Add Inmate')
+                    ->url(fn(): string => CreateInmate::getUrl())
+                    ->icon('heroicon-o-user-plus')
+                    ->group('Inmate Management')
+                    ->isActiveWhen(fn() => request()->url() === InmateResource::getUrl('create'))
+                    ->sort(3),
+
+                NavigationItem::make('Add Users')
+                    ->url(fn(): string => CreateUser::getUrl())
+                    ->icon('heroicon-o-user-plus')
+                    ->group('User Management')
+                    ->isActiveWhen(fn() => request()->routeIs('filament.station.pages.create-inmate'))
+                    ->sort(3),
+
+                // ...
             ])
             ->discoverResources(in: app_path('Filament/Station/Resources'), for: 'App\\Filament\\Station\\Resources')
             ->discoverPages(in: app_path('Filament/Station/Pages'), for: 'App\\Filament\\Station\\Pages')

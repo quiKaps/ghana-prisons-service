@@ -29,13 +29,15 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    protected static ?string $navigationGroup = 'User Management';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
             Group::make()
                 ->schema([
-                    Section::make('User Details')
+                Forms\Components\Section::make('User Details')
                         ->schema([
                             Forms\Components\TextInput::make('name')
                                 ->label("Officer's Name")
@@ -103,7 +105,7 @@ class UserResource extends Resource
                 ]),
             Group::make()
                 ->schema([
-                    Section::make('')
+                Forms\Components\Section::make('')
                         ->schema([
                             FileUpload::make('photo')
                                 ->label('Officer Photo')
@@ -186,7 +188,7 @@ class UserResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make(fn($record) => $record->serial_number . '-' . strtoupper($record->rank) . '-' . $record->name . ' Details')
+            Section::make(fn($record) => $record->serial_number . '-' . strtoupper($record->rank) . '-' . $record->name . ' Details')
                     ->schema([
                         ImageEntry::make('photo')
                             ->label('Officer Photo')

@@ -19,6 +19,12 @@ class InmateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
+    protected static ?string $navigationGroup = 'Inmate Management';
+
+    protected static ?string $navigationLabel = 'All Inmates';
+
+
+
     public static function form(Form $form): Form
     {
         return $form
