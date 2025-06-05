@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('photo')->nullable();
             $table->string('email')->unique();
+            $table->foreignId('station_id')->nullable()->constrained('stations')->nullOnDelete();
             $table->string('user_type')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('is_active')->default(true);

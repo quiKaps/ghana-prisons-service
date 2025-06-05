@@ -94,6 +94,15 @@ class StationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->emptyStateHeading('No Stations Found')
+            ->emptyStateIcon('heroicon-o-building-library')
+            ->emptyStateDescription('You can create a new station by clicking the button below.')
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make('Create Station')
+                    ->label('Create New Station')
+                    ->icon('heroicon-o-plus-circle')
+                    ->color('primary'),
+            ])
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Prison Facility Name')
@@ -108,6 +117,12 @@ class StationResource extends Resource
                 Tables\Columns\TextColumn::make('category')
                     ->label('Category')
                     ->searchable()
+                ->badge()
+                ->color(fn(string $state): string => match ($state) {
+                    'male' => 'success',
+                    'female' => 'danger',
+                    default => 'primary',
+                })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('region')
                     ->label('Region')
@@ -116,9 +131,13 @@ class StationResource extends Resource
 
             ])
             ->filters([
-                Filter::make('Male Prisons', fn($query) => $query->where('catergory', 'male')),
-                Filter::make('Female Prisons', fn($query) => $query->where('catergory', 'female'))
-            ])
+            Filter::make('male_prisons')
+                ->label('Male Prisons')
+                ->query(fn(Builder $query): Builder => $query->where('category', 'male')),
+            Filter::make('female_prisons')
+                ->label('Female Prisons')
+                ->query(fn(Builder $query): Builder => $query->where('category', 'female')),
+        ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
