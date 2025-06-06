@@ -28,8 +28,8 @@ return new class extends Migration
             $table->boolean('previously_convicted')->default(false);
             // $table->foreignId('previous_conviction_id')->nullable()->constrained('previous_convictions')->onDelete('set null');
             $table->foreignId('previous_conviction_id')->nullable()->constrained('stations')->onDelete('set null');
-            $table->foreignId('cell_id')->constrained('cells')->onDelete('cascade');
-            $table->string('court_of_committal');
+            $table->foreignId('cell_id')->constrained('cells')->onDelete('set null');
+            $table->string('court_of_committal')->nullable();
             $table->string('EPD');
             $table->string('LPD');
             $table->string('photo')->nullable();
@@ -47,11 +47,11 @@ return new class extends Migration
             $table->string('hometown')->nullable();
             $table->string('tribe')->nullable();
             $table->string('distinctive_marks')->nullable();
-            $table->string('languages_spoken');
+            $table->string('languages_spoken')->nullable();
             $table->boolean('disability')->nullable();
             $table->string('disability_type')->nullable();
-            $table->string('police_name');
-            $table->string('police_station');
+            $table->string('police_name')->nullable();
+            $table->string('police_station')->nullable();
             $table->string('police_contact')->nullable();
             $table->boolean('goaler')->nullable();
             $table->string('goaler_document')->nullable();

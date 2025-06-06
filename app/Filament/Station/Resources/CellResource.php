@@ -2,16 +2,17 @@
 
 namespace App\Filament\Station\Resources;
 
-use App\Filament\Station\Resources\CellResource\Pages;
-use App\Filament\Station\Resources\CellResource\RelationManagers;
-use App\Models\Cell;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\Cell;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Group;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Station\Resources\CellResource\Pages;
+use App\Filament\Station\Resources\CellResource\RelationManagers;
 
 class CellResource extends Resource
 {
@@ -27,18 +28,29 @@ class CellResource extends Resource
     {
         return $form
             ->schema([
-            Forms\Components\TextInput::make('cell_number')
-                ->label('Cell Number')
-                ->required()
-                ->numeric()
-                ->minValue(1)
-                ->unique(Cell::class, 'cell_number', ignoreRecord: true)
-                ->maxLength(255),
-            Forms\Components\TextInput::make('block')
-                ->label('Identifier (Block/Floor etc.)')
-                ->required()
-                ->maxLength(255)
-                ->required(),
+            Group::make()
+                ->schema(
+                    [
+                        Forms\Components\Section::make('Add Cell Information')
+                            ->schema([
+                        Forms\Components\TextInput::make('cell_number')
+                            ->label('Cell Number')
+                            ->required()
+                            ->numeric()
+                            ->placeholder('Enter Cell Number')
+                            ->minValue(1)
+                            ->unique(Cell::class, 'cell_number', ignoreRecord: true)
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('block')
+                            ->label('Identifier (Block/Floor etc.)')
+                            ->required()
+                            ->placeholder('Enter Block/Floor etc. eg. Block A, Floor 1')
+                            ->maxLength(255)
+                            ->required(),
+                            ])
+                    ]
+                )
+
             ]);
     }
 
