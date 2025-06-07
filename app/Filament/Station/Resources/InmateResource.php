@@ -35,8 +35,7 @@ class InmateResource extends Resource
                 Group::make()
                     ->schema([
                         Forms\Components\Section::make("Inmate's Personal Information")
-                            ->schema([
-
+                    ->schema([
                                 Forms\Components\TextInput::make('surname')
                                     ->label('Surname')
                                     ->required()
@@ -72,8 +71,7 @@ class InmateResource extends Resource
                                     ->numeric()
                                     ->label('Age on Admission')
                                     ->required()
-                                    ->placeholder('Enter Age eg. 25'),
-
+                        ->placeholder('Enter Age eg. 25'),
                                 Forms\Components\DatePicker::make('date_of_birth')
                                     ->label('Date of Birth')
                                     ->required()
@@ -101,9 +99,7 @@ class InmateResource extends Resource
                                 Forms\Components\TextInput::make('hometown')
                                     ->label('Hometown')
                                     ->required()
-                                    ->placeholder('Enter Hometown (e.g. Kyebi)'),
-
-
+                        ->placeholder('Enter Hometown (e.g. Kyebi)'),
                             ])->columns(3),
                         Forms\Components\Section::make('Legal & Offence Details')
                             ->schema([
@@ -136,9 +132,9 @@ class InmateResource extends Resource
                                     ->default(now()),
                                 Forms\Components\DatePicker::make('date_sentenced')
                                     ->label('Date of Sentence')
+                        ->maxDate(now())
                                     ->required()
-                                    ->maxDate(now()),
-
+                        ->maxDate(now()),
                                 Forms\Components\TextInput::make('court_of_committal')
                                     ->label('Court of Committal')
                                     ->required()
@@ -155,12 +151,13 @@ class InmateResource extends Resource
                                     )
                                     ->getOptionLabelFromRecordUsing(fn($record) => "CELL {$record->cell_number} - {$record->block}")
                                     ->searchable(['cell_number', 'block']),
-                                Forms\Components\TextInput::make('EPD')
+                    Forms\Components\DatePicker::make('EPD')
                                     ->label('EPD (Estimated Prison Discharge)')
-                                    ->placeholder('Enter EPD (optional)')
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('LPD')
+                        ->minDate(now())
+                        ->placeholder('Enter EPD (optional)'),
+                    Forms\Components\DatePicker::make('LPD')
                                     ->label('LPD (Legal Prison Discharge)')
+                        ->minDate(now())
                                     ->required(),
                             ])->columns(3),
                         Forms\Components\Section::make('Police & Legal Authorities')
@@ -179,6 +176,7 @@ class InmateResource extends Resource
                                     ->placeholder('Enter Police Contact'),
                                 Radio::make('goalder')
                                     ->label('Goaler?')
+                        ->live()
                                     ->default('no')
                                     ->options([
                                         'yes' => "Yes",
@@ -187,7 +185,7 @@ class InmateResource extends Resource
                                     ->inline(),
                                 Forms\Components\FileUpload::make('goaler_document')
                                     ->label('Goaler Document')
-                                    ->required(fn(Get $get) => $get('goalder') === 'yes')
+                        ->hidden(fn(Get $get) => $get('goalder') === 'no')
                                     ->placeholder('Upload Goaler Document')
                                     ->visibility('private')
                                     ->multiple()
@@ -217,19 +215,19 @@ class InmateResource extends Resource
                                 Forms\Components\TagsInput::make('allergies')
                                     ->label('Allergies')
                                     ->placeholder('Enter Allergies (optional)'),
-                                Forms\Components\Radio::make('disability')
-                                    ->label('Disability?')
-                                    ->live()
-                                    ->default(0)
-                                    ->options([
-                                        1 => 'Yes',
-                                        0 => 'No',
-                                    ])
-                                    ->inline(),
-                                Forms\Components\Select::make('disability_type')
-                                    ->label('Disability Type')
-                                    ->required()
-                                    ->hidden(fn(Get $get) => $get('disability') === 0)
+                    Forms\Components\Radio::make('disability')
+                        ->label('Disability?')
+                        ->live()
+                        ->default('0')
+                        ->options([
+                            '1' => 'Yes',
+                            '0' => 'No',
+                        ])
+                        ->inline(),
+                    Forms\Components\Select::make('disability_type')
+                        ->label('Disability Type')
+                        ->required()
+                        ->hidden(fn(Get $get): bool => $get('disability') === '0')
                                     ->options([
                                         'hearing impairment' => 'Hearing Impairment',
                                         'visual impairment' => 'Visual Impairment',
@@ -244,21 +242,21 @@ class InmateResource extends Resource
                                     ->label('Inmate Photo')
                                     ->placeholder('Upload Inmate Photo')
                                     ->visibility('private')
-                                    ->acceptedFileTypes(['png', 'jpg', 'jpeg'])
+                        ->image()
                                     ->openable()
                                     ->uploadingMessage('Uploading inmate photo...'),
                                 Forms\Components\FileUpload::make('fingerprint')
                                     ->label('Inmate Fingerprint')
                                     ->placeholder('Upload Inmate Fingerprint')
                                     ->visibility('private')
-                                    ->acceptedFileTypes(['png', 'jpg', 'jpeg'])
+                        ->image()
                                     ->openable()
                                     ->uploadingMessage('Uploading inmate fingerprint...'),
                                 Forms\Components\FileUpload::make('signature')
                                     ->label('Inmate Signature')
                                     ->placeholder('Upload Inmate Signature')
                                     ->visibility('private')
-                                    ->acceptedFileTypes(['png', 'jpg', 'jpeg'])
+                        ->image()
                                     ->openable()
                                     ->uploadingMessage('Uploading inmate signature...'),
                                 Forms\Components\TextInput::make('distinctive_marks')

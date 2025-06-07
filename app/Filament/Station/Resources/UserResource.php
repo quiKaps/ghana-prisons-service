@@ -92,16 +92,8 @@ class UserResource extends Resource
                                         'officer' => 'Prison Officer',
                         'prison_admin' => 'Prison Administrator',
                         ]),
-                                Forms\Components\Select::make('station_id')
-                                    ->label('Prison Facility')
-                                    ->relationship('station', 'name')
-                                    ->required()
-                                    ->placeholder('Select Prison Facility')
-                                    ->searchable()
-                                    ->preload()
-                                    ->options(fn() => \App\Models\Station::all()->pluck('name', 'id'))
-                                    ->columnSpanFull(),
-                            ])->columns(2),
+
+                ])->columns(2),
                     ]),
                 Group::make()
                     ->schema([

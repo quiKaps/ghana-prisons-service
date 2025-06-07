@@ -56,6 +56,17 @@ class Inmate extends Model
 
     ];
 
+    protected $casts = [
+        'medical_conditions' => 'array',
+        'allergies' => 'array',
+        'languages_spoken' => 'array',
+        'disability' => 'boolean',
+        'admission_date' => 'date',
+        'date_sentenced' => 'date',
+        'EPD' => 'date',
+        'LPD' => 'date',
+    ];
+
     /**
      * Get the cell associated with the inmate.
      */
