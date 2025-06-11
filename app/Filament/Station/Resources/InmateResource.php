@@ -36,11 +36,16 @@ class InmateResource extends Resource
                     ->schema([
                         Forms\Components\Section::make("Inmate's Personal Information")
                     ->schema([
-                                Forms\Components\TextInput::make('surname')
-                                    ->label('Surname')
-                                    ->required()
-                                    ->placeholder('Enter Surname')
-                                    ->maxLength(255),
+                    Forms\Components\TextInput::make('serial_number')
+                        ->label('Serial Number')
+                        ->required()
+                        ->placeholder('Serial Number eg. NSM/01/25')
+                        ->maxLength(255),
+                    Forms\Components\TextInput::make('surname')
+                        ->label('Surname')
+                        ->required()
+                        ->placeholder('Enter Surname')
+                        ->maxLength(255),
                                 Forms\Components\TextInput::make('first_name')
                                     ->label('First Name')
                                     ->required()
@@ -77,9 +82,8 @@ class InmateResource extends Resource
                                     ->required()
                                     ->minDate(now()->subYears(100))
                                     ->maxDate(now()->subYears(16)),
-                                Forms\Components\Select::make('religion')
-                                    ->required()
-                                    ->label('Religion')
+                    Forms\Components\Select::make('religion')
+                        ->label('Religion')
                                     ->placeholder('Select a Religion')
                                     ->options([
                                         'christian' => 'Christian',
@@ -94,11 +98,11 @@ class InmateResource extends Resource
                                     ->placeholder('Enter Nationality (e.g. Ghanaian)'),
                                 Forms\Components\TextInput::make('tribe')
                                     ->label('Tribe')
-                                    ->required()
-                                    ->placeholder('Enter Tribe (e.g. Ewe)'),
+
+                        ->placeholder('Enter Tribe (e.g. Ewe)'),
                                 Forms\Components\TextInput::make('hometown')
                                     ->label('Hometown')
-                                    ->required()
+
                         ->placeholder('Enter Hometown (e.g. Kyebi)'),
                             ])->columns(3),
                         Forms\Components\Section::make('Legal & Offence Details')
@@ -128,7 +132,7 @@ class InmateResource extends Resource
                                 Forms\Components\DatePicker::make('admission_date')
                                     ->label('Date of Admission')
                                     ->required()
-                                    ->readOnly()
+                        ->maxDate(now())
                                     ->default(now()),
                                 Forms\Components\DatePicker::make('date_sentenced')
                                     ->label('Date of Sentence')
@@ -317,7 +321,38 @@ class InmateResource extends Resource
     {
         return $table
             ->columns([
-                //
+            Tables\Columns\TextColumn::make('serial_number')
+                ->label('Serial Number')
+                ->searchable()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('surname')
+                ->label('Full Name')
+                ->searchable()
+                ->sortable()
+                ->formatStateUsing(
+                    fn($record) =>
+                    $record->surname . ', ' . $record->first_name . ' ' . $record->middle_name
+                ),
+            Tables\Columns\TextColumn::make('gender')
+                ->searchable()
+                ->sortable()
+                ->formatStateUsing(fn(string $state): string => ucfirst($state)),
+            Tables\Columns\TextColumn::make('age_on_admission')
+                ->label('Age')
+                ->sortable(),
+            Tables\Columns\TextColumn::make('sentence')
+                ->searchable()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('admission_date')
+                ->date()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('cell.cell_number')
+                ->label('Cell')
+                ->searchable()
+                ->sortable()
+                ->formatStateUsing(
+                    fn($record) => $record->cell ? "CELL {$record->cell->cell_number} - {$record->cell->block}" : 'No Cell Assigned'
+                ),
             ])
             ->filters([
                 //

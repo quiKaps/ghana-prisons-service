@@ -16,11 +16,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('rank')->nullable();
             $table->string('serial_number')->unique()->nullable();
-            $table->string('phone')->nullable();
+            $table->string('phone')->unique()->nullable();
             $table->string('photo')->nullable();
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->foreignId('station_id')->nullable()->constrained('stations')->nullOnDelete();
-            $table->string('user_type')->unique()->nullable();
+            $table->string('user_type')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('is_active')->default(true);
             $table->string('password');

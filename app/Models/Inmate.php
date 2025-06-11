@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Scopes\FacilitiesScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+#[ScopedBy([FacilitiesScope::class])]
 class Inmate extends Model
 {
     /** @use HasFactory<\Database\Factories\InmateFactory> */
@@ -66,6 +69,7 @@ class Inmate extends Model
         'EPD' => 'date',
         'LPD' => 'date',
     ];
+
 
     /**
      * Get the cell associated with the inmate.

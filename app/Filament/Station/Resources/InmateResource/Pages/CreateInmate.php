@@ -26,11 +26,11 @@ class CreateInmate extends CreateRecord
         }
 
         $data['station_id'] = $user->station_id; // Current user station id
-        $lastInmate = \App\Models\Inmate::orderBy('id', 'desc')->first();
-        $columnNumber = $lastInmate ? $lastInmate->id + 1 : 1;
-        $year = date('y');
-        $stationCode = $user->station->code;
-        $data['serial_number'] = "{$stationCode}/{$columnNumber}/{$year}";
+        // $lastInmate = \App\Models\Inmate::orderBy('id', 'desc')->first();
+        // $columnNumber = $lastInmate ? $lastInmate->id + 1 : 1;
+        // $year = date('y');
+        // $stationCode = $user->station->code;
+        // $data['serial_number'] = "{$stationCode}/{$columnNumber}/{$year}";
 
         $data['medical_conditions'] = json_encode($data['medical_conditions'] ?? []);
         $data['allergies'] = json_encode($data['allergies'] ?? []);
