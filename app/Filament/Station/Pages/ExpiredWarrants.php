@@ -51,9 +51,8 @@ class ExpiredWarrants extends Page implements \Filament\Tables\Contracts\HasTabl
                     ->date(),
                 TextColumn::make('country_of_origin')
                     ->label('Country of Origin'),
-                TextColumn::make('police_station')
-                    ->label('Police Station'),
-                TextColumn::make('police_officer')
+
+            TextColumn::make('police_officer')
                     ->label('Police Officer'),
                 TextColumn::make('police_contact')
                     ->label('Police Contact'),
@@ -264,10 +263,10 @@ class ExpiredWarrants extends Page implements \Filament\Tables\Contracts\HasTabl
                     //     ]),
                     // //Edit remand action
                 ])
-                    ->label('More actions')
+                ->label('Actions')
                     ->icon('heroicon-m-ellipsis-vertical')
                     ->size(ActionSize::Small)
-                    ->color('primary')
+                ->color('green')
                     ->button()
             ]);
     }

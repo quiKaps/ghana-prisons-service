@@ -2,30 +2,31 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Station\Resources\InmateResource;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
+use App\Models\RemandTrial;
 use Filament\PanelProvider;
 use Filament\Pages\Dashboard;
 use Filament\Support\Colors\Color;
 use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
+use Filament\Support\Facades\FilamentColor;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
+use App\Filament\Station\Resources\InmateResource;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Station\Resources\RemandTrialResource;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use App\Filament\Station\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Station\Resources\InmateResource\Pages\CreateInmate;
-use App\Filament\Station\Resources\RemandTrialResource;
 use App\Filament\Station\Resources\RemandTrialResource\Pages\CreateRemandTrial;
-use App\Models\RemandTrial;
 
 class StationPanelProvider extends PanelProvider
 {
@@ -35,7 +36,7 @@ class StationPanelProvider extends PanelProvider
             ->id('station')
             ->path('station')
             ->colors([
-                'primary' => Color::Amber,
+            'primary' => Color::hex('#654321'),
             ])
             ->navigationGroups([
                 NavigationGroup::make()
@@ -67,8 +68,6 @@ class StationPanelProvider extends PanelProvider
                 ->group('Inmate Management')
                 ->isActiveWhen(fn() => request()->url() === RemandTrialResource::getUrl('create'))
                 ->sort(3),
-
-                // ...
             ])
             ->discoverResources(in: app_path('Filament/Station/Resources'), for: 'App\\Filament\\Station\\Resources')
             ->discoverPages(in: app_path('Filament/Station/Pages'), for: 'App\\Filament\\Station\\Pages')
@@ -94,5 +93,17 @@ class StationPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+
+    public function boot(): void
+    {
+        FilamentColor::register([
+            'brown' => Color::hex('#654321'),
+            'cream' => Color::hex('#F9E4BC'),
+            'pink' => Color::hex('#FFC0CB'),
+            'blue' => Color::hex('#779ECB'),
+            'green' => Color::hex('#79B791'),
+            'purple' => Color::hex('#CE93D8'),
+        ]);
     }
 }

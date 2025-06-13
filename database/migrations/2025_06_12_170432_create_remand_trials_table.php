@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('remand_trials', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('station_id')->constrained()->onDelete('set null');
-            $table->foreignId('cell_id')->constrained()->onDelete('set null');
+            $table->foreignId('station_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('cell_id')->nullable()->constrained()->onDelete('set null');
             $table->string('serial_number')->unique();
             $table->string('name');
             $table->string('offense');

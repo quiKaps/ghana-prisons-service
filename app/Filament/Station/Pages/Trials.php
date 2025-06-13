@@ -9,6 +9,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
@@ -29,7 +30,7 @@ class Trials extends Page implements HasTable
 
     protected static ?string $title = 'Inmates On Trial';
 
-    protected ?string $subheading = 'Custom Page Subheading';
+    protected ?string $subheading = 'Manage and track inmates currently on trial';
 
     protected static ?string $model = RemandTrial::class;
 
@@ -43,19 +44,26 @@ class Trials extends Page implements HasTable
             ->query(RemandTrial::query()->where('detention_type', 'trial'))
             ->columns([
                 TextColumn::make('serial_number')
-                    ->label('Serial Number'),
+                ->weight(FontWeight::Bold)
+                ->label('S.N.'),
                 TextColumn::make('name')
                     ->searchable()
-                    ->label('Inmate Name'),
+
+                ->label('Inmate Name'),
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
-                    ->date(),
-
+                ->date(),
                 TextColumn::make('court')
                     ->label('Court'),
                 TextColumn::make('next_court_date')
                     ->label('Next Court Date')
+                ->badge()
+                ->color('success')
                     ->date(),
+            TextColumn::make('police_officer')
+                ->label('Police Officer'),
+            TextColumn::make('police_contact')
+                ->label('Police Contact'),
 
             ])
             ->filters([
@@ -339,10 +347,10 @@ class Trials extends Page implements HasTable
                         ]),
 
                 ])
-                    ->label('More actions')
+                ->label('Actions')
                     ->icon('heroicon-m-ellipsis-vertical')
                     ->size(ActionSize::Small)
-                    ->color('primary')
+                ->color('green')
                     ->button()
 
             ]);

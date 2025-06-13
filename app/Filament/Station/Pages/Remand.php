@@ -8,6 +8,7 @@ use App\Models\RemandTrial;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -41,20 +42,21 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                 ->where('next_court_date', '>=', now()))
             ->columns([
                 TextColumn::make('serial_number')
-                    ->label('Serial Number'),
+                ->weight(FontWeight::Bold)
+                ->label('S.N.'),
                 TextColumn::make('name')
                     ->searchable()
                     ->label('Inmate Name'),
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
-                    ->date(),
-
+                ->date(),
                 TextColumn::make('court')
                     ->label('Court'),
                 TextColumn::make('next_court_date')
+                ->badge()
+                ->color('success')
                     ->label('Next Court Date')
-                    ->date(),
-
+                ->date(),
                 TextColumn::make('police_station')
                     ->label('Police Station'),
                 TextColumn::make('police_contact')
@@ -342,10 +344,10 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                         ]),
 
                 ])
-                    ->label('More actions')
+                ->label('Actions')
                     ->icon('heroicon-m-ellipsis-vertical')
                     ->size(ActionSize::Small)
-                    ->color('primary')
+                ->color('green')
                     ->button()
             ]);
     }
