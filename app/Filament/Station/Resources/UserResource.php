@@ -256,7 +256,8 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('station_id', auth()->user()->station_id);
+        return parent::getEloquentQuery()
+            ->where('station_id', auth()->user()->station_id);
     }
 
     public static function getPages(): array

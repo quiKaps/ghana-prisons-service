@@ -23,6 +23,9 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use App\Filament\Station\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Station\Resources\InmateResource\Pages\CreateInmate;
+use App\Filament\Station\Resources\RemandTrialResource;
+use App\Filament\Station\Resources\RemandTrialResource\Pages\CreateRemandTrial;
+use App\Models\RemandTrial;
 
 class StationPanelProvider extends PanelProvider
 {
@@ -58,6 +61,12 @@ class StationPanelProvider extends PanelProvider
                     ->group('User Management')
                     ->isActiveWhen(fn() => request()->routeIs('filament.station.pages.create-inmate'))
                     ->sort(3),
+            NavigationItem::make('Add Remand/Trial')
+                ->url(fn(): string => CreateRemandTrial::getUrl())
+                ->icon('heroicon-o-user-plus')
+                ->group('Inmate Management')
+                ->isActiveWhen(fn() => request()->url() === RemandTrialResource::getUrl('create'))
+                ->sort(3),
 
                 // ...
             ])
