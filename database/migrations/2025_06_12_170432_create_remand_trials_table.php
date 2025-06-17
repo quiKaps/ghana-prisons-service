@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('police_station')->nullable();
             $table->string('police_officer')->nullable();
             $table->string('police_contact')->nullable();
+            $table->date('re_admission_date')->nullable();
             $table->timestamps();
         });
     }

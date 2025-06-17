@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('sentences', function (Blueprint $table) {
             $table->id();
+            $table->string('sentence');
+            $table->string('offence');
+            $table->date('EPD');
+            $table->date('LPD');
+            $table->string('goaler_document')->nullable();
+            $table->string('warrant_document')->nullable();
+            $table->longText('offence');
+            $table->string('sentence');
             $table->timestamps();
         });
     }

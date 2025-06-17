@@ -21,8 +21,7 @@ return new class extends Migration
             $table->enum('married_status', ['single', 'married', 'divorced', 'widowed']);
             $table->integer('age_on_admission')->unsigned();
             $table->date('date_of_birth')->nullable();
-            $table->longText('offence');
-            $table->string('sentence');
+
             $table->date('admission_date');
             $table->date('date_sentenced');
             $table->boolean('previously_convicted')->default(false);
@@ -30,8 +29,7 @@ return new class extends Migration
             $table->foreignId('station_id')->nullable()->constrained('stations')->onDelete('set null');
             $table->foreignId('cell_id')->nullable()->constrained('cells')->onDelete('set null');
             $table->string('court_of_committal')->nullable();
-            $table->date('EPD');
-            $table->date('LPD');
+
             $table->string('photo')->nullable();
             $table->string('fingerprint')->nullable();
             $table->string('signature')->nullable();
@@ -54,8 +52,7 @@ return new class extends Migration
             $table->string('police_station')->nullable();
             $table->string('police_contact')->nullable();
             $table->boolean('goaler')->nullable();
-            $table->string('goaler_document')->nullable();
-            $table->string('warrant_document')->nullable();
+
             //transferedin
             //transferedout
             $table->timestamps();
