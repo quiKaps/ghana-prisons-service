@@ -11,9 +11,7 @@ class DischargedInmates extends Model
         'serial_number',
         'inmate_type',
         'full_name',
-        'surname',
-        'first_name',
-        'middle_name',
+        'country_of_origin',
         'offense',
         'admission_date',
         'age_on_admission',
@@ -34,7 +32,15 @@ class DischargedInmates extends Model
         'next_of_kin_name',
         'next_of_kin_relationship',
         'next_of_kin_contact',
+        'mode_of_discharge',
+        'date_of_discharge',
         'discharged_by'
+    ];
+
+    protected $casts = [
+        'admission_date' => 'date',
+        'date_sentenced' => 'date',
+        'date_of_discharge' => 'date'
     ];
 
     public function dischargedSentences(): HasMany

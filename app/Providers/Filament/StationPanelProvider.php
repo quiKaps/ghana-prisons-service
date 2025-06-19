@@ -40,13 +40,27 @@ class StationPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make()
+                ->collapsible(false)
                     ->label('General Management'),
                 NavigationGroup::make()
+                ->collapsible(false)
                     ->label('Inmate Management'),
                 NavigationGroup::make()
+                ->collapsible(false)
                     ->label('Cell Management'),
-                NavigationGroup::make()
-                    ->label('User Management'),
+
+            NavigationGroup::make()
+                ->collapsible(false)
+                ->label('Remand'),
+            NavigationGroup::make()
+                ->collapsible(false)
+                ->label('Trials'),
+            NavigationGroup::make()
+                ->collapsible(false)
+                ->label('Escapees'),
+            NavigationGroup::make()
+                ->collapsible(false)
+                ->label('User Management'),
             ])
             ->navigationItems([
                 NavigationItem::make('Add Inmate')

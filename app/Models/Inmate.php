@@ -15,23 +15,17 @@ class Inmate extends Model
 
     protected $fillable = [
         'serial_number',
-        'surname',
-        'first_name',
-        'middle_name',
+        'full_name',
         'gender',
         'married_status',
         'age_on_admission',
         'date_of_birth',
-        'offence',
-        'sentence',
         'admission_date',
         'date_sentenced',
         'previously_convicted',
         'previous_conviction_id',
         'cell_id',
         'court_of_committal',
-        'EPD',
-        'LPD',
         'photo',
         'fingerprint',
         'signature',
@@ -54,8 +48,6 @@ class Inmate extends Model
         'police_station',
         'police_contact',
         'goaler',
-        'goaler_document',
-        'warrant_document',
 
     ];
 
@@ -66,8 +58,6 @@ class Inmate extends Model
         'disability' => 'boolean',
         'admission_date' => 'date',
         'date_sentenced' => 'date',
-        'EPD' => 'date',
-        'LPD' => 'date',
     ];
 
 

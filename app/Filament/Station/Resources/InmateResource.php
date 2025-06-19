@@ -41,21 +41,13 @@ class InmateResource extends Resource
                         ->required()
                         ->placeholder('Serial Number eg. NSM/01/25')
                         ->maxLength(255),
-                    Forms\Components\TextInput::make('surname')
-                        ->label('Surname')
+                    Forms\Components\TextInput::make('full_name')
+                        ->label('Full Name')
                         ->required()
-                        ->placeholder('Enter Surname')
+                        ->placeholder('Enter Full Name')
+                        ->columnSpan(2)
                         ->maxLength(255),
-                                Forms\Components\TextInput::make('first_name')
-                                    ->label('First Name')
-                                    ->required()
-                                    ->placeholder('Enter First Name')
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('middle_name')
-                                    ->label('Middle Name')
-                                    ->placeholder('Enter Middle Name (optional)')
-                                    ->maxLength(255),
-                                Forms\Components\Select::make('gender')
+                    Forms\Components\Select::make('gender')
                                     ->label('Gender')
                                     ->required()
                                     ->options([
@@ -131,14 +123,11 @@ class InmateResource extends Resource
                                     ->maxLength(255),
                                 Forms\Components\DatePicker::make('admission_date')
                                     ->label('Date of Admission')
-                                    ->required()
-                        ->maxDate(now())
+                        ->required()
                                     ->default(now()),
                                 Forms\Components\DatePicker::make('date_sentenced')
                                     ->label('Date of Sentence')
-                        ->maxDate(now())
-                                    ->required()
-                        ->maxDate(now()),
+                        ->required(),
                                 Forms\Components\TextInput::make('court_of_committal')
                                     ->label('Court of Committal')
                                     ->required()

@@ -22,7 +22,6 @@ class Trials extends Page implements HasTable
 {
     use \Filament\Tables\Concerns\InteractsWithTable;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.station.pages.trials';
 
@@ -40,7 +39,9 @@ class Trials extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(RemandTrial::query()->where('detention_type', 'trial'))
+            ->query(RemandTrial::query()
+                ->where('detention_type', 'trial')
+                ->orderBy('created_at', 'DESC'))
             ->emptyStateHeading('No Inmate On Trial Found')
             ->emptyStateDescription('Station has no inmates on trial yet...')
             ->emptyStateIcon('heroicon-s-user')
@@ -48,7 +49,7 @@ class Trials extends Page implements HasTable
                 TextColumn::make('serial_number')
                 ->weight(FontWeight::Bold)
                 ->label('S.N.'),
-                TextColumn::make('name')
+            TextColumn::make('full_name')
                 ->searchable()
                 ->label('Inmate Name'),
                 TextColumn::make('admission_date')
@@ -82,26 +83,24 @@ class Trials extends Page implements HasTable
                     Notification::make()
                         ->success()
                         ->title('Inmate Discharged')
-                        ->body('The inmates has been discharged successfully.')
+                    ->body("{$record->full_name} has been discharged successfully.")
                         ->send();
-                })
+            })
                 ->label('Discharge')
                 ->fillForm(fn(RemandTrial $record): array => [
                     'serial_number' => $record->serial_number,
-                    'name' => $record->name,
+                'full_name' => $record->full_name,
                     'age_on_admission' => $record->age_on_admission,
-                    'country_of_origin' => $record->country_of_origin,
-                    'admission_date' => $record->admission_date,
-                    'detention_type' => $record->detention_type,
-                    'offense' => $record->offense,
-                    'court' => $record->court,
-                    'next_court_date' => $record->next_court_date,
-                    'police_station' => $record->police_station,
-                    'police_officer' => $record->police_officer,
-                    'police_contact' => $record->police_contact,
-                    'date_of_discharge' => $record->date_of_discharge,
-                    'mode_of_discharge' => $record->mode_of_discharge
-                ])
+                'detention_type' => $record->detention_type,
+                'country_of_origin' => $record->country_of_origin,
+                'offense' => $record->offense,
+                'court' => $record->court,
+                'next_court_date' => $record->next_court_date,
+                'police_station' => $record->police_station,
+                'police_officer' => $record->police_officer,
+                'police_contact' => $record->police_contact,
+                //'date_of_discharge' => $record->date_of_discharge,
+            ])
                         ->form([
                             Section::make('Inmate Details')
                                 ->columns(2)
@@ -111,26 +110,10 @@ class Trials extends Page implements HasTable
                                         ->unique(ignoreRecord: true)
                                         ->placeholder('e.g. NSW/06/25')
                                         ->label('Serial Number'),
-                                    TextInput::make('name')
+                    TextInput::make('full_name')
                                         ->required()
                                         ->placeholder('e.g. Nana Kwame')
-                                        ->label('Inmate Name'),
-                                    TextInput::make('age_on_admission')
-                                        ->numeric()
-                                        ->minValue(15)
-                                        ->placeholder('e.g. 30')
-                                        ->required()
-                                        ->label('Age on Admission'),
-                                    Select::make('country_of_origin')
-                                        ->options(config('countries'))
-                                        ->searchable()
-                                        ->required()
-                                        ->label('Country of Origin'),
-                                    DatePicker::make('admission_date')
-                                        ->required()
-                                        ->default(now())
-                                        ->label('Admission Date'),
-
+                        ->label('Inmate Name'),
                                     Select::make('detention_type')
                                         ->options([
                                             'remand' => 'Remand',
@@ -185,8 +168,7 @@ class Trials extends Page implements HasTable
                                             'other' => 'Other',
                                         ])
                                         ->label('Mode of Discharge'),
-                                ])->columns(2),
-
+                    ])->columns(2),
                         ]),
                     //Edit remand action
                     EditAction::make()
@@ -195,11 +177,11 @@ class Trials extends Page implements HasTable
                                 ->success()
                                 ->title('Trial Updated')
                                 ->body('The inmates trial has been updated successfully.'),
-                        )
-
+            )
                         ->modalHeading('Edit Trial Details')
                         ->label('Edit')
-
+                ->button()
+                ->color('blue')
                 ->form([
                             Section::make('Inmate Details')
                                 ->columns(2)
@@ -209,7 +191,7 @@ class Trials extends Page implements HasTable
                                         ->unique(ignoreRecord: true)
                                         ->placeholder('e.g. NSW/06/25')
                                         ->label('Serial Number'),
-                                    TextInput::make('name')
+                    TextInput::make('full_name')
                                         ->required()
                                         ->placeholder('e.g. Nana Kwame')
                                         ->label('Inmate Name'),
@@ -219,16 +201,13 @@ class Trials extends Page implements HasTable
                                         ->placeholder('e.g. 30')
                                         ->required()
                                         ->label('Age on Admission'),
-                                    Select::make('country_of_origin')
-                                        ->options(config('countries'))
-                                        ->searchable()
-                                        ->required()
+                    TextInput::make('country_of_origin')
+                        ->required()
                                         ->label('Country of Origin'),
                                     DatePicker::make('admission_date')
                                         ->required()
                                         ->default(now())
-                                        ->label('Admission Date'),
-
+                        ->label('Admission Date'),
                                     Select::make('detention_type')
                                         ->options([
                                             'remand' => 'Remand',

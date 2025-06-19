@@ -5,6 +5,7 @@ namespace App\Filament\Station\Pages;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
 use App\Models\RemandTrial;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Support\Enums\ActionSize;
@@ -22,8 +23,6 @@ class ForeignersOnTrial extends Page implements HasTable
 
     use \Filament\Tables\Concerns\InteractsWithTable;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
     protected static string $view = 'filament.station.pages.foreigners-on-trial';
 
     protected static ?string $navigationGroup = 'Trials';
@@ -40,12 +39,13 @@ class ForeignersOnTrial extends Page implements HasTable
     {
         return $table
             ->query(RemandTrial::query()->where('detention_type', 'trial')
-                ->where('country_of_origin', '!=', 'Ghana'))
+            ->where('country_of_origin', '!=', 'Ghana')
+            ->orderBy('created_at', 'DESC'))
             ->columns([
                 TextColumn::make('serial_number')
                     ->weight(FontWeight::Bold)
                     ->label('S.N.'),
-                TextColumn::make('name')
+            TextColumn::make('full_name')
                     ->searchable()
                     ->label('Inmate Name'),
                 TextColumn::make('country_of_origin')
@@ -70,289 +70,180 @@ class ForeignersOnTrial extends Page implements HasTable
                 // Define any filters here if needed
             ])
             ->actions([
-                ActionGroup::make([
-                    // Transfer Inmate Action
-                    EditAction::make()
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title('Trial Updated')
-                                ->body('The inmates trial has been updated successfully.'),
-                        )
-
-                        ->color('info')
-                        ->icon('heroicon-m-arrows-right-left')
-                        ->modalHeading('Edit Trial Details')
-                        ->label('Transfer Inmate')
-                        ->form([
-                            Section::make('Inmate Details')
-                                ->columns(2)
-                                ->schema([
-                                    TextInput::make('serial_number')
-                                        ->required()
-                                        ->unique(ignoreRecord: true)
-                                        ->placeholder('e.g. NSW/06/25')
-                                        ->label('Serial Number'),
-                                    TextInput::make('name')
-                                        ->required()
-                                        ->placeholder('e.g. Nana Kwame')
-                                        ->label('Inmate Name'),
-                                    TextInput::make('age_on_admission')
-                                        ->numeric()
-                                        ->minValue(15)
-                                        ->placeholder('e.g. 30')
-                                        ->required()
-                                        ->label('Age on Admission'),
-                                    Select::make('country_of_origin')
-                                        ->options(config('countries'))
-                                        ->searchable()
-                                        ->required()
-                                        ->label('Country of Origin'),
-                                    DatePicker::make('admission_date')
-                                        ->required()
-                                        ->default(now())
-                                        ->label('Admission Date'),
-
-                                    Select::make('detention_type')
-                                        ->options([
-                                            'remand' => 'Remand',
-                                            'trial' => 'Trial',
-                                        ])
-                                        ->required()
-                                        ->label('Detention Type'),
-                                ])->columns(2),
-                            Section::make('Legal Details')
-                                ->columns(2)
-                                ->schema([
-                                    TextInput::make('offense')
-                                        ->required()
-                                        ->maxLength(255)
-                                        ->placeholder('e.g. Theft')
-                                        ->label('Offense'),
-                                    TextInput::make('court')
-                                        ->required()
-                                        ->placeholder('e.g. Kumasi Circuit Court')
-                                        ->label('Court'),
-                                    DatePicker::make('next_court_date')
-                                        ->required()
-                                        ->label('Next Court Date'),
-                                    TextInput::make('police_station')
-                                        ->required()
-                                        ->placeholder('e.g. Central Police Station')
-                                        ->label('Police Station'),
-                                    TextInput::make('police_officer')
-                                        ->label('Police Officer')
-                                        ->placeholder('e.g. Inspector Kwesi Nyarko'),
-                                    TextInput::make('police_contact')
-                                        ->label('Police Contact')
-                                        ->placeholder('e.g. 0241234567')
-                                        ->tel(),
-                                ]),
-                            Section::make('Discharge Details')
-                                ->columns(2)
-                                ->schema([
-                                    TextInput::make('date_of_discharge')
-                                        ->required()
-                                        ->maxLength(255)
-                                        ->placeholder('e.g. 2023-12-31')
-                                        ->label('Date of Discharge'),
-                                    Select::make('mode_of_discharge')
-                                        ->required()
-                                        ->options([
-                                            'discharged' => 'Discharged',
-                                            'acquitted_and_discharged' => 'Acquitted and Discharged',
-                                            'bail_bond' => 'Bail Bond',
-                                            'escape' => 'Escape',
-                                            'death' => 'Death',
-                                            'other' => 'Other',
-                                        ])
-                                        ->label('Mode of Discharge'),
-                                ])->columns(2),
-
-                        ]),
-                    //Dischage Action
-                    EditAction::make()
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title('Trial Updated')
-                                ->body('The inmates trial has been updated successfully.'),
-                        )
-
-                        ->color('success')
-                        ->icon('heroicon-m-arrow-right-start-on-rectangle')
-                        ->modalHeading('Edit Trial Details')
-                        ->label('Discharge')
-                        ->form([
-                            Section::make('Inmate Details')
-                                ->columns(2)
-                                ->schema([
-                                    TextInput::make('serial_number')
-                                        ->required()
-                                        ->unique(ignoreRecord: true)
-                                        ->placeholder('e.g. NSW/06/25')
-                                        ->label('Serial Number'),
-                                    TextInput::make('name')
-                                        ->required()
-                                        ->placeholder('e.g. Nana Kwame')
-                                        ->label('Inmate Name'),
-                                    TextInput::make('age_on_admission')
-                                        ->numeric()
-                                        ->minValue(15)
-                                        ->placeholder('e.g. 30')
-                                        ->required()
-                                        ->label('Age on Admission'),
-                                    Select::make('country_of_origin')
-                                        ->options(config('countries'))
-                                        ->searchable()
-                                        ->required()
-                                        ->label('Country of Origin'),
-                                    DatePicker::make('admission_date')
-                                        ->required()
-                                        ->default(now())
-                                        ->label('Admission Date'),
-
-                                    Select::make('detention_type')
-                                        ->options([
-                                            'remand' => 'Remand',
-                                            'trial' => 'Trial',
-                                        ])
-                                        ->required()
-                                        ->label('Detention Type'),
-                                ])->columns(2),
-                            Section::make('Legal Details')
-                                ->columns(2)
-                                ->schema([
-                                    TextInput::make('offense')
-                                        ->required()
-                                        ->maxLength(255)
-                                        ->placeholder('e.g. Theft')
-                                        ->label('Offense'),
-                                    TextInput::make('court')
-                                        ->required()
-                                        ->placeholder('e.g. Kumasi Circuit Court')
-                                        ->label('Court'),
-                                    DatePicker::make('next_court_date')
-                                        ->required()
-                                        ->label('Next Court Date'),
-                                    TextInput::make('police_station')
-                                        ->required()
-                                        ->placeholder('e.g. Central Police Station')
-                                        ->label('Police Station'),
-                                    TextInput::make('police_officer')
-                                        ->label('Police Officer')
-                                        ->placeholder('e.g. Inspector Kwesi Nyarko'),
-                                    TextInput::make('police_contact')
-                                        ->label('Police Contact')
-                                        ->placeholder('e.g. 0241234567')
-                                        ->tel(),
-                                ]),
-                            Section::make('Discharge Details')
-                                ->columns(2)
-                                ->schema([
-                                    TextInput::make('date_of_discharge')
-                                        ->required()
-                                        ->maxLength(255)
-                                        ->placeholder('e.g. 2023-12-31')
-                                        ->label('Date of Discharge'),
-                                    Select::make('mode_of_discharge')
-                                        ->required()
-                                        ->options([
-                                            'discharged' => 'Discharged',
-                                            'acquitted_and_discharged' => 'Acquitted and Discharged',
-                                            'bail_bond' => 'Bail Bond',
-                                            'escape' => 'Escape',
-                                            'death' => 'Death',
-                                            'other' => 'Other',
-                                        ])
-                                        ->label('Mode of Discharge'),
-                                ])->columns(2),
-
-                        ]),
-                    //Edit remand action
-                    EditAction::make()
-                        ->successNotification(
-                            Notification::make()
-                                ->success()
-                                ->title('Trial Updated')
-                                ->body('The inmates trial has been updated successfully.'),
-                        )
-
-                        ->modalHeading('Edit Trial Details')
-                        ->label('Edit')
-                        ->form([
-                            Section::make('Inmate Details')
-                                ->columns(2)
-                                ->schema([
-                                    TextInput::make('serial_number')
-                                        ->required()
-                                        ->unique(ignoreRecord: true)
-                                        ->placeholder('e.g. NSW/06/25')
-                                        ->label('Serial Number'),
-                                    TextInput::make('name')
-                                        ->required()
-                                        ->placeholder('e.g. Nana Kwame')
-                                        ->label('Inmate Name'),
-                                    TextInput::make('age_on_admission')
-                                        ->numeric()
-                                        ->minValue(15)
-                                        ->placeholder('e.g. 30')
-                                        ->required()
-                                        ->label('Age on Admission'),
-                                    Select::make('country_of_origin')
-                                        ->options(config('countries'))
-                                        ->searchable()
-                                        ->required()
-                                        ->label('Country of Origin'),
-                                    DatePicker::make('admission_date')
-                                        ->required()
-                                        ->default(now())
-                                        ->label('Admission Date'),
-
-                                    Select::make('detention_type')
-                                        ->options([
-                                            'remand' => 'Remand',
-                                            'trial' => 'Trial',
-                                        ])
-                                        ->required()
-                                        ->label('Detention Type'),
-                                ])->columns(2),
-                            Section::make('Legal Details')
-                                ->columns(2)
-                                ->schema([
-                                    TextInput::make('offense')
-                                        ->required()
-                                        ->maxLength(255)
-                                        ->placeholder('e.g. Theft')
-                                        ->label('Offense'),
-                                    TextInput::make('court')
-                                        ->required()
-                                        ->placeholder('e.g. Kumasi Circuit Court')
-                                        ->label('Court'),
-                                    DatePicker::make('next_court_date')
-                                        ->required()
-                                        ->label('Next Court Date'),
-                                    TextInput::make('police_station')
-                                        ->required()
-                                        ->placeholder('e.g. Central Police Station')
-                                        ->label('Police Station'),
-                                    TextInput::make('police_officer')
-                                        ->label('Police Officer')
-                                        ->placeholder('e.g. Inspector Kwesi Nyarko'),
-                                    TextInput::make('police_contact')
-                                        ->label('Police Contact')
-                                        ->placeholder('e.g. 0241234567')
-                                        ->tel(),
-                                ]),
-                        ]),
-
+            Action::make('Discharge')
+                ->color('green')
+                ->button()
+                ->icon('heroicon-m-arrow-right-start-on-rectangle')
+                ->modalHeading('Trial Discharge')
+                ->modalSubmitActionLabel('Discharge Imate')
+                ->action(function (array $data, $record) {
+                    app(\App\Services\DischargeService::class)
+                        ->dischargeInmate($record, $data);
+                    Notification::make()
+                        ->success()
+                        ->title('Inmate Discharged')
+                        ->body("{$record->full_name} has been discharged successfully.")
+                        ->send();
+                })
+                ->label('Discharge')
+                ->fillForm(fn(RemandTrial $record): array => [
+                    'serial_number' => $record->serial_number,
+                    'full_name' => $record->full_name,
+                    'age_on_admission' => $record->age_on_admission,
+                    'detention_type' => $record->detention_type,
+                    'country_of_origin' => $record->country_of_origin,
+                    'offense' => $record->offense,
+                    'court' => $record->court,
+                    'next_court_date' => $record->next_court_date,
+                    'police_station' => $record->police_station,
+                    'police_officer' => $record->police_officer,
+                    'police_contact' => $record->police_contact,
+                    'date_of_discharge' => $record->date_of_discharge,
+                    'mode_of_discharge' => $record->mode_of_discharge
                 ])
-                    ->label('Actions')
-                    ->icon('heroicon-m-ellipsis-vertical')
-                    ->size(ActionSize::Small)
-                    ->color('green')
-                    ->button()
-
+                ->form([
+                    Section::make('Inmate Details')
+                        ->columns(2)
+                        ->schema([
+                            TextInput::make('serial_number')
+                                ->required()
+                                ->unique(ignoreRecord: true)
+                                ->placeholder('e.g. NSW/06/25')
+                                ->label('Serial Number'),
+                    TextInput::make('full_name')
+                        ->required()
+                        ->placeholder('e.g. Nana Kwame')
+                        ->label('Inmate Name'),
+                        Select::make('detention_type')
+                            ->options([
+                                'remand' => 'Remand',
+                                'trial' => 'Trial',
+                            ])
+                            ->required()
+                            ->label('Detention Type'),
+                    ])->columns(2),
+                Section::make('Legal Details')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('offense')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('e.g. Theft')
+                            ->label('Offense'),
+                        TextInput::make('court')
+                            ->required()
+                            ->placeholder('e.g. Kumasi Circuit Court')
+                            ->label('Court'),
+                        DatePicker::make('next_court_date')
+                            ->required()
+                            ->label('Next Court Date'),
+                        TextInput::make('police_station')
+                            ->required()
+                            ->placeholder('e.g. Central Police Station')
+                            ->label('Police Station'),
+                        TextInput::make('police_officer')
+                            ->label('Police Officer')
+                            ->placeholder('e.g. Inspector Kwesi Nyarko'),
+                        TextInput::make('police_contact')
+                            ->label('Police Contact')
+                            ->placeholder('e.g. 0241234567')
+                            ->tel(),
+                    ]),
+                Section::make('Discharge Details')
+                    ->columns(2)
+                    ->schema([
+                    DatePicker::make('date_of_discharge')
+                        ->required()
+                        ->default(now())
+                            ->placeholder('e.g. 2023-12-31')
+                            ->label('Date of Discharge'),
+                        Select::make('mode_of_discharge')
+                            ->required()
+                            ->options([
+                                'discharged' => 'Discharged',
+                                'acquitted_and_discharged' => 'Acquitted and Discharged',
+                                'bail_bond' => 'Bail Bond',
+                                'escape' => 'Escape',
+                                'death' => 'Death',
+                                'other' => 'Other',
+                            ])
+                            ->label('Mode of Discharge'),
+                    ])->columns(2),
+                ]),
+            //Edit remand action
+            EditAction::make()
+                ->successNotification(
+                    Notification::make()
+                        ->success()
+                        ->title('Trial Updated')
+                        ->body('The inmates trial has been updated successfully.'),
+                )
+                ->modalHeading('Edit Trial Details')
+                ->label('Edit')
+                ->button()
+                ->color('blue')
+                ->form([
+                    Section::make('Inmate Details')
+                        ->columns(2)
+                        ->schema([
+                            TextInput::make('serial_number')
+                                ->required()
+                                ->unique(ignoreRecord: true)
+                                ->placeholder('e.g. NSW/06/25')
+                                ->label('Serial Number'),
+                    TextInput::make('full_name')
+                        ->required()
+                        ->placeholder('e.g. Nana Kwame')
+                        ->label('Inmate Name'),
+                    TextInput::make('age_on_admission')
+                        ->numeric()
+                        ->minValue(15)
+                        ->placeholder('e.g. 30')
+                        ->required()
+                        ->label('Age on Admission'),
+                    TextInput::make('country_of_origin')
+                        ->required()
+                        ->label('Country of Origin'),
+                    DatePicker::make('admission_date')
+                        ->required()
+                        ->default(now())
+                        ->label('Admission Date'),
+                            Select::make('detention_type')
+                                ->options([
+                                    'remand' => 'Remand',
+                                    'trial' => 'Trial',
+                                ])
+                                ->required()
+                                ->label('Detention Type'),
+                        ])->columns(2),
+                    Section::make('Legal Details')
+                        ->columns(2)
+                        ->schema([
+                            TextInput::make('offense')
+                                ->required()
+                                ->maxLength(255)
+                                ->placeholder('e.g. Theft')
+                                ->label('Offense'),
+                            TextInput::make('court')
+                                ->required()
+                                ->placeholder('e.g. Kumasi Circuit Court')
+                                ->label('Court'),
+                            DatePicker::make('next_court_date')
+                                ->required()
+                                ->label('Next Court Date'),
+                            TextInput::make('police_station')
+                                ->required()
+                                ->placeholder('e.g. Central Police Station')
+                                ->label('Police Station'),
+                            TextInput::make('police_officer')
+                                ->label('Police Officer')
+                                ->placeholder('e.g. Inspector Kwesi Nyarko'),
+                            TextInput::make('police_contact')
+                                ->label('Police Contact')
+                                ->placeholder('e.g. 0241234567')
+                                ->tel(),
+                        ]),
+                ]),
             ]);
     }
 }

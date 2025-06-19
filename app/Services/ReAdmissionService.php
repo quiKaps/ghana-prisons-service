@@ -7,7 +7,7 @@ use App\Models\DischargedInmates;
 use App\Models\RemandTrial;
 use Illuminate\Support\Facades\DB;
 
-class ReadmissionService
+class ReAdmissionService
 {
     public function readmitRemandTrial(int $dischargedInmateId, array $data): RemandTrial
     {
@@ -18,7 +18,7 @@ class ReadmissionService
                 'station_id' => $archived->station_id,
                 'cell_id' => $archived->cell_id,
                 'serial_number' => $data['serial_number'],
-                'name' => $data['prisoner_name'],
+                'full_name' => $data['full_name'],
                 'offense' => $archived->offense,
                 'admission_date' => $data['readmission_date'],
                 'age_on_admission' => $archived->age_on_admission,
@@ -30,7 +30,7 @@ class ReadmissionService
                 'police_station' => $archived->police_station,
                 'police_officer' => $archived->police_name,
                 'police_contact' => $archived->police_contact,
-                // add other relevant fields as needed
+                're_admission_date' => $data['readmission_date'],
             ]);
 
             $archived->delete(); // or soft delete for traceability

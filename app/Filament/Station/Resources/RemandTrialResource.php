@@ -38,7 +38,7 @@ class RemandTrialResource extends Resource
                                     ->unique(ignoreRecord: true)
                                     ->placeholder('e.g. NSW/06/25')
                                     ->label('Serial Number'),
-                                Forms\Components\TextInput::make('name')
+                    Forms\Components\TextInput::make('full_name')
                                     ->required()
                                     ->placeholder('e.g. Nana Kwame')
                                     ->label('Inmate Name'),
@@ -105,7 +105,7 @@ class RemandTrialResource extends Resource
                 Tables\Columns\TextColumn::make('serial_number')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
+            Tables\Columns\TextColumn::make('full_name')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('offense')

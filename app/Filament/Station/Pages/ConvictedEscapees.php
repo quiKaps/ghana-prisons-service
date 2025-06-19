@@ -6,7 +6,6 @@ use Filament\Pages\Page;
 
 class ConvictedEscapees extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.station.pages.convicted-escapees';
 

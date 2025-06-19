@@ -21,9 +21,7 @@ class InmateFactory extends Factory
     {
         return [
             'serial_number' => strtoupper(Str::random(10)),
-            'surname' => $this->faker->lastName,
-            'first_name' => $this->faker->firstName,
-            'middle_name' => $this->faker->optional()->firstName,
+            'full_name' => $this->faker->firstName . ' ' . $this->faker->lastName,
             'gender' => $this->faker->randomElement(['male', 'female']),
             'married_status' => $this->faker->randomElement(['single', 'married', 'divorced', 'widowed']),
             'age_on_admission' => $this->faker->numberBetween(18, 80),

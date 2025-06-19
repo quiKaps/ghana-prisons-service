@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('station_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('cell_id')->nullable()->constrained()->onDelete('set null');
             $table->string('serial_number')->unique();
-            $table->string('name');
+            $table->string('full_name');
             $table->string('offense');
             $table->date('admission_date');
             $table->integer('age_on_admission')->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->enum('detention_type', ['remand', 'trial']);
             $table->date('next_court_date');
             $table->string('warrant')->nullable();
-            $table->string('country_of_origin')->nullable();
+            $table->string('country_of_origin');
             $table->string('police_station')->nullable();
             $table->string('police_officer')->nullable();
             $table->string('police_contact')->nullable();

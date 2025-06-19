@@ -11,7 +11,21 @@ class Sentence extends Model
     /** @use HasFactory<\Database\Factories\SentenceFactory> */
     use HasFactory;
 
-    protected $fillable = [];
+    protected $fillable = [
+        'inmate_id',
+        'sentence',
+        'offence',
+        'EPD',
+        'LPD',
+        'goaler_document',
+        'warrant_document',
+    ];
+
+
+    protected $casts = [
+        'EPD' => 'date',
+        'LPD' => 'date',
+    ];
 
 
     //Convicts and Sentences
