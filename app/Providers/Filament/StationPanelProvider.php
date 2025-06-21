@@ -35,6 +35,7 @@ class StationPanelProvider extends PanelProvider
         return $panel
             ->id('station')
             ->path('station')
+            ->breadcrumbs(false)
             ->colors([
             'primary' => Color::hex('#654321'),
             ])
@@ -47,8 +48,7 @@ class StationPanelProvider extends PanelProvider
                     ->label('Inmate Management'),
                 NavigationGroup::make()
                 ->collapsible(false)
-                    ->label('Cell Management'),
-
+                ->label('Cell Management'),
             NavigationGroup::make()
                 ->collapsible(false)
                 ->label('Remand'),
@@ -86,13 +86,9 @@ class StationPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Station/Resources'), for: 'App\\Filament\\Station\\Resources')
             ->discoverPages(in: app_path('Filament/Station/Pages'), for: 'App\\Filament\\Station\\Pages')
             ->pages([
-                Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Station/Widgets'), for: 'App\\Filament\\Station\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
-            ])
+            ->widgets([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

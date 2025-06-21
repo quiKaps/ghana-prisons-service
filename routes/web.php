@@ -7,6 +7,15 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+Route::get('/dashboard', function () {
+    $user = auth()->user();
+    if ($user && $user->type !== 'hq_admin') {
+        return redirect('/station');
+    } else {
+        return redirect('/hq');
+    }
+})->middleware(['auth', 'verified'])->name('dashboard');
+
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');

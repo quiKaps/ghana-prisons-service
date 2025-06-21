@@ -30,6 +30,8 @@ class UserResource extends Resource
 
     protected static ?string $navigationLabel = 'All Users';
 
+    protected ?string $subheading = 'Manage and track inmates currently on trial';
+
 
 
     public static function form(Form $form): Form
@@ -92,7 +94,6 @@ class UserResource extends Resource
                                         'officer' => 'Prison Officer',
                         'prison_admin' => 'Prison Administrator',
                         ]),
-
                 ])->columns(2),
                     ]),
                 Group::make()
@@ -107,11 +108,9 @@ class UserResource extends Resource
                                     ->directory('officer_photos')
                                     ->columnSpanFull(),
                             ])->columns(1),
-                    ])
-
+            ])
             ]);
     }
-
     public static function table(Table $table): Table
     {
         return $table
@@ -130,14 +129,12 @@ class UserResource extends Resource
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'officer' => 'info',
-                        'prison_admin' => 'warning',
-
+                'prison_admin' => 'warning',
                 default => 'danger',
                     })
                     ->formatStateUsing(fn($state) => match ($state) {
                         'officer' => 'Prison Officer',
-                        'prison_admin' => 'Prison Administrator',
-
+                'prison_admin' => 'Prison Administrator',
                 default => 'Unknown',
                     }),
                 // ToggleColumn::make('is_active')
@@ -147,8 +144,7 @@ class UserResource extends Resource
                     ->boolean()
                     ->trueIcon('heroicon-s-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
-                    ->state(fn($record): bool => !is_null($record->password_changed_at)),
-
+                ->state(fn($record): bool => !is_null($record->password_changed_at)),
             ])
             ->filters([
                 //
@@ -222,14 +218,12 @@ class UserResource extends Resource
                             ->badge()
                             ->color(fn(string $state): string => match ($state) {
                                 'officer' => 'info',
-                                'prison_admin' => 'warning',
-
+                    'prison_admin' => 'warning',
                     default => 'danger',
                             })
                             ->formatStateUsing(fn($state) => match ($state) {
                                 'officer' => 'Prison Officer',
-                                'prison_admin' => 'Prison Administrator',
-
+                    'prison_admin' => 'Prison Administrator',
                     default => 'Unknown',
                             }),
                         TextEntry::make('is_active')

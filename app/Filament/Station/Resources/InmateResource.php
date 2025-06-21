@@ -26,6 +26,8 @@ class InmateResource extends Resource
 
     protected static ?string $navigationLabel = 'All Inmates';
 
+    protected static string | array $routeMiddleware = ['password.confirm'];
+
 
 
     public static function form(Form $form): Form
