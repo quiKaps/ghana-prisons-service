@@ -40,7 +40,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+        $this->redirectIntended(default: route('dashboard', absolute: false));
     }
 
     /**
@@ -104,10 +104,9 @@ new #[Layout('components.layouts.auth')] class extends Component {
         </div>
     </form>
 
-    @if (Route::has('register'))
-        <div class="space-x-1 text-center text-sm text-zinc-600 rtl:space-x-reverse dark:text-zinc-400">
-            {{ __('Don\'t have an account?') }}
-            <flux:link :href="route('register')" wire:navigate>{{ __('Sign up') }}</flux:link>
+
+        <div class="space-x-1 pt-8 text-center text-sm text-zinc-600 rtl:space-x-reverse dark:text-zinc-400">
+            <p>Powered by <a class="text-amber-50" href="https://zelosworks.com" target="_blank">Zelosworks</a></p>
         </div>
-    @endif
+
 </div>

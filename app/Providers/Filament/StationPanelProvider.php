@@ -12,6 +12,7 @@ use Filament\Support\Colors\Color;
 use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
+use App\Http\Middleware\PanelAccessControl;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -68,8 +69,7 @@ class StationPanelProvider extends PanelProvider
                     ->icon('heroicon-o-user-plus')
                     ->group('Inmate Management')
                     ->isActiveWhen(fn() => request()->url() === InmateResource::getUrl('create'))
-                    ->sort(3),
-
+                ->sort(3),
                 NavigationItem::make('Add Users')
                     ->url(fn(): string => CreateUser::getUrl())
                     ->icon('heroicon-o-user-plus')
@@ -85,10 +85,11 @@ class StationPanelProvider extends PanelProvider
             ])
             ->discoverResources(in: app_path('Filament/Station/Resources'), for: 'App\\Filament\\Station\\Resources')
             ->discoverPages(in: app_path('Filament/Station/Pages'), for: 'App\\Filament\\Station\\Pages')
-            ->pages([
-            ])
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/Station/Widgets'), for: 'App\\Filament\\Station\\Widgets')
-            ->widgets([])
+            ->widgets([
+                Widgets\AccountWidget::class,
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -102,6 +103,7 @@ class StationPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            PanelAccessControl::class
             ]);
     }
 

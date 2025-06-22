@@ -9,14 +9,19 @@ use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use App\Actions\SecureEditAction;
+use App\Actions\SecureDeleteAction;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Radio;
+use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Station\Resources\InmateResource\Pages;
 use App\Filament\Station\Resources\InmateResource\RelationManagers;
+use Filament\Actions\Action;
 
 class InmateResource extends Resource
+
 {
     protected static ?string $model = Inmate::class;
 
@@ -26,9 +31,7 @@ class InmateResource extends Resource
 
     protected static ?string $navigationLabel = 'All Inmates';
 
-    protected static string | array $routeMiddleware = ['password.confirm'];
-
-
+    // protected static string | array $routeMiddleware = ['password.confirm'];
 
     public static function form(Form $form): Form
     {
@@ -316,14 +319,10 @@ class InmateResource extends Resource
                 ->label('Serial Number')
                 ->searchable()
                 ->sortable(),
-            Tables\Columns\TextColumn::make('surname')
+            Tables\Columns\TextColumn::make('full_name')
                 ->label('Full Name')
                 ->searchable()
-                ->sortable()
-                ->formatStateUsing(
-                    fn($record) =>
-                    $record->surname . ', ' . $record->first_name . ' ' . $record->middle_name
-                ),
+                ->sortable(),
             Tables\Columns\TextColumn::make('gender')
                 ->searchable()
                 ->sortable()
@@ -342,16 +341,34 @@ class InmateResource extends Resource
                 ->searchable()
                 ->sortable()
                 ->formatStateUsing(
-                    fn($record) => $record->cell ? "CELL {$record->cell->cell_number} - {$record->cell->block}" : 'No Cell Assigned'
+                fn($record) => $record->cell ? "CELL {$record->cell->cell_number} - {$record->cell->block}" : 'No Cell Assigned'
                 ),
             ])
             ->filters([
-                //
-            ])
+            //
+        ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+
+            Tables\Actions\ActionGroup::make([
+                Tables\Actions\ViewAction::make()
+                    ->label('Profile')
+                    ->icon('heroicon-o-user'),
+                Action::make('Transfer')->icon('heroicon-o-arrow-right-on-rectangle'),
+                Action::make('Additional Sentence')->icon('heroicon-o-plus-circle'),
+                Action::make('Amnesty')->icon('heroicon-o-sparkles'),
+                Action::make('Sentence Reduction')->icon('heroicon-o-arrow-trending-down'),
+                SecureEditAction::make('edit', 'filament.admin.resources.inmates.edit')
+                    ->modalWidth('md')
+                    ->modalHeading('Protected Data Access')
+                    ->modalDescription('This is a secure area of the application. Please confirm your password before continuing.')
+                    ->label('Edit'),
+                SecureDeleteAction::make('delete')
+                    ->label('Delete'),
             ])
+                ->button()
+                ->label('More Actions'),
+            ])
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
