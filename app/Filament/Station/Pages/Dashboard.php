@@ -10,6 +10,15 @@ class Dashboard extends \Filament\Pages\Dashboard
 
     public function getTitle(): string
     {
-        return 'Welcome ' . (Auth::check() ? Auth::user()->name : 'Guest');
+        $hour = now()->hour;
+        if ($hour < 12) {
+            $greeting = 'Good morning';
+        } elseif ($hour < 18) {
+            $greeting = 'Good afternoon';
+        } else {
+            $greeting = 'Good evening';
+        }
+        $name = Auth::check() ? Auth::user()->name : 'Guest';
+        return "{$greeting}, {$name}";
     }
 }
