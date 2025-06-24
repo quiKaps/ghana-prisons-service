@@ -9,8 +9,10 @@ use App\Models\RemandTrial;
 use Filament\PanelProvider;
 use Filament\Pages\Dashboard;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\Route;
 use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationGroup;
+use App\Filament\Station\Pages\ViewInmate;
 use Filament\Http\Middleware\Authenticate;
 use App\Http\Middleware\PanelAccessControl;
 use Filament\Support\Facades\FilamentColor;
@@ -27,6 +29,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use App\Filament\Station\Resources\UserResource\Pages\CreateUser;
 use App\Filament\Station\Resources\InmateResource\Pages\CreateInmate;
+use App\Filament\Station\Resources\InmateResource\Pages\ConvictedForiegners;
 use App\Filament\Station\Resources\RemandTrialResource\Pages\CreateRemandTrial;
 
 class StationPanelProvider extends PanelProvider
@@ -52,10 +55,7 @@ class StationPanelProvider extends PanelProvider
                 ->label('Cell Management'),
             NavigationGroup::make()
                 ->collapsible(false)
-                ->label('Remand'),
-            NavigationGroup::make()
-                ->collapsible(false)
-                ->label('Trials'),
+                ->label('Remand and Trials'),
             NavigationGroup::make()
                 ->collapsible(false)
                 ->label('Escapees'),
@@ -64,7 +64,7 @@ class StationPanelProvider extends PanelProvider
                 ->label('User Management'),
             ])
             ->navigationItems([
-                NavigationItem::make('Add Inmate')
+            NavigationItem::make('Add Convict')
                     ->url(fn(): string => CreateInmate::getUrl())
                     ->icon('heroicon-o-user-plus')
                     ->group('Inmate Management')
@@ -82,10 +82,17 @@ class StationPanelProvider extends PanelProvider
                 ->group('Inmate Management')
                 ->isActiveWhen(fn() => request()->url() === RemandTrialResource::getUrl('create'))
                 ->sort(3),
+            NavigationItem::make('Forigners - Convicts')
+                ->url(fn(): string => ConvictedForiegners::getUrl())
+                ->icon('heroicon-o-user-plus')
+                ->group('Inmate Management')
+                ->isActiveWhen(fn() => request()->url() === fn(): string => ConvictedForiegners::getUrl())
             ])
             ->discoverResources(in: app_path('Filament/Station/Resources'), for: 'App\\Filament\\Station\\Resources')
             ->discoverPages(in: app_path('Filament/Station/Pages'), for: 'App\\Filament\\Station\\Pages')
-            ->pages([])
+            ->pages([
+                \App\Filament\Station\Pages\ViewInmate::class,
+            ])
             ->discoverWidgets(in: app_path('Filament/Station/Widgets'), for: 'App\\Filament\\Station\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

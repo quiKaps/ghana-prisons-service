@@ -18,6 +18,9 @@ class EscapeesOnRemand extends Page implements HasTable
 
     protected static ?string $navigationGroup = 'Escapees';
 
+    protected static ?string $navigationLabel = 'Escaped List - Remand';
+
+
     public function table(Table $table): Table
     {
         return $table

@@ -24,7 +24,7 @@ class ExpiredWarrants extends Page implements \Filament\Tables\Contracts\HasTabl
 
     protected static string $view = 'filament.station.pages.expired-warrants';
 
-    protected static ?string $navigationGroup = 'Remand';
+    //  protected static ?string $navigationGroup = 'Remand';
 
     protected static ?string $navigationLabel = 'Expired Warrants';
 

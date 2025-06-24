@@ -29,9 +29,7 @@ class InmateResource extends Resource
 
     protected static ?string $navigationGroup = 'Inmate Management';
 
-    protected static ?string $navigationLabel = 'All Inmates';
-
-    // protected static string | array $routeMiddleware = ['password.confirm'];
+    protected static ?string $navigationLabel = 'Convicts List';
 
     public static function form(Form $form): Form
     {
@@ -314,6 +312,11 @@ class InmateResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->query(
+                Inmate::query()
+                    ->whereDate('LPD', '!=', now()->toDateString())
+                    ->orderByDesc('created_at')
+            )
             ->columns([
             Tables\Columns\TextColumn::make('serial_number')
                 ->label('Serial Number')
@@ -386,6 +389,8 @@ class InmateResource extends Resource
     public static function getPages(): array
     {
         return [
+
+            'convicted-foriegners' => Pages\ConvictedForiegners::route('convicted-foriegners'),
             'index' => Pages\ListInmates::route('/'),
             'create' => Pages\CreateInmate::route('/create'),
             'view' => Pages\ViewInmate::route('/{record}'),

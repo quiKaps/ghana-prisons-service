@@ -60,6 +60,16 @@ class Inmate extends Model
         'date_sentenced' => 'date',
     ];
 
+    public function scopeScheduledForDischargeTomorrow($query)
+    {
+        return $query->whereDate('lpd', now()->addDay()->toDateString());
+    }
+
+    public function scopeScheduledForDischargeToday($query)
+    {
+        return $query->whereDate('lpd', now()->addDay()->toDateString());
+    }
+
 
     /**
      * Get the cell associated with the inmate.

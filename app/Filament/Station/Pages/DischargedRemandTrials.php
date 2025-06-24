@@ -14,6 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Group;
 
 class DischargedRemandTrials extends Page implements \Filament\Tables\Contracts\HasTable
 {
@@ -23,13 +24,13 @@ class DischargedRemandTrials extends Page implements \Filament\Tables\Contracts\
 
     protected static ?string $navigationLabel = 'Discharged Remand and Trials';
 
-    protected static ?string $title = 'Discharged Remand and Trials';
+    protected static ?string $title = 'Remand and Trials Discharge';
 
     protected ?string $subheading = 'Manage and track inmates discharged from trials or remands';
 
     protected static ?string $model = DischargedInmates::class;
 
-    protected static ?string $navigationGroup = 'Trials';
+    protected static ?string $navigationGroup = 'Remand and Trials';
 
     public function table(Table $table): Table
     {
@@ -76,22 +77,26 @@ class DischargedRemandTrials extends Page implements \Filament\Tables\Contracts\
                 'full_name' => $record->full_name,
                     ])
                     ->form([
-                TextInput::make('serial_number')
-                    ->required(),
-                TextInput::make('full_name')
-                    ->label("Inmates's Full Name")
-                    ->readonly()
-                    ->required(),
-                DatePicker::make('readmission_date')
-                    ->label('Re-Admission Date')
-                    ->default(now())
-                    ->maxDate(now())
-                    ->required(),
-                DatePicker::make('next_court_date')
-                    ->label('Next Court Date')
-                    ->default(now())
-                    ->minDate(now())
-                    ->required(),
+                Group::make()
+                    ->columns(2)
+                    ->schema([
+                    TextInput::make('serial_number')
+                        ->required(),
+                    TextInput::make('full_name')
+                        ->label("Inmates's Full Name")
+                        ->readonly()
+                        ->required(),
+                    DatePicker::make('readmission_date')
+                        ->label('Re-Admission Date')
+                        ->default(now())
+                        ->maxDate(now())
+                        ->required(),
+                    DatePicker::make('next_court_date')
+                        ->label('Next Court Date')
+                        ->default(now())
+                        ->minDate(now())
+                        ->required(),
+                ])
                     ])
                 ->modalHeading('Re-Admit Inmate')
                 ->modalSubmitActionLabel('Re-Admit Inmate')

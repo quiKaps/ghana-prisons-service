@@ -14,7 +14,10 @@ class FacilitiesScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         if (auth()->check() && auth()->user()->user_type !== 'hq_admin') {
-            $builder->where('station_id', auth()->user()->station_id);
+            $builder->where(
+                $model->getTable() . '.station_id',
+                auth()->user()->station_id
+            );
         }
     }
 }

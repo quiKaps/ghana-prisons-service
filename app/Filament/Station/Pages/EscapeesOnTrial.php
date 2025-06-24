@@ -20,6 +20,13 @@ class EscapeesOnTrial extends Page implements HasTable
 
     protected static ?string $navigationGroup = 'Escapees';
 
+    protected static ?string $navigationLabel = 'Escaped List - Trial';
+
+    protected ?string $heading = 'Escape List - Trial';
+
+    protected ?string $subheading = 'List of inmates who were on trial but have escaped';
+
+
     public function table(Table $table): Table
     {
         return $table
