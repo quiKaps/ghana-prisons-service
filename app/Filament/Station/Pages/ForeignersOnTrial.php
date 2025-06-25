@@ -32,7 +32,7 @@ class ForeignersOnTrial extends Page implements HasTable
 
     protected static ?string $title = 'Foreigners On Trial';
 
-    protected ?string $subheading = 'View and manage foreign trial inmates';
+    protected ?string $subheading = "View and manage foreign trial Prisoners";
 
     protected static ?string $model = RemandTrial::class;
 
@@ -48,9 +48,8 @@ class ForeignersOnTrial extends Page implements HasTable
                     ->label('S.N.'),
             TextColumn::make('full_name')
                     ->searchable()
-                    ->label('Inmate Name'),
-                TextColumn::make('country_of_origin')
-
+                ->label("Prisoner's Name"),
+            TextColumn::make('country_of_origin')
                     ->label('Country'),
                 TextColumn::make('next_court_date')
                     ->label('Next Court Date')
@@ -64,8 +63,7 @@ class ForeignersOnTrial extends Page implements HasTable
                     ->label('Admission Date')
                     ->date(),
                 TextColumn::make('court')
-                    ->label('Court'),
-
+                ->label('Court'),
             ])
             ->filters([
                 // Define any filters here if needed

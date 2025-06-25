@@ -50,19 +50,18 @@ class ViewRemandTrial extends ViewRecord
                         ['record' => $record]
                     );
                 }),
-
             Action::make('Discharge')
                 ->color('green')
                 ->button()
                 ->icon('heroicon-m-arrow-right-start-on-rectangle')
                 ->modalHeading('Trial Discharge')
-                ->modalSubmitActionLabel('Discharge Imate')
+                ->modalSubmitActionLabel("Discharge Prisoner")
                 ->action(function (array $data, $record) {
                     app(\App\Services\DischargeService::class)
                         ->dischargeInmate($record, $data);
                     Notification::make()
                         ->success()
-                        ->title('Inmate Discharged')
+                    ->title('Prisoner Discharged')
                         ->body("{$record->full_name} has been discharged successfully.")
                         ->send();
                 })
@@ -90,7 +89,7 @@ class ViewRemandTrial extends ViewRecord
                                 ->label('Serial Number'),
                             TextInput::make('full_name')
                                 ->readOnly()
-                                ->label('Inmate Name'),
+                        ->label("Prisoner's Name"),
                         ])->columns(2),
                     Group::make()
                         ->columns(2)

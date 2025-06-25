@@ -54,8 +54,8 @@ class ConvictDischargeResource extends Resource
     {
         return $table
             ->query(Inmate::scheduledForDischargeToday()->orderByDesc('created_at'))
-            ->emptyStateHeading('No Inmates Available for Discharge')
-            ->emptyStateDescription('There are currently no inmates available for discharge today.')
+            ->emptyStateHeading('No Prisoners Available for Discharge')
+            ->emptyStateDescription('There are currently no prisoners available for discharge today.')
             ->emptyStateIcon('heroicon-s-user')
             ->columns([
                 TextColumn::make('serial_number')
@@ -63,11 +63,10 @@ class ConvictDischargeResource extends Resource
                     ->label('S.N.'),
                 TextColumn::make('full_name')
                     ->searchable()
-                    ->label('Inmate Name'),
+                ->label("Prisoner's Name"),
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
-                    ->date(),
-
+                ->date(),
             ])
             ->filters([
                 //

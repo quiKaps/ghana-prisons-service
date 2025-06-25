@@ -28,7 +28,7 @@ class EscapeesOnTrial extends Page implements HasTable
 
     protected ?string $heading = 'Escape List - Trial';
 
-    protected ?string $subheading = 'List of inmates who were on trial but have escaped';
+    protected ?string $subheading = 'List of prisoners who were on trial but have escaped';
 
 
     public function table(Table $table): Table
@@ -44,7 +44,7 @@ class EscapeesOnTrial extends Page implements HasTable
                     ->label('S.N.'),
                 TextColumn::make('full_name')
                     ->searchable()
-                    ->label('Inmate Name'),
+                ->label("Prisoner's Name"),
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
                     ->date(),
@@ -81,7 +81,7 @@ class EscapeesOnTrial extends Page implements HasTable
                                 TextInput::make('serial_number')
                                     ->required(),
                                 TextInput::make('full_name')
-                                    ->label("Inmates's Full Name")
+                        ->label("Prisoner's Full Name")
                                     ->readonly()
                                     ->required(),
                                 DatePicker::make('readmission_date')
@@ -96,8 +96,8 @@ class EscapeesOnTrial extends Page implements HasTable
                                     ->required(),
                             ])
                     ])
-                    ->modalHeading('Re-Admit Inmate')
-                    ->modalSubmitActionLabel('Re-Admit Inmate')
+                ->modalHeading('Re-Admit InmatePrisoner')
+                ->modalSubmitActionLabel('Re-Admit Prisoner')
                     ->action(function ($data, $record) {
                         app(ReAdmissionService::class)->readmitRemandTrial($record->id, $data);
                         Notification::make()

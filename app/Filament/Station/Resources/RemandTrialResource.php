@@ -30,7 +30,7 @@ class RemandTrialResource extends Resource
                 Group::make()
                     ->columnSpan(2)
                     ->schema([
-                        Section::make('Inmate Details')
+                Section::make('Prisoner Details')
                             ->columns(2)
                             ->schema([
                                 Forms\Components\TextInput::make('serial_number')
@@ -41,7 +41,7 @@ class RemandTrialResource extends Resource
                     Forms\Components\TextInput::make('full_name')
                                     ->required()
                                     ->placeholder('e.g. Nana Kwame')
-                                    ->label('Inmate Name'),
+                        ->label("Prisoner's Name"),
                                 Forms\Components\TextInput::make('age_on_admission')
                                     ->numeric()
                                     ->minValue(15)
@@ -56,8 +56,7 @@ class RemandTrialResource extends Resource
                                 Forms\Components\DatePicker::make('admission_date')
                                     ->required()
                                     ->default(now())
-                                    ->label('Admission Date'),
-
+                        ->label('Admission Date'),
                                 Forms\Components\Select::make('detention_type')
                                     ->options([
                                         'remand' => 'Remand',
@@ -65,8 +64,7 @@ class RemandTrialResource extends Resource
                                     ])
                                     ->required()
                                     ->label('Detention Type'),
-                            ]),
-
+                    ]),
                         Section::make('Legal Details')
                             ->columns(2)
                             ->schema([

@@ -45,7 +45,7 @@ class InmateResource extends Resource
                         ->placeholder('Serial Number eg. NSM/01/25')
                         ->maxLength(255),
                     Forms\Components\TextInput::make('full_name')
-                        ->label('Full Name')
+                        ->label("Prisoner's Full Name")
                         ->required()
                         ->placeholder('Enter Full Name')
                         ->columnSpan(2)
@@ -323,7 +323,7 @@ class InmateResource extends Resource
                 ->searchable()
                 ->sortable(),
             Tables\Columns\TextColumn::make('full_name')
-                ->label('Full Name')
+                ->label("Prisoner's Name")
                 ->searchable()
                 ->sortable(),
             Tables\Columns\TextColumn::make('gender')

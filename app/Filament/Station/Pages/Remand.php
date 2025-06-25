@@ -8,13 +8,10 @@ use App\Models\RemandTrial;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
-use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Group;
 
@@ -30,7 +27,7 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
 
     protected static ?string $title = 'Inmates On Remand';
 
-    protected ?string $subheading = 'View and manage remand inmates';
+    protected ?string $subheading = "View and manage remand Prisoners";
 
     protected static ?string $model = RemandTrial::class;
 
@@ -47,7 +44,7 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                 ->label('S.N.'),
             TextColumn::make('full_name')
                     ->searchable()
-                    ->label('Inmate Name'),
+                ->label("Prisoner's Name"),
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
                 ->date(),
@@ -61,8 +58,7 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                 TextColumn::make('police_station')
                     ->label('Police Station'),
                 TextColumn::make('police_contact')
-                    ->label('Police Contact'),
-
+                ->label('Police Contact'),
             ])
             ->filters([
                 // Define any filters here if needed
@@ -73,13 +69,13 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                 ->button()
                 ->icon('heroicon-m-arrow-right-start-on-rectangle')
                 ->modalHeading('Trial Discharge')
-                ->modalSubmitActionLabel('Discharge Imate')
+                ->modalSubmitActionLabel('Discharge Prisoner')
                 ->action(function (array $data, $record) {
                     app(\App\Services\DischargeService::class)
                         ->dischargeInmate($record, $data);
                     Notification::make()
                         ->success()
-                        ->title('Inmate Discharged')
+                    ->title('Prisoner Discharged')
                     ->body("{$record->full_name} has been discharged successfully.")
                         ->send();
             })
@@ -148,7 +144,6 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                 ->label('Profile')
                 ->button()
                 ->color('blue')
-
                 ->url(fn(RemandTrial $record) => route('filament.station.resources.remand-trials.view', [
                     'record' => $record->getKey(),
                 ])),

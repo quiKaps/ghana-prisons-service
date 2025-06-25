@@ -47,7 +47,7 @@ class ConvictedForiegners extends Page implements \Filament\Tables\Contracts\Has
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('full_name')
-                    ->label('Full Name')
+                ->label("Prisoner's Name")
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('gender')

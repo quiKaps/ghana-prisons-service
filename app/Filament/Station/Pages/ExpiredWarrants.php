@@ -43,7 +43,7 @@ class ExpiredWarrants extends Page implements \Filament\Tables\Contracts\HasTabl
                     ->label('Serial Number'),
             TextColumn::make('full_name')
                     ->searchable()
-                    ->label('Inmate Name'),
+                ->label("Prisoner's Name"),
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
                 ->date(),
@@ -68,13 +68,13 @@ class ExpiredWarrants extends Page implements \Filament\Tables\Contracts\HasTabl
                 ->button()
                 ->icon('heroicon-m-arrow-right-start-on-rectangle')
                 ->modalHeading('Trial Discharge')
-                ->modalSubmitActionLabel('Discharge Imate')
+                ->modalSubmitActionLabel('Discharge Prisoner')
                 ->action(function (array $data, $record) {
                     app(\App\Services\DischargeService::class)
                         ->dischargeInmate($record, $data);
                     Notification::make()
                         ->success()
-                        ->title('Inmate Discharged')
+                    ->title('Prisoner Discharged')
                         ->body("{$record->full_name} has been discharged successfully.")
                         ->send();
                 })
@@ -143,7 +143,6 @@ class ExpiredWarrants extends Page implements \Filament\Tables\Contracts\HasTabl
                 ->label('Profile')
                 ->button()
                 ->color('blue')
-
                 ->url(fn(RemandTrial $record) => route('filament.station.resources.remand-trials.view', [
                     'record' => $record->getKey(),
                 ])),

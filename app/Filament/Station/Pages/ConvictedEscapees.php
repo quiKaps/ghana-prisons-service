@@ -33,14 +33,14 @@ class ConvictedEscapees extends Page implements HasTable
                 ->where('mode_of_discharge', 'escape')
                 ->orderBy('created_at', 'DESC'))
             ->emptyStateHeading('No Escapee Remands')
-            ->emptyStateDescription('No recorded escaped remand inmates')
+            ->emptyStateDescription('No recorded escaped remand prisoners')
             ->columns([
                 TextColumn::make('serial_number')
                     ->weight(FontWeight::Bold)
                     ->label('S.N.'),
                 TextColumn::make('full_name')
                     ->searchable()
-                    ->label('Inmate Name'),
+                ->label('Prisoner Name'),
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
                     ->date(),
@@ -78,7 +78,7 @@ class ConvictedEscapees extends Page implements HasTable
                                     ->readOnly()
                                     ->required(),
                                 TextInput::make('full_name')
-                                    ->label("Inmates's Full Name")
+                        ->label("Prisoner's Name")
                                     ->readonly()
                                     ->required(),
                                 DatePicker::make('readmission_date')
@@ -93,8 +93,8 @@ class ConvictedEscapees extends Page implements HasTable
                                     ->required(),
                             ])
                     ])
-                    ->modalHeading('Re-Admit Inmate')
-                    ->modalSubmitActionLabel('Re-Admit Inmate')
+                ->modalHeading('Re-Admit Prisoner')
+                ->modalSubmitActionLabel('Re-Admit Prisoner')
                     ->action(function ($data, $record) {
                         app(ReAdmissionService::class)->readmitRemandTrial($record->id, $data);
                         Notification::make()

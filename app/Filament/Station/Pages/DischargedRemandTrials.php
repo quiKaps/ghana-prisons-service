@@ -39,7 +39,7 @@ class DischargedRemandTrials extends Page implements \Filament\Tables\Contracts\
                 ->where('inmate_type', 'trial')
                 ->orWhere('inmate_type', 'remand')
                 ->orderBy('created_at', 'DESC'))
-            ->emptyStateHeading('Station has no disharged inmates')
+            ->emptyStateHeading('Station has no disharged prisoners')
             ->emptyStateIcon('heroicon-s-user')
             ->columns([
                 TextColumn::make('serial_number')
@@ -47,7 +47,7 @@ class DischargedRemandTrials extends Page implements \Filament\Tables\Contracts\
                     ->label('S.N.'),
                 TextColumn::make('full_name')
                     ->searchable()
-                    ->label('Inmate Name'),
+                ->label("Prisoner's Name"),
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
                     ->date(),
@@ -83,7 +83,7 @@ class DischargedRemandTrials extends Page implements \Filament\Tables\Contracts\
                     TextInput::make('serial_number')
                         ->required(),
                     TextInput::make('full_name')
-                        ->label("Inmates's Full Name")
+                        ->label("Prisoner's Full Name")
                         ->readonly()
                         ->required(),
                     DatePicker::make('readmission_date')
@@ -98,8 +98,8 @@ class DischargedRemandTrials extends Page implements \Filament\Tables\Contracts\
                         ->required(),
                 ])
                     ])
-                ->modalHeading('Re-Admit Inmate')
-                ->modalSubmitActionLabel('Re-Admit Inmate')
+                ->modalHeading('Re-Admit InmatePrisoner')
+                ->modalSubmitActionLabel('Re-Admit Prisoner')
                     ->action(function ($data, $record) {
                 app(ReAdmissionService::class)->readmitRemandTrial($record->id, $data);
                         Notification::make()

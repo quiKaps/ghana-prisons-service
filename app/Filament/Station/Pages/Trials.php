@@ -29,9 +29,9 @@ class Trials extends Page implements HasTable
 
     protected static ?string $navigationLabel = 'All Trials';
 
-    protected static ?string $title = 'Inmates On Trial';
+    protected static ?string $title = "Prisoners On Trial";
 
-    protected ?string $subheading = 'Manage and track inmates currently on trial';
+    protected ?string $subheading = 'Manage and track prisoners currently on trial';
 
     protected static ?string $model = RemandTrial::class;
 
@@ -44,8 +44,8 @@ class Trials extends Page implements HasTable
             ->query(RemandTrial::query()
                 ->where('detention_type', 'trial')
                 ->orderBy('created_at', 'DESC'))
-            ->emptyStateHeading('No Inmate On Trial Found')
-            ->emptyStateDescription('Station has no inmates on trial yet...')
+            ->emptyStateHeading('No prisoner On Trial Found')
+            ->emptyStateDescription('Station has no prisoners on trial yet...')
             ->emptyStateIcon('heroicon-s-user')
             ->columns([
                 TextColumn::make('serial_number')
@@ -53,7 +53,7 @@ class Trials extends Page implements HasTable
                 ->label('S.N.'),
             TextColumn::make('full_name')
                 ->searchable()
-                ->label('Inmate Name'),
+                ->label("Prisoner's Name"),
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
                 ->date(),
@@ -78,13 +78,13 @@ class Trials extends Page implements HasTable
                 ->button()
                 ->icon('heroicon-m-arrow-right-start-on-rectangle')
                 ->modalHeading('Trial Discharge')
-                ->modalSubmitActionLabel('Discharge Imate')
+                ->modalSubmitActionLabel('Discharge Prisoner')
                 ->action(function (array $data, $record) {
                     app(\App\Services\DischargeService::class)
                         ->dischargeInmate($record, $data);
                     Notification::make()
                         ->success()
-                        ->title('Inmate Discharged')
+                    ->title('Prisoner Discharged')
                     ->body("{$record->full_name} has been discharged successfully.")
                         ->send();
             })
@@ -115,7 +115,7 @@ class Trials extends Page implements HasTable
                     TextInput::make('full_name')
                                         ->required()
                                         ->placeholder('e.g. Nana Kwame')
-                        ->label('Inmate Name'),
+                        ->label("Prisoner's Name"),
                                     Select::make('detention_type')
                                         ->options([
                                             'remand' => 'Remand',
@@ -178,7 +178,6 @@ class Trials extends Page implements HasTable
                 ->label('Profile')
                 ->button()
                 ->color('blue')
-
                 ->url(fn(RemandTrial $record) => route('filament.station.resources.remand-trials.view', [
                     'record' => $record->getKey(),
                 ])),

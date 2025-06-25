@@ -6,17 +6,9 @@ use Filament\Pages\Page;
 use Filament\Tables\Table;
 use App\Models\RemandTrial;
 use Filament\Tables\Actions\Action;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Forms\Components\DatePicker;
+
 
 class ForeignersOnRemand extends Page implements \Filament\Tables\Contracts\HasTable
 {
@@ -49,7 +41,7 @@ class ForeignersOnRemand extends Page implements \Filament\Tables\Contracts\HasT
                     ->label('S.N.'),
             TextColumn::make('full_name')
                     ->searchable()
-                    ->label('Inmate Name'),
+                ->label("Prisoner's Name"),
                 TextColumn::make('country_of_origin')
                     ->label('Country'),
                 TextColumn::make('admission_date')
@@ -76,7 +68,6 @@ class ForeignersOnRemand extends Page implements \Filament\Tables\Contracts\HasT
                 ->label('Profile')
                 ->button()
                 ->color('blue')
-
                 ->url(fn(RemandTrial $record) => route('filament.station.resources.remand-trials.view', [
                     'record' => $record->getKey(),
                 ])),

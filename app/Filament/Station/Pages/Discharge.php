@@ -23,8 +23,8 @@ class Discharge extends Page implements \Filament\Tables\Contracts\HasTable
     {
         return $table
             ->query(Inmate::scheduledForDischargeTomorrow()->orderByDesc('created_at'))
-            ->emptyStateHeading('No Inmates Available for Discharge')
-            ->emptyStateDescription('There are currently no inmates available for discharge today.')
+            ->emptyStateHeading('No Prisoners Available for Discharge')
+            ->emptyStateDescription('There are currently no prisoners available for discharge today.')
             ->emptyStateIcon('heroicon-s-user')
             ->columns([
                 TextColumn::make('serial_number')
@@ -32,7 +32,7 @@ class Discharge extends Page implements \Filament\Tables\Contracts\HasTable
                     ->label('S.N.'),
                 TextColumn::make('full_name')
                     ->searchable()
-                    ->label('Inmate Name'),
+                ->label('Prisoner Name'),
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
                     ->date(),
