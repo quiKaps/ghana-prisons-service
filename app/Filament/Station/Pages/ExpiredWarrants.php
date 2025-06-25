@@ -6,6 +6,7 @@ use Filament\Pages\Page;
 use Filament\Tables\Table;
 use App\Models\RemandTrial;
 use Filament\Tables\Actions\Action;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Support\Enums\ActionSize;
@@ -21,10 +22,9 @@ class ExpiredWarrants extends Page implements \Filament\Tables\Contracts\HasTabl
 
     use \Filament\Tables\Concerns\InteractsWithTable;
 
-
     protected static string $view = 'filament.station.pages.expired-warrants';
 
-    //  protected static ?string $navigationGroup = 'Remand';
+    protected static ?string $navigationGroup = 'Remand and Trials';
 
     protected static ?string $navigationLabel = 'Expired Warrants';
 
@@ -91,56 +91,30 @@ class ExpiredWarrants extends Page implements \Filament\Tables\Contracts\HasTabl
                     'police_station' => $record->police_station,
                     'police_officer' => $record->police_officer,
                     'police_contact' => $record->police_contact,
-                    'date_of_discharge' => $record->date_of_discharge,
-                    'mode_of_discharge' => $record->mode_of_discharge
-                ])
+                //'date_of_discharge' => $record->date_of_discharge,
+            ])
                 ->form([
-                    Section::make('Inmate Details')
-                        ->columns(2)
-                        ->schema([
-                            TextInput::make('serial_number')
-                                ->required()
-                                ->unique(ignoreRecord: true)
-                                ->placeholder('e.g. NSW/06/25')
-                                ->label('Serial Number'),
-                            TextInput::make('full_name')
-                                ->required()
-                                ->placeholder('e.g. Nana Kwame')
-                                ->label('Inmate Name'),
-                            Select::make('detention_type')
-                                ->options([
-                                    'remand' => 'Remand',
-                                    'trial' => 'Trial',
-                                ])
-                                ->required()
-                                ->label('Detention Type'),
-                        ])->columns(2),
-                    Section::make('Legal Details')
+                Group::make()
                         ->columns(2)
                         ->schema([
                             TextInput::make('offense')
-                                ->required()
-                                ->maxLength(255)
-                                ->placeholder('e.g. Theft')
-                                ->label('Offense'),
+                        ->label('Offense')
+                        ->readOnly(),
                             TextInput::make('court')
-                                ->required()
-                                ->placeholder('e.g. Kumasi Circuit Court')
-                                ->label('Court'),
-                            DatePicker::make('next_court_date')
-                                ->required()
-                                ->label('Next Court Date'),
+                        ->label('Court')
+                        ->readOnly(),
+                    TextInput::make('next_court_date')
+                        ->label('Next Court Date')
+                        ->readOnly(),
                             TextInput::make('police_station')
-                                ->required()
-                                ->placeholder('e.g. Central Police Station')
-                                ->label('Police Station'),
+                        ->label('Police Station')
+                        ->readOnly(),
                             TextInput::make('police_officer')
                                 ->label('Police Officer')
-                                ->placeholder('e.g. Inspector Kwesi Nyarko'),
+                        ->readOnly(),
                             TextInput::make('police_contact')
                                 ->label('Police Contact')
-                                ->placeholder('e.g. 0241234567')
-                                ->tel(),
+                        ->readOnly(),
                         ]),
                     Section::make('Discharge Details')
                         ->columns(2)
@@ -163,80 +137,16 @@ class ExpiredWarrants extends Page implements \Filament\Tables\Contracts\HasTabl
                                 ->label('Mode of Discharge'),
                         ])->columns(2),
                 ]),
-            //Edit remand action
-            EditAction::make()
-                ->successNotification(
-                    Notification::make()
-                        ->success()
-                        ->title('Trial Updated')
-                        ->body('The inmates trial has been updated successfully.'),
-                )
-                ->modalHeading('Edit Trial Details')
-                ->label('Edit')
-                    ->button()
+            Action::make('Profile')
+                ->color('gray')
+                ->icon('heroicon-o-user')
+                ->label('Profile')
+                ->button()
                 ->color('blue')
-                ->form([
-                    Section::make('Inmate Details')
-                        ->columns(2)
-                        ->schema([
-                            TextInput::make('serial_number')
-                                ->required()
-                                ->unique(ignoreRecord: true)
-                                ->placeholder('e.g. NSW/06/25')
-                                ->label('Serial Number'),
-                            TextInput::make('full_name')
-                                ->required()
-                                ->placeholder('e.g. Nana Kwame')
-                                ->label('Inmate Name'),
-                            TextInput::make('age_on_admission')
-                                ->numeric()
-                                ->minValue(15)
-                                ->placeholder('e.g. 30')
-                                ->required()
-                                ->label('Age on Admission'),
-                            TextInput::make('country_of_origin')
-                                ->required()
-                                ->label('Country of Origin'),
-                            DatePicker::make('admission_date')
-                                ->required()
-                                ->default(now())
-                                ->label('Admission Date'),
-                            Select::make('detention_type')
-                                ->options([
-                                    'remand' => 'Remand',
-                                    'trial' => 'Trial',
-                                ])
-                                ->required()
-                                ->label('Detention Type'),
-                        ])->columns(2),
-                    Section::make('Legal Details')
-                        ->columns(2)
-                        ->schema([
-                            TextInput::make('offense')
-                                ->required()
-                                ->maxLength(255)
-                                ->placeholder('e.g. Theft')
-                                ->label('Offense'),
-                            TextInput::make('court')
-                                ->required()
-                                ->placeholder('e.g. Kumasi Circuit Court')
-                                ->label('Court'),
-                            DatePicker::make('next_court_date')
-                                ->required()
-                                ->label('Next Court Date'),
-                            TextInput::make('police_station')
-                                ->required()
-                                ->placeholder('e.g. Central Police Station')
-                                ->label('Police Station'),
-                            TextInput::make('police_officer')
-                                ->label('Police Officer')
-                                ->placeholder('e.g. Inspector Kwesi Nyarko'),
-                            TextInput::make('police_contact')
-                                ->label('Police Contact')
-                                ->placeholder('e.g. 0241234567')
-                                ->tel(),
-                        ]),
-                ]),
+
+                ->url(fn(RemandTrial $record) => route('filament.station.resources.remand-trials.view', [
+                    'record' => $record->getKey(),
+                ])),
             ]);
     }
 }

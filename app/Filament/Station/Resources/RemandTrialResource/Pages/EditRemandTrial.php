@@ -35,11 +35,9 @@ class EditRemandTrial extends EditRecord
                             ->title('Incorrect Password')
                             ->danger()
                             ->body('You must confirm your password to delete this record.')
-                            ->send();
-
+                        ->send();
                         return;
-                    }
-
+                }
                     $record->delete();
 
                     \Filament\Notifications\Notification::make()

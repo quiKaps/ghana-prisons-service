@@ -46,4 +46,9 @@ class CreateInmate extends CreateRecord
 
         return $data;
     }
+
+    public function getHeading(): string
+    {
+        return "Admit a Convict";
+    }
 }

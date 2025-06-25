@@ -53,7 +53,7 @@ class ConvictDischargeResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(Inmate::scheduledForDischargeTomorrow()->orderByDesc('created_at'))
+            ->query(Inmate::scheduledForDischargeToday()->orderByDesc('created_at'))
             ->emptyStateHeading('No Inmates Available for Discharge')
             ->emptyStateDescription('There are currently no inmates available for discharge today.')
             ->emptyStateIcon('heroicon-s-user')

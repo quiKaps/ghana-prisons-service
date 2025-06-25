@@ -67,7 +67,7 @@ class Inmate extends Model
 
     public function scopeScheduledForDischargeToday($query)
     {
-        return $query->whereDate('lpd', now()->addDay()->toDateString());
+        return $query->whereDate('lpd', now()->toDateString());
     }
 
 

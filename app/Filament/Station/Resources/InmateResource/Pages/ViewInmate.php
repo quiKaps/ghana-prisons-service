@@ -16,4 +16,9 @@ class ViewInmate extends ViewRecord
             Actions\EditAction::make(),
         ];
     }
+
+    public function getHeading(): string
+    {
+        return "{$this->record->full_name}'s Profile";
+    }
 }

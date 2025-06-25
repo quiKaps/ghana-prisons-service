@@ -14,7 +14,7 @@ class CreateRemandTrial extends CreateRecord
 
     public function getTitle(): string
     {
-        return 'Create Remand or Trial';
+        return 'Remand & Trial Admission Form';
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array

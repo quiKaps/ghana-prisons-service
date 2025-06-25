@@ -64,7 +64,7 @@ class StationPanelProvider extends PanelProvider
                 ->label('User Management'),
             ])
             ->navigationItems([
-            NavigationItem::make('Add Convict')
+            NavigationItem::make('Convict Admission Form')
                     ->url(fn(): string => CreateInmate::getUrl())
                     ->icon('heroicon-o-user-plus')
                     ->group('Inmate Management')
@@ -74,9 +74,9 @@ class StationPanelProvider extends PanelProvider
                     ->url(fn(): string => CreateUser::getUrl())
                     ->icon('heroicon-o-user-plus')
                     ->group('User Management')
-                    ->isActiveWhen(fn() => request()->routeIs('filament.station.pages.create-inmate'))
+                ->isActiveWhen(fn() => request()->routeIs('filament.station.pages.create-user'))
                     ->sort(3),
-            NavigationItem::make('Add Remand/Trial')
+            NavigationItem::make('Remand & Trial Admission Form')
                 ->url(fn(): string => CreateRemandTrial::getUrl())
                 ->icon('heroicon-o-user-plus')
                 ->group('Inmate Management')

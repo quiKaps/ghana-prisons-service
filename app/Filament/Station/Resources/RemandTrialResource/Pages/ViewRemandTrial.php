@@ -4,8 +4,9 @@ namespace App\Filament\Station\Resources\RemandTrialResource\Pages;
 
 use Filament\Actions;
 use App\Models\RemandTrial;
+use Filament\Actions\Action;
 use App\Actions\SecureEditAction;
-use Filament\Pages\Actions\Action;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -13,7 +14,6 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Forms\Components\DatePicker;
 use App\Filament\Station\Resources\RemandTrialResource;
-use Filament\Forms\Components\Group;
 
 class ViewRemandTrial extends ViewRecord
 {
@@ -44,14 +44,12 @@ class ViewRemandTrial extends ViewRecord
                             ->danger()
                             ->send();
                         return;
-                    }
-
+                }
                     return redirect()->route(
                         'filament.station.resources.remand-trials.edit',
                         ['record' => $record]
                     );
                 }),
-
 
             Action::make('Discharge')
                 ->color('green')
