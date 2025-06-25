@@ -6,6 +6,7 @@ use App\Models\Scopes\FacilitiesScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[ScopedBy([FacilitiesScope::class])]
 
@@ -30,7 +31,8 @@ class RemandTrial extends Model
         'police_station',
         'police_officer',
         'police_contact',
-        're_admission_date'
+        're_admission_date',
+        'warrant'
     ];
     protected $casts = [
         'admission_date' => 'date',
@@ -45,5 +47,10 @@ class RemandTrial extends Model
     public function cell(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Cell::class);
+    }
+
+    public function station(): BelongsTo
+    {
+        return $this->belongsTo(Station::class);
     }
 }

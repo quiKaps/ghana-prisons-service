@@ -25,9 +25,9 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
 
     protected static ?string $navigationLabel = 'All Remands';
 
-    protected static ?string $title = 'Inmates On Remand';
+    protected static ?string $title = 'Prisoners On Remand';
 
-    protected ?string $subheading = "View and manage remand Prisoners";
+    protected ?string $subheading = "View and manage remand prisoners";
 
     protected static ?string $model = RemandTrial::class;
 
@@ -46,10 +46,10 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                     ->searchable()
                 ->label("Prisoner's Name"),
                 TextColumn::make('admission_date')
-                    ->label('Admission Date')
+                ->label('Date of Admission')
                 ->date(),
                 TextColumn::make('court')
-                    ->label('Court'),
+                ->label('Court of Committal'),
                 TextColumn::make('next_court_date')
                 ->badge()
                 ->color('success')

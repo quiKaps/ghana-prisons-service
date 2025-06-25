@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Station extends Model
 {
@@ -63,5 +64,17 @@ class Station extends Model
     public function inmates()
     {
         return $this->hasMany(Inmate::class);
+    }
+
+    public function remand(): HasMany
+    {
+        return $this->hasMany(RemandTrial::class)
+            ->where('detention_type', 'remand');
+    }
+
+    public function trial(): HasMany
+    {
+        return $this->hasMany(RemandTrial::class)
+            ->where('detention_type', 'trial');
     }
 }

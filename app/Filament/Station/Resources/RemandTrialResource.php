@@ -58,19 +58,20 @@ class RemandTrialResource extends Resource
                     Forms\Components\DatePicker::make('admission_date')
                         ->required()
                         ->default(now())
-                        ->label('Admission Date'),
+                        ->label('Date of Admission'),
                     Forms\Components\Select::make('detention_type')
                         ->options([
                             'remand' => 'Remand',
                             'trial' => 'Trial',
                         ])
+                        ->placeholder('Select remand or trial')
                         ->required()
                         ->label('Detention Type'),
                     Forms\Components\TextInput::make('offense')
                         ->required()
                         ->maxLength(255)
                         ->placeholder('e.g. Theft')
-                        ->label('Offense'),
+                        ->label('Offence'),
                     Forms\Components\TextInput::make('court')
                         ->required()
                         ->placeholder('e.g. Kumasi Circuit Court')
@@ -79,6 +80,11 @@ class RemandTrialResource extends Resource
                         ->required()
                         ->minDate('now')
                         ->label('Next Court Date'),
+                    FileUpload::make('warrant')
+                        ->label("Upload Warrant")
+                        ->acceptedFileTypes(['application/pdf'])
+                        ->helperText('Only PDF files are allowed for upload.')
+                        ->previewable()
                     ]),
                 Section::make('Police Information')
                     ->columns(2)
