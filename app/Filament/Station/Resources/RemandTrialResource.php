@@ -28,21 +28,22 @@ class RemandTrialResource extends Resource
     {
         return $form
             ->schema([
-            Group::make()
+
+            Group::make()->columnSpan(3)
                 ->schema([
-                    Section::make()
+                    Section::make('Prisoner Details')
+                        ->columns(2)
                         ->schema([
+                    Group::make()
+                        ->schema([
+                        Group::make()
+                            ->schema([
                             FileUpload::make('picture')
                                 ->label("Prisoner's Picture")
                                 ->acceptedFileTypes(['image/jpeg', 'image/png'])
-                                ->previewable()
-                        ])->columnSpan(1)
-                ]),
-            Group::make()->columnSpan(3)
-                ->schema([
-                Section::make('Prisoner Details')
-                    ->columns()
-                            ->schema([
+                                        ->previewable()->columnSpan(1)
+                                ])->columns(2)
+                        ])->columnSpan(2),
                     Forms\Components\TextInput::make('serial_number')
                                     ->required()
                                     ->unique(ignoreRecord: true)
