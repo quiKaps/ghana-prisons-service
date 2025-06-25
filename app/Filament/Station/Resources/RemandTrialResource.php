@@ -28,9 +28,18 @@ class RemandTrialResource extends Resource
     {
         return $form
             ->schema([
-                Group::make()
-                ->columnSpan(2)
-                    ->schema([
+            Group::make()
+                ->schema([
+                    Section::make()
+                        ->schema([
+                            FileUpload::make('picture')
+                                ->label("Prisoner's Picture")
+                                ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                                ->previewable()
+                        ])->columnSpan(1)
+                ]),
+            Group::make()->columnSpan(3)
+                ->schema([
                 Section::make('Prisoner Details')
                     ->columns()
                             ->schema([
@@ -75,7 +84,7 @@ class RemandTrialResource extends Resource
                     Forms\Components\TextInput::make('court')
                         ->required()
                         ->placeholder('e.g. Kumasi Circuit Court')
-                        ->label('Court'),
+                        ->label('Court of Committal'),
                     Forms\Components\DatePicker::make('next_court_date')
                         ->required()
                         ->minDate('now')
@@ -87,7 +96,7 @@ class RemandTrialResource extends Resource
                         ->previewable()
                     ]),
                 Section::make('Police Information')
-                    ->columns(2)
+                    ->columns(3)
                     ->schema([
                         Forms\Components\TextInput::make('police_officer')
                             ->label('Police Officer')
@@ -102,17 +111,8 @@ class RemandTrialResource extends Resource
                         ->label('Police Station'),
                     ]),
                     ]),
-                Group::make()
-                    ->schema([
-                        Section::make()
-                            ->schema([
-                                FileUpload::make('picture')
-                                    ->label("Prisoner's Picture")
-                                    ->acceptedFileTypes(['image/jpeg', 'image/png'])
-                                    ->previewable()
-                            ])->columnSpan(1)
-                    ]),
-            ])->columns(
+
+        ])->columns(
                 3
             );
     }

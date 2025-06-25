@@ -25,6 +25,9 @@ class ListInmates extends ListRecords
         return [
             'All' => Tab::make('All')
                 ->badge(Inmate::count()),
+            'Recividists' => Tab::make('Recividists')
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('previously_convicted', true))
+                ->badge(Inmate::count()),
             'Condemn' => Tab::make('Condemn')
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('offence', 'condemn'))
                 ->badge(fn() => Inmate::where('offence', 'condemn')->count()),

@@ -31,6 +31,10 @@ class InmateResource extends Resource
 
     protected static ?string $navigationLabel = 'Convicts List';
 
+    protected static ?string $modelLabel = 'Convict List';
+
+    protected static ?string $pluralModelLabel = 'Convicts List';
+
     public static function form(Form $form): Form
     {
         return $form

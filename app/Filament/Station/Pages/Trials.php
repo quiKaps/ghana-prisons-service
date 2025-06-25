@@ -2,6 +2,7 @@
 
 namespace App\Filament\Station\Pages;
 
+use App\Models\Inmate;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
 use App\Models\RemandTrial;
@@ -73,6 +74,11 @@ class Trials extends Page implements HasTable
                 // Define any filters here if needed
             ])
             ->actions([
+            Action::make('Re-admission')
+
+                ->icon('heroicon-s-arrow-path')
+                ->button()
+                ->color('info'),
             Action::make('Discharge')
                 ->color('green')
                 ->button()

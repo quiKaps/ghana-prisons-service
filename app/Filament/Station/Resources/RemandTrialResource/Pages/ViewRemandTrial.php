@@ -22,6 +22,9 @@ class ViewRemandTrial extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('Print')
+                ->color('info')
+                ->icon('heroicon-s-printer'),
             Actions\Action::make('edit')
                 ->label('Edit')
                 ->icon('heroicon-o-pencil-square')

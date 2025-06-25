@@ -69,7 +69,7 @@ class UserResource extends Resource
                                         'sco' => 'Second Class Officer'
                                     ]),
                                 Forms\Components\TextInput::make('serial_number')
-                                    ->label('Officer Serial Number')
+                        ->label('Officer Number')
                                     ->placeholder('e.g. 112')
                                     ->required()
                                     ->unique(User::class, 'serial_number', ignoreRecord: true)
