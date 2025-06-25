@@ -6,6 +6,7 @@ use App\Filament\Station\Resources\RemandTrialResource\Pages;
 use App\Filament\Station\Resources\RemandTrialResource\RelationManagers;
 use App\Models\RemandTrial;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -28,12 +29,12 @@ class RemandTrialResource extends Resource
         return $form
             ->schema([
                 Group::make()
-                    ->columnSpan(2)
+                ->columnSpan(2)
                     ->schema([
                 Section::make('Prisoner Details')
-                            ->columns(2)
+                    ->columns()
                             ->schema([
-                                Forms\Components\TextInput::make('serial_number')
+                    Forms\Components\TextInput::make('serial_number')
                                     ->required()
                                     ->unique(ignoreRecord: true)
                                     ->placeholder('e.g. NSW/06/25')
@@ -41,7 +42,7 @@ class RemandTrialResource extends Resource
                     Forms\Components\TextInput::make('full_name')
                                     ->required()
                                     ->placeholder('e.g. Nana Kwame')
-                        ->label("Prisoner's Name"),
+                        ->label("Name of Prisoner"),
                                 Forms\Components\TextInput::make('age_on_admission')
                                     ->numeric()
                                     ->minValue(15)
@@ -51,49 +52,63 @@ class RemandTrialResource extends Resource
                                 Forms\Components\Select::make('country_of_origin')
                                     ->options(config('countries'))
                                     ->searchable()
+                        ->placeholder('Select Nationality')
                                     ->required()
-                                    ->label('Country of Origin'),
-                                Forms\Components\DatePicker::make('admission_date')
-                                    ->required()
-                                    ->default(now())
+                        ->label('Country of Origin'),
+                    Forms\Components\DatePicker::make('admission_date')
+                        ->required()
+                        ->default(now())
                         ->label('Admission Date'),
-                                Forms\Components\Select::make('detention_type')
-                                    ->options([
-                                        'remand' => 'Remand',
-                                        'trial' => 'Trial',
-                                    ])
-                                    ->required()
-                                    ->label('Detention Type'),
+                    Forms\Components\Select::make('detention_type')
+                        ->options([
+                            'remand' => 'Remand',
+                            'trial' => 'Trial',
+                        ])
+                        ->required()
+                        ->label('Detention Type'),
+                    Forms\Components\TextInput::make('offense')
+                        ->required()
+                        ->maxLength(255)
+                        ->placeholder('e.g. Theft')
+                        ->label('Offense'),
+                    Forms\Components\TextInput::make('court')
+                        ->required()
+                        ->placeholder('e.g. Kumasi Circuit Court')
+                        ->label('Court'),
+                    Forms\Components\DatePicker::make('next_court_date')
+                        ->required()
+                        ->minDate('now')
+                        ->label('Next Court Date'),
                     ]),
-                        Section::make('Legal Details')
-                            ->columns(2)
+                Section::make('Police Information')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('police_officer')
+                            ->label('Police Officer')
+                            ->placeholder('e.g. Inspector Kwesi Nyarko'),
+                        Forms\Components\TextInput::make('police_contact')
+                            ->label('Police Contact')
+                            ->placeholder('e.g. 0241234567')
+                            ->tel(),
+                    Forms\Components\TextInput::make('police_station')
+                        ->required()
+                        ->placeholder('e.g. Central Police Station')
+                        ->label('Police Station'),
+                    ]),
+                    ]),
+                Group::make()
+                    ->schema([
+                        Section::make()
                             ->schema([
-                                Forms\Components\TextInput::make('offense')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->placeholder('e.g. Theft')
-                                    ->label('Offense'),
-                                Forms\Components\TextInput::make('court')
-                                    ->required()
-                                    ->placeholder('e.g. Kumasi Circuit Court')
-                                    ->label('Court'),
-                                Forms\Components\DatePicker::make('next_court_date')
-                                    ->required()
-                                    ->label('Next Court Date'),
-                                Forms\Components\TextInput::make('police_station')
-                                    ->required()
-                                    ->placeholder('e.g. Central Police Station')
-                                    ->label('Police Station'),
-                                Forms\Components\TextInput::make('police_officer')
-                                    ->label('Police Officer')
-                                    ->placeholder('e.g. Inspector Kwesi Nyarko'),
-                                Forms\Components\TextInput::make('police_contact')
-                                    ->label('Police Contact')
-                                    ->placeholder('e.g. 0241234567')
-                                    ->tel(),
-                            ]),
-                    ])
-            ]);
+                                FileUpload::make('picture')
+                                    ->label("Prisoner's Picture")
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                                    ->previewable()
+                            ])->columnSpan(1)
+                    ]),
+            ])->columns(
+                3
+            );
     }
 
     public static function table(Table $table): Table
