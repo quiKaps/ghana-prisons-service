@@ -24,7 +24,7 @@ class EscapeesOnTrial extends Page implements HasTable
 
     protected static ?string $navigationGroup = 'Escapees';
 
-    protected static ?string $navigationLabel = 'Escaped List - Trial';
+    protected static ?string $navigationLabel = 'Escape List - Trial';
 
     protected ?string $heading = 'Escape List - Trial';
 

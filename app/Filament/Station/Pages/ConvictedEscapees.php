@@ -23,7 +23,7 @@ class ConvictedEscapees extends Page implements HasTable
 
     protected static ?string $navigationGroup = 'Escapees';
 
-    protected static ?string $navigationLabel = 'Escaped List - Convict';
+    protected static ?string $navigationLabel = 'Escape List - Convict';
 
     public function table(Table $table): Table
     {
