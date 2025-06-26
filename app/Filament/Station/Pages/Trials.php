@@ -74,11 +74,7 @@ class Trials extends Page implements HasTable
                 // Define any filters here if needed
             ])
             ->actions([
-            Action::make('Re-admission')
-
-                ->icon('heroicon-s-arrow-path')
-                ->button()
-                ->color('info'),
+            //Discharge Action
             Action::make('Discharge')
                 ->color('green')
                 ->button()
@@ -178,6 +174,16 @@ class Trials extends Page implements HasTable
                                         ->label('Mode of Discharge'),
                     ])->columns(2),
                         ]),
+            //Discharge ends
+
+            //readmission starts
+            Action::make('Re-admission')
+                ->icon('heroicon-s-arrow-path')
+                ->button()
+                ->color('info'),
+            //readmission ends
+
+            //profile starts
             Action::make('Profile')
                 ->color('gray')
                 ->icon('heroicon-o-user')
@@ -187,6 +193,8 @@ class Trials extends Page implements HasTable
                 ->url(fn(RemandTrial $record) => route('filament.station.resources.remand-trials.view', [
                     'record' => $record->getKey(),
                 ])),
-            ]);
+
+            //profile ends
+        ]);
     }
 }

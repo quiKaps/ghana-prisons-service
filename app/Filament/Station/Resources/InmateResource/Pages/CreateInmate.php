@@ -51,4 +51,13 @@ class CreateInmate extends CreateRecord
     {
         return "Admit a Convict";
     }
+
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getCreateFormAction()->label("Save"),
+            ...(static::canCreateAnother() ? [$this->getCreateAnotherFormAction()->label("Save and Admit Another")] : []),
+            $this->getCancelFormAction(),
+        ];
+    }
 }

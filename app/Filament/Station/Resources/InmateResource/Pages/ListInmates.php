@@ -16,7 +16,8 @@ class ListInmates extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Admit A Convict'),
         ];
     }
 
@@ -27,7 +28,10 @@ class ListInmates extends ListRecords
                 ->badge(Inmate::count()),
             'Recividists' => Tab::make('Recividists')
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('previously_convicted', true))
-                ->badge(Inmate::count()),
+                ->badge(Inmate::where('previously_convicted', true)->count()),
+            'Convict On Trial' => Tab::make('Convict on Trial')
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('goaler', true))
+                ->badge(Inmate::where('goaler', true)->count()),
             'Condemn' => Tab::make('Condemn')
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('offence', 'condemn'))
                 ->badge(fn() => Inmate::where('offence', 'condemn')->count()),

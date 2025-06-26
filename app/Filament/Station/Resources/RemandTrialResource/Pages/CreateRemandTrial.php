@@ -35,4 +35,13 @@ class CreateRemandTrial extends CreateRecord
 
         return $data;
     }
+
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getCreateFormAction()->label("Save"),
+            ...(static::canCreateAnother() ? [$this->getCreateAnotherFormAction()->label("Save and Admit Another")] : []),
+            $this->getCancelFormAction(),
+        ];
+    }
 }

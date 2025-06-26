@@ -60,14 +60,26 @@ class Inmate extends Model
         'date_sentenced' => 'date',
     ];
 
+
+    /**
+     * Scope a query to only include inmates scheduled for discharge today or later.
+     */
     public function scopeScheduledForDischargeTomorrow($query)
     {
         return $query->whereDate('lpd', now()->addDay()->toDateString());
     }
 
+    /**
+     * Scope a query to only include inmates scheduled for discharge today or
+     */
     public function scopeScheduledForDischargeToday($query)
     {
         return $query->whereDate('lpd', now()->toDateString());
+    }
+
+    public function scopeScheduledDischargePassed($query)
+    {
+        return $query->whereDate('lpd', '<', now()->toDateString());
     }
 
 

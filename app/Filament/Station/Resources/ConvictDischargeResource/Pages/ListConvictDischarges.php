@@ -20,6 +20,7 @@ class ListConvictDischarges extends ListRecords
         $today = now()->toDateString();
         $tomorrow = now()->addDay()->toDateString();
 
+
         $counts = Inmate::whereIn('lpd', [$today, $tomorrow])
             ->selectRaw('lpd, COUNT(*) as count')
             ->groupBy('lpd')

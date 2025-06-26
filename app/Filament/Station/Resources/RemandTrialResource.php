@@ -38,10 +38,11 @@ class RemandTrialResource extends Resource
                         ->schema([
                         Group::make()
                             ->schema([
-                            FileUpload::make('picture')
+                            FileUpload::make("picture")
                                 ->label("Prisoner's Picture")
                                 ->acceptedFileTypes(['image/jpeg', 'image/png'])
-                                        ->previewable()->columnSpan(1)
+                                ->previewable()
+                                ->columnSpan(1)
                                 ])->columns(2)
                         ])->columnSpan(2),
                     Forms\Components\TextInput::make('serial_number')
@@ -53,13 +54,13 @@ class RemandTrialResource extends Resource
                                     ->required()
                                     ->placeholder('e.g. Nana Kwame')
                         ->label("Name of Prisoner"),
-                                Forms\Components\TextInput::make('age_on_admission')
+                    Forms\Components\TextInput::make('age_on_admission')
                                     ->numeric()
                                     ->minValue(15)
                                     ->placeholder('e.g. 30')
                                     ->required()
                                     ->label('Age on Admission'),
-                                Forms\Components\Select::make('country_of_origin')
+                    Forms\Components\Select::make('country_of_origin')
                                     ->options(config('countries'))
                                     ->searchable()
                         ->placeholder('Select Nationality')
@@ -174,6 +175,8 @@ class RemandTrialResource extends Resource
             'create' => Pages\CreateRemandTrial::route('/create'),
             'view' => Pages\ViewRemandTrial::route('/{record}'),
             'edit' => Pages\EditRemandTrial::route('/{record}/edit'),
+            // 'discharged-remand' => Pages\RemandDischarge::route('/discharged-remand/{record}'),
+            // 'discharged-trial' => Pages\TrialDischarge::route('/discharged-trial/{record}'),
         ];
     }
 }
