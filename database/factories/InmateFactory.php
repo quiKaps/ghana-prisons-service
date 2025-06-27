@@ -26,16 +26,28 @@ class InmateFactory extends Factory
             'married_status' => $this->faker->randomElement(['single', 'married', 'divorced', 'widowed']),
             'age_on_admission' => $this->faker->numberBetween(18, 80),
             'date_of_birth' => $this->faker->date(),
-            'offence' => $this->faker->sentence(10),
+            'offence' => $this->faker->randomElement([
+                'assault',
+                'causing_harm',
+                'defilement',
+                'defrauding',
+                'manslaughter',
+                'murder',
+                'robbery',
+                'stealing',
+                'unlawful_damage',
+                'unlawful_entry',
+                'others'
+            ]),
             'sentence' => $this->faker->numberBetween(1, 50) . ' years',
             'admission_date' => $this->faker->date(),
             'date_sentenced' => $this->faker->date(),
             'previously_convicted' => $this->faker->boolean(),
-            'station_id' => Station::inRandomOrder()->first()->id ?? null, // Foreign key from database
-            'cell_id' => Cell::inRandomOrder()->first()->id ?? null,       // Foreign key from database
+            'station_id' => Station::inRandomOrder()->first()->id, // Foreign key from database
+            'cell_id' => Cell::inRandomOrder()->first()->id,       // Foreign key from database
             'court_of_committal' => $this->faker->city,
-            'EPD' => $this->faker->date(),
-            'LPD' => $this->faker->date(),
+            'EPD' => $this->faker->dateTimeBetween('tomorrow', '+5 years')->format('Y-m-d'),
+            'LPD' => $this->faker->dateTimeBetween('tomorrow', '+10 years')->format('Y-m-d'),
             'photo' => $this->faker->imageUrl(),
             'fingerprint' => Str::random(20),
             'signature' => Str::random(20),

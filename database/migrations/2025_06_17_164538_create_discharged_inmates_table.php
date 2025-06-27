@@ -38,7 +38,7 @@ return new class extends Migration
             $table->string('next_of_kin_relationship')->nullable();
             $table->string('next_of_kin_contact')->nullable();
             $table->string('mode_of_discharge');
-            $table->string('date_of_discharge');
+            $table->date('date_of_discharge');
             $table->string('discharged_by')->nullable();
             $table->timestamps();
         });

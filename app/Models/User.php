@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -76,4 +77,16 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Station::class);
     }
+
+    /**
+     * Get the discharged inmates associated with the user.
+     *
+     * Defines a one-to-many relationship between User and DischargedInmates.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    // public function dischargedInmates(): HasMany
+    // {
+    //     return $this->hasMany(DischargedInmates::class);
+    // }
 }

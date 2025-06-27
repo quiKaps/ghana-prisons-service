@@ -45,19 +45,37 @@ class RemandDischarge extends Page implements \Filament\Tables\Contracts\HasTabl
                 TextColumn::make('full_name')
                     ->searchable()
                     ->label("Prisoner's Name"),
+            TextColumn::make('country_of_origin')
+                ->label('Nationality'),
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
                     ->date(),
-                TextColumn::make('court')
-                    ->label('Court'),
-                TextColumn::make('next_court_date')
-                    ->label('Next Court Date')
-                    ->badge()
-                    ->color('success')
-                    ->date(),
-                TextColumn::make('police_name')
-                    ->label('Police Officer'),
-                TextColumn::make('police_contact')
+            TextColumn::make('date_of_discharge')
+                ->date()
+                ->label('Date of Discharge'),
+            TextColumn::make('mode_of_discharge')
+                ->label('Mode of Discharge')
+                ->badge()
+                ->color(fn($state) => match ($state) {
+                    'discharged' => 'success',
+                    'acquitted_and_discharged' => 'primary',
+                    'bail_bond' => 'info',
+                    'escape' => 'danger',
+                    'death' => 'gray',
+                    'other' => 'secondary',
+                    default => 'secondary',
+                })
+                ->formatStateUsing(fn($state) => match ($state) {
+                    'discharged' => 'Discharged',
+                    'acquitted_and_discharged' => 'Acquitted and Discharged',
+                    'bail_bond' => 'Bail Bond',
+                    'escape' => 'Escape',
+                    'death' => 'Death',
+                    'other' => 'Other',
+                    default => ucfirst($state),
+                }),
+
+            TextColumn::make('police_contact')
                     ->label('Police Contact'),
             ])
             ->filters([

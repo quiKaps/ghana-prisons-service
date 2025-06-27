@@ -6,9 +6,12 @@ use App\Models\Cell;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Inmate;
+use App\Models\RemandTrial;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Database\Factories\CellFactory;
 use Database\Seeders\StationSeeder;
+use Illuminate\Support\Facades\Hash;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class DatabaseSeeder extends Seeder
@@ -19,6 +22,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory(1)->create();
+
+
+
         // Seed the database with station-related data
         $this->call(StationSeeder::class);
         Cell::factory(1000)->create();
@@ -29,9 +35,15 @@ class DatabaseSeeder extends Seeder
             Inmate::factory($batchSize)->create();
         }
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        User::factory()->create([
+            'name' => fake()->name(),
+            'email' => 'ohene@gmail.com',
+            'station_id' => 1,
+            'user_type' => 'prison_admin',
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+            'remember_token' => Str::random(10),
+        ]);
+        RemandTrial::factory(1000)->create();
     }
 }

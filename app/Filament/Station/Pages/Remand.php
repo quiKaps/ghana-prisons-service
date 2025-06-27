@@ -44,22 +44,21 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                 ->label('S.N.'),
             TextColumn::make('full_name')
                     ->searchable()
-                ->label("Prisoner's Name"),
-                TextColumn::make('admission_date')
-                ->label('Date of Admission')
-                ->date(),
-                TextColumn::make('court')
-                ->label('Court of Committal'),
+                ->label("Name of Prisoner"),
+            TextColumn::make('offense')
+                ->label('Offence'),
+            TextColumn::make('admission_date')
+                ->date()
+                ->label('Date of Admission'),
                 TextColumn::make('next_court_date')
                 ->badge()
                 ->color('success')
                     ->label('Next Court Date')
                 ->date(),
-                TextColumn::make('police_station')
-                    ->label('Police Station'),
-                TextColumn::make('police_contact')
-                ->label('Police Contact'),
-            ])
+            TextColumn::make('court')
+                ->label('Court of Committal'),
+
+        ])
             ->filters([
                 // Define any filters here if needed
             ])
@@ -83,38 +82,38 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                 ->fillForm(fn(RemandTrial $record): array => [
                     'serial_number' => $record->serial_number,
                 'full_name' => $record->full_name,
-                    'age_on_admission' => $record->age_on_admission,
+                'admission_date' => date_format($record->admission_date, 'Y-m-d'),
+                'age_on_admission' => $record->age_on_admission,
                 'detention_type' => $record->detention_type,
                 'country_of_origin' => $record->country_of_origin,
                 'offense' => $record->offense,
                 'court' => $record->court,
-                'next_court_date' => $record->next_court_date,
+                'next_court_date' => date_format($record->next_court_date, 'Y-m-d'),
                 'police_station' => $record->police_station,
                 'police_officer' => $record->police_officer,
                 'police_contact' => $record->police_contact,
-                //'date_of_discharge' => $record->date_of_discharge,
             ])
                 ->form([
                 Group::make()
                     ->columns(2)
                     ->schema([
+                    TextInput::make("serial_number")
+                        ->label('Serial Number')
+                        ->readOnly(),
+                    TextInput::make("full_name")
+                        ->label("Prisoner's Name")
+                        ->readOnly(),
                         TextInput::make('offense')
                         ->label('Offense')
                         ->readOnly(),
+                    TextInput::make('admission_date')
+                        ->label('Date of Admission')
+                        ->readOnly(),
                         TextInput::make('court')
-                        ->label('Court')
+                        ->label('Court of Committal')
                         ->readOnly(),
                     TextInput::make('next_court_date')
                         ->label('Next Court Date')
-                        ->readOnly(),
-                        TextInput::make('police_station')
-                        ->label('Police Station')
-                        ->readOnly(),
-                        TextInput::make('police_officer')
-                            ->label('Police Officer')
-                        ->readOnly(),
-                        TextInput::make('police_contact')
-                            ->label('Police Contact')
                         ->readOnly(),
                     ]),
                 Section::make('Discharge Details')
@@ -123,6 +122,7 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                     DatePicker::make('date_of_discharge')
                         ->required()
                         ->default(now())
+                        ->maxDate(now())
                         ->placeholder('e.g. 2023-12-31')
                         ->label('Date of Discharge'),
                     Select::make('mode_of_discharge')

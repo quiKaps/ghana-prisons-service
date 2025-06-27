@@ -41,7 +41,7 @@ class DischargeService
                 'next_of_kin_name' => $inmate->next_of_kin_name ?? null,
                 'next_of_kin_relationship' => $inmate->next_of_kin_relationship ?? null,
                 'next_of_kin_contact' => $inmate->next_of_kin_contact ?? null,
-                //'date_of_discharge' => $data['date_of_discharge'],
+                'date_of_discharge' => $data['date_of_discharge'],
                 'mode_of_discharge' => $data['mode_of_discharge'],
             ]);
 

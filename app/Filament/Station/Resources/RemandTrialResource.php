@@ -54,22 +54,29 @@ class RemandTrialResource extends Resource
                                     ->required()
                                     ->placeholder('e.g. Nana Kwame')
                         ->label("Name of Prisoner"),
-                    Forms\Components\TextInput::make('age_on_admission')
-                                    ->numeric()
-                                    ->minValue(15)
-                                    ->placeholder('e.g. 30')
-                                    ->required()
-                                    ->label('Age on Admission'),
-                    Forms\Components\Select::make('country_of_origin')
-                                    ->options(config('countries'))
-                                    ->searchable()
-                        ->placeholder('Select Nationality')
-                                    ->required()
-                        ->label('Country of Origin'),
+                    Forms\Components\TextInput::make('offense')
+                        ->required()
+                        ->maxLength(255)
+                        ->placeholder('e.g. Theft')
+                        ->label('Offence'),
                     Forms\Components\DatePicker::make('admission_date')
                         ->required()
                         ->default(now())
                         ->label('Date of Admission'),
+                    Forms\Components\DatePicker::make('next_court_date')
+                        ->required()
+                        ->minDate('now')
+                        ->label('Next Court Date'),
+                    Forms\Components\TextInput::make('court')
+                        ->required()
+                        ->placeholder('e.g. Kumasi Circuit Court')
+                        ->label('Court of Committal'),
+                    Forms\Components\TextInput::make('age_on_admission')
+                        ->numeric()
+                        ->minValue(15)
+                        ->placeholder('e.g. 30')
+                        ->required()
+                        ->label('Age on Admission'),
                     Forms\Components\Select::make('detention_type')
                         ->options([
                             'remand' => 'Remand',
@@ -78,19 +85,12 @@ class RemandTrialResource extends Resource
                         ->placeholder('Select remand or trial')
                         ->required()
                         ->label('Detention Type'),
-                    Forms\Components\TextInput::make('offense')
+                    Forms\Components\Select::make('country_of_origin')
+                        ->options(config('countries'))
+                        ->searchable()
+                        ->placeholder('Select Nationality')
                         ->required()
-                        ->maxLength(255)
-                        ->placeholder('e.g. Theft')
-                        ->label('Offence'),
-                    Forms\Components\TextInput::make('court')
-                        ->required()
-                        ->placeholder('e.g. Kumasi Circuit Court')
-                        ->label('Court of Committal'),
-                    Forms\Components\DatePicker::make('next_court_date')
-                        ->required()
-                        ->minDate('now')
-                        ->label('Next Court Date'),
+                        ->label('Country of Origin'),
                     FileUpload::make('warrant')
                         ->label("Upload Warrant")
                         ->acceptedFileTypes(['application/pdf'])
@@ -112,8 +112,7 @@ class RemandTrialResource extends Resource
                         ->placeholder('e.g. Central Police Station')
                         ->label('Police Station'),
                     ]),
-                    ]),
-
+                ]),
         ])->columns(
                 3
             );
@@ -125,23 +124,24 @@ class RemandTrialResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('serial_number')
                     ->sortable()
-                    ->searchable(),
+                ->label("S.N.")
+                ->searchable(),
             Tables\Columns\TextColumn::make('full_name')
                     ->sortable()
-                    ->searchable(),
+                ->label("Prisoner's Name")
+                ->searchable(),
                 Tables\Columns\TextColumn::make('offense')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('admission_date')
                     ->date()
-                    ->sortable(),
+                ->sortable(),
                 Tables\Columns\TextColumn::make('age_on_admission')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('court')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('detention_type')
-
+            Tables\Columns\TextColumn::make('detention_type')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('next_court_date')
                     ->date()

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DischargedInmates extends Model
@@ -46,5 +47,10 @@ class DischargedInmates extends Model
     public function dischargedSentences(): HasMany
     {
         return $this->hasMany(DischargedSentences::class);
+    }
+
+    public function officer(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
