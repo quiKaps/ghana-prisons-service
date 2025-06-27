@@ -393,7 +393,6 @@ class InmateResource extends Resource
     public static function getPages(): array
     {
         return [
-
             'convicted-foriegners' => Pages\ConvictedForiegners::route('convicted-foriegners'),
             'index' => Pages\ListInmates::route('/'),
             'create' => Pages\CreateInmate::route('/create'),
