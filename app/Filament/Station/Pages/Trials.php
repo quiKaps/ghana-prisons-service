@@ -7,8 +7,10 @@ use Filament\Pages\Page;
 use Filament\Tables\Table;
 use App\Models\RemandTrial;
 use Filament\Tables\Actions\Action;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Filament\Resources\Components\Tab;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\EditAction;
@@ -18,7 +20,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
-use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
 class Trials extends Page implements HasTable
@@ -55,21 +56,20 @@ class Trials extends Page implements HasTable
             TextColumn::make('full_name')
                 ->searchable()
                 ->label("Prisoner's Name"),
-                TextColumn::make('admission_date')
-                    ->label('Admission Date')
+            TextColumn::make('offense')
+                ->badge()
+                ->label('Offense'),
+            TextColumn::make('admission_date')
+                ->label('Admitted On')
                 ->date(),
-                TextColumn::make('court')
-                    ->label('Court'),
                 TextColumn::make('next_court_date')
                     ->label('Next Court Date')
                 ->badge()
                 ->color('success')
                     ->date(),
-            TextColumn::make('police_officer')
-                ->label('Police Officer'),
-            TextColumn::make('police_contact')
-                ->label('Police Contact'),
-            ])
+            TextColumn::make('court')
+                ->label('Court of Committal'),
+        ])
             ->filters([
                 // Define any filters here if needed
             ])
@@ -83,104 +83,80 @@ class Trials extends Page implements HasTable
                 ->modalSubmitActionLabel('Discharge Prisoner')
                 ->action(function (array $data, $record) {
                     app(\App\Services\DischargeService::class)
-                        ->dischargeInmate($record, $data);
+                    ->dischargeInmate($record, $data);
                     Notification::make()
-                        ->success()
+                    ->success()
                     ->title('Prisoner Discharged')
                     ->body("{$record->full_name} has been discharged successfully.")
-                        ->send();
+                    ->send();
             })
                 ->label('Discharge')
                 ->fillForm(fn(RemandTrial $record): array => [
-                    'serial_number' => $record->serial_number,
+                'serial_number' => $record->serial_number,
                 'full_name' => $record->full_name,
-                    'age_on_admission' => $record->age_on_admission,
-                'detention_type' => $record->detention_type,
-                'country_of_origin' => $record->country_of_origin,
+                'admission_date' => date_format($record->admission_date, 'Y-m-d'),
                 'offense' => $record->offense,
                 'court' => $record->court,
-                'next_court_date' => $record->next_court_date,
-                'police_station' => $record->police_station,
-                'police_officer' => $record->police_officer,
-                'police_contact' => $record->police_contact,
-                //'date_of_discharge' => $record->date_of_discharge,
+                'next_court_date' => date_format($record->next_court_date, 'Y-m-d'),
             ])
-                        ->form([
-                            Section::make('Inmate Details')
-                                ->columns(2)
-                                ->schema([
-                                    TextInput::make('serial_number')
-                                        ->required()
-                                        ->unique(ignoreRecord: true)
-                                        ->placeholder('e.g. NSW/06/25')
-                                        ->label('Serial Number'),
-                    TextInput::make('full_name')
-                                        ->required()
-                                        ->placeholder('e.g. Nana Kwame')
-                        ->label("Prisoner's Name"),
-                                    Select::make('detention_type')
-                                        ->options([
-                                            'remand' => 'Remand',
-                                            'trial' => 'Trial',
-                                        ])
-                                        ->required()
-                                        ->label('Detention Type'),
-                                ])->columns(2),
-                            Section::make('Legal Details')
-                                ->columns(2)
-                                ->schema([
-                                    TextInput::make('offense')
-                                        ->required()
-                                        ->maxLength(255)
-                                        ->placeholder('e.g. Theft')
-                                        ->label('Offense'),
-                                    TextInput::make('court')
-                                        ->required()
-                                        ->placeholder('e.g. Kumasi Circuit Court')
-                                        ->label('Court'),
-                                    DatePicker::make('next_court_date')
-                                        ->required()
-                                        ->label('Next Court Date'),
-                                    TextInput::make('police_station')
-                                        ->required()
-                                        ->placeholder('e.g. Central Police Station')
-                                        ->label('Police Station'),
-                                    TextInput::make('police_officer')
-                                        ->label('Police Officer')
-                                        ->placeholder('e.g. Inspector Kwesi Nyarko'),
-                                    TextInput::make('police_contact')
-                                        ->label('Police Contact')
-                                        ->placeholder('e.g. 0241234567')
-                                        ->tel(),
-                                ]),
-                            Section::make('Discharge Details')
-                                ->columns(2)
-                                ->schema([
-                    DatePicker::make('date_of_discharge')
-                                        ->required()
-                        ->default(now())
-                                        ->placeholder('e.g. 2023-12-31')
-                                        ->label('Date of Discharge'),
-                                    Select::make('mode_of_discharge')
-                                        ->required()
-                                        ->options([
-                                            'discharged' => 'Discharged',
-                                            'acquitted_and_discharged' => 'Acquitted and Discharged',
-                                            'bail_bond' => 'Bail Bond',
-                                            'escape' => 'Escape',
-                                            'death' => 'Death',
-                                            'other' => 'Other',
-                                        ])
-                                        ->label('Mode of Discharge'),
-                    ])->columns(2),
-                        ]),
+                ->form([
+                Group::make()
+                    ->columns(2)
+                    ->schema([
+                    TextInput::make("serial_number")
+                        ->label('Serial Number')
+                        ->readOnly(),
+                    TextInput::make("full_name")
+                        ->label("Prisoner's Name")
+                        ->readOnly(),
+                    TextInput::make('offense')
+                        ->label('Offense')
+                        ->readOnly(),
+                    TextInput::make('admission_date')
+                        ->label('Date of Admission')
+                        ->readOnly(),
+                    TextInput::make('court')
+                            ->label('Court of Committal')
+                            ->readOnly(),
+                        TextInput::make('next_court_date')
+                            ->label('Next Court Date')
+                            ->readOnly(),
+                    ]),
+                Section::make('Discharge Details')
+                    ->columns(2)
+                    ->schema([
+                        DatePicker::make('date_of_discharge')
+                            ->required()
+                            ->default(now())
+                        ->maxDate(now())
+                        ->placeholder('e.g. 2023-12-31')
+                        ->label('Date of Discharge'),
+                    Select::make('mode_of_discharge')
+                        ->required()
+                        ->options([
+                            'discharged' => 'Discharged',
+                            'acquitted_and_discharged' => 'Acquitted and Discharged',
+                            'bail_bond' => 'Bail Bond',
+                            'escape' => 'Escape',
+                            'death' => 'Death',
+                                    'others' => 'Others',
+                                ])
+                                ->label('Mode of Discharge'),
+                        ])->columns(2),
+                ]),
             //Discharge ends
 
             //readmission starts
             Action::make('Re-admission')
                 ->icon('heroicon-s-arrow-path')
+                ->color('info')
                 ->button()
-                ->color('info'),
+                ->action(fn($record) => redirect()->route('filament.station.resources.inmates.create', [
+                    'from_remand' => $record->id,
+                ]))
+                ->requiresConfirmation()
+                ->modalHeading('Re-admit this inmate?')
+                ->modalSubmitActionLabel('Proceed to Admission'),
             //readmission ends
 
             //profile starts

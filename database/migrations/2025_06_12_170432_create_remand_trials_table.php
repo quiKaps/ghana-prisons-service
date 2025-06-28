@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('cell_id')->nullable()->constrained()->onDelete('set null');
             $table->string('serial_number')->unique();
             $table->string('full_name');
+            $table->string('gender');
             $table->string('offense');
             $table->date('admission_date');
             $table->integer('age_on_admission')->nullable();

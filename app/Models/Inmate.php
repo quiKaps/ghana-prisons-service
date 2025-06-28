@@ -14,6 +14,8 @@ class Inmate extends Model
     use HasFactory;
 
     protected $fillable = [
+        'station_id',
+        'cell_id',
         'serial_number',
         'full_name',
         'gender',
@@ -21,10 +23,10 @@ class Inmate extends Model
         'age_on_admission',
         'date_of_birth',
         'admission_date',
+        'offence',
         'date_sentenced',
         'previously_convicted',
         'previous_conviction_id',
-        'cell_id',
         'court_of_committal',
         'photo',
         'fingerprint',
@@ -48,6 +50,9 @@ class Inmate extends Model
         'police_station',
         'police_contact',
         'goaler',
+        'sentence',
+        'EPD',
+        'LPD'
 
     ];
 

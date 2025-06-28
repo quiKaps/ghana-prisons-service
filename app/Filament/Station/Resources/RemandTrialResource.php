@@ -41,7 +41,10 @@ class RemandTrialResource extends Resource
                             FileUpload::make("picture")
                                 ->label("Prisoner's Picture")
                                 ->acceptedFileTypes(['image/jpeg', 'image/png'])
+                                ->helperText('Only jpeg and png files are allowed for upload.')
                                 ->previewable()
+                                ->downloadable()
+                                ->openable()
                                 ->columnSpan(1)
                                 ])->columns(2)
                         ])->columnSpan(2),
@@ -71,12 +74,24 @@ class RemandTrialResource extends Resource
                         ->required()
                         ->placeholder('e.g. Kumasi Circuit Court')
                         ->label('Court of Committal'),
-                    Forms\Components\TextInput::make('age_on_admission')
-                        ->numeric()
-                        ->minValue(15)
-                        ->placeholder('e.g. 30')
-                        ->required()
-                        ->label('Age on Admission'),
+                    Group::make()
+                        ->schema([
+                        Forms\Components\TextInput::make('age_on_admission')
+                            ->numeric()
+                            ->minValue(15)
+                            ->placeholder('e.g. 30')
+                            ->required()
+                            ->label('Age on Admission'),
+                            Forms\Components\Radio::make('gender')
+                                ->label('Gender')
+                                ->inline()
+                                ->inlineLabel(false)
+                                ->options([
+                                    'male' => "Male",
+                                    'female' => 'Female'
+                                ])
+                                ->required()
+                        ])->columns(2),
                     Forms\Components\Select::make('detention_type')
                         ->options([
                             'remand' => 'Remand',
@@ -90,12 +105,14 @@ class RemandTrialResource extends Resource
                         ->searchable()
                         ->placeholder('Select Nationality')
                         ->required()
-                        ->label('Country of Origin'),
+                        ->label('Nationality'),
                     FileUpload::make('warrant')
                         ->label("Upload Warrant")
                         ->acceptedFileTypes(['application/pdf'])
                         ->helperText('Only PDF files are allowed for upload.')
                         ->previewable()
+                        ->downloadable()
+                        ->openable()
                     ]),
                 Section::make('Police Information')
                     ->columns(3)
@@ -108,7 +125,6 @@ class RemandTrialResource extends Resource
                             ->placeholder('e.g. 0241234567')
                             ->tel(),
                     Forms\Components\TextInput::make('police_station')
-                        ->required()
                         ->placeholder('e.g. Central Police Station')
                         ->label('Police Station'),
                     ]),

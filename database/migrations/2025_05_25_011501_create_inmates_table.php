@@ -25,8 +25,8 @@ return new class extends Migration
             $table->date('date_sentenced');
             $table->boolean('previously_convicted')->default(false);
             // $table->foreignId('previous_conviction_id')->nullable()->constrained('previous_convictions')->onDelete('set null');
-            $table->foreignId('station_id')->nullable()->constrained('stations')->onDelete('set null');
-            $table->foreignId('cell_id')->nullable()->constrained('cells')->onDelete('set null');
+            $table->foreignId('station_id')->nullable()->constrained('stations');
+            $table->foreignId('cell_id')->nullable()->constrained('cells');
             $table->string('court_of_committal')->nullable();
             $table->date('EPD');
             $table->date('LPD');

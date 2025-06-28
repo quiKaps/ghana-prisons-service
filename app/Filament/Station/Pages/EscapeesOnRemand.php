@@ -26,6 +26,7 @@ class EscapeesOnRemand extends Page implements HasTable
 
     protected static ?string $navigationLabel = 'Escape List - Remand';
 
+    protected ?string $subheading = 'List of prisoners who were on remand but have escaped';
 
     public function table(Table $table): Table
     {
@@ -37,28 +38,50 @@ class EscapeesOnRemand extends Page implements HasTable
             ->emptyStateHeading('No Escapee Remands')
             ->emptyStateDescription('No recorded escaped remand Prisoners')
             ->columns([
-                TextColumn::make('serial_number')
-                    ->weight(FontWeight::Bold)
-                    ->label('S.N.'),
-                TextColumn::make('full_name')
-                    ->searchable()
+            TextColumn::make('serial_number')
+                ->weight(FontWeight::Bold)
+                ->label('S.N.'),
+            TextColumn::make('full_name')
+                ->searchable()
                 ->label("Prisoner's Name"),
-                TextColumn::make('admission_date')
-                    ->label('Admission Date')
-                    ->date(),
-                TextColumn::make('court')
-                    ->label('Court'),
-                TextColumn::make('next_court_date')
-                    ->badge()
-                    ->color('success')
-                    ->label('Next Court Date')
-                    ->date(),
-                TextColumn::make('police_station')
-                    ->label('Police Station'),
-                TextColumn::make('police_contact')
-                    ->label('Police Contact'),
+            TextColumn::make('country_of_origin')
+                ->label('Nationality'),
+            TextColumn::make('court')
+                ->label('Court of Committal'),
+            TextColumn::make('offense')
+                ->badge()
+                ->weight(FontWeight::Bold)
+                ->extraAttributes(['style' => 'font-size: 2.25rem;'])
+                ->label('Offence'),
+            TextColumn::make('mode_of_discharge')
+                ->label('Mode of Discharge')
+                ->badge()
+                ->color(fn($state) => match ($state) {
+                    'discharged' => 'success',
+                    'acquitted_and_discharged' => 'primary',
+                    'bail_bond' => 'info',
+                    'escape' => 'danger',
+                    'death' => 'gray',
+                    'other' => 'secondary',
+                    default => 'secondary',
+                })
+                ->formatStateUsing(fn($state) => match ($state) {
+                    'discharged' => 'Discharged',
+                    'acquitted_and_discharged' => 'Acquitted and Discharged',
+                    'bail_bond' => 'Bail Bond',
+                    'escape' => 'Escape',
+                    'death' => 'Death',
+                    'other' => 'Other',
+                    default => ucfirst($state),
+                }),
 
-            ])
+            TextColumn::make('date_of_discharge')
+                ->label('Date of Discharge')
+                ->badge()
+                ->color('success')
+                ->date(),
+
+        ])
             ->filters([
                 // Define any filters here if needed
             ])

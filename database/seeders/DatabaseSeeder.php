@@ -33,6 +33,8 @@ class DatabaseSeeder extends Seeder
 
         for ($i = 0; $i < $totalRecords / $batchSize; $i++) {
             Inmate::factory($batchSize)->create();
+            //generate 1k remand and trial inmates
+            RemandTrial::factory(1000)->create();
         }
 
         User::factory()->create([
@@ -44,6 +46,5 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ]);
-        RemandTrial::factory(1000)->create();
     }
 }

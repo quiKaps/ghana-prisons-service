@@ -8,6 +8,8 @@ use App\Models\Inmate;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\RemandTrial;
+use Filament\Actions\Action;
 use Filament\Resources\Resource;
 use App\Actions\SecureEditAction;
 use App\Actions\SecureDeleteAction;
@@ -18,7 +20,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Station\Resources\InmateResource\Pages;
 use App\Filament\Station\Resources\InmateResource\RelationManagers;
-use Filament\Actions\Action;
 
 class InmateResource extends Resource
 
@@ -37,6 +38,12 @@ class InmateResource extends Resource
 
     public static function form(Form $form): Form
     {
+
+        $remand = null;
+
+        if (request()->has('from_remand')) {
+            $remand = RemandTrial::find(request('from_remand'));
+        }
         return $form
             ->schema([
                 Group::make()
@@ -46,21 +53,26 @@ class InmateResource extends Resource
                     Forms\Components\TextInput::make('serial_number')
                         ->label('Serial Number')
                         ->required()
+                        ->unique(ignoreRecord: true)
                         ->placeholder('Serial Number eg. NSM/01/25')
                         ->maxLength(255),
                     Forms\Components\TextInput::make('full_name')
                         ->label("Prisoner's Full Name")
+                        ->default($remand?->full_name)
                         ->required()
                         ->placeholder('Enter Full Name')
                         ->columnSpan(2)
                         ->maxLength(255),
-                    Forms\Components\Select::make('gender')
-                                    ->label('Gender')
-                                    ->required()
-                                    ->options([
-                                        'male' => 'Male',
-                                        'female' => 'Female',
-                                    ]),
+                    Forms\Components\Radio::make('gender')
+                        ->label('Gender')
+                        ->inline()
+                        ->default($remand?->gender)
+                        ->inlineLabel(false)
+                        ->options([
+                            'male' => "Male",
+                            'female' => 'Female'
+                        ])
+                        ->required(),
                                 Forms\Components\Select::make('married_status')
                                     ->label('Marital Status')
                                     ->options([
@@ -91,10 +103,13 @@ class InmateResource extends Resource
                                         'other_religion' => 'Other Religion',
                                         'no_religion' => 'No Religion',
                                     ]),
-                                Forms\Components\TextInput::make('nationality')
-                                    ->label('Nationality')
-                                    ->required()
-                                    ->placeholder('Enter Nationality (e.g. Ghanaian)'),
+                    Forms\Components\Select::make('nationality')
+                        ->options(config('countries'))
+                        ->searchable()
+                        ->default($remand?->country_of_origin)
+                        ->placeholder('Select Nationality')
+                        ->required()
+                        ->label('Country of Origin'),
                                 Forms\Components\TextInput::make('tribe')
                                     ->label('Tribe')
 

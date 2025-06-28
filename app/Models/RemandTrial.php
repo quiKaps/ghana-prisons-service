@@ -21,6 +21,7 @@ class RemandTrial extends Model
         'serial_number',
         'full_name',
         'offense',
+        'gender',
         'admission_date',
         'age_on_admission',
         'court',
@@ -32,7 +33,8 @@ class RemandTrial extends Model
         'police_officer',
         'police_contact',
         're_admission_date',
-        'warrant'
+        'warrant',
+        'picture'
     ];
     protected $casts = [
         'admission_date' => 'date',

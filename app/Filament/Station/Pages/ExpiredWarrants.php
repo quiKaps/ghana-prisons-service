@@ -10,6 +10,7 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -39,25 +40,25 @@ class ExpiredWarrants extends Page implements \Filament\Tables\Contracts\HasTabl
                 ->where('detention_type', 'remand')
                 ->where('next_court_date', '<', now()))
             ->columns([
-                TextColumn::make('serial_number')
-                    ->label('Serial Number'),
+            TextColumn::make('serial_number')
+                ->weight(FontWeight::Bold)
+                ->label('S.N.'),
             TextColumn::make('full_name')
-                    ->searchable()
+                ->searchable()
                 ->label("Prisoner's Name"),
-                TextColumn::make('admission_date')
-                    ->label('Admission Date')
+            TextColumn::make('offense')
+                ->badge()
+                ->label('Offense'),
+            TextColumn::make('admission_date')
+                ->label('Admitted On')
                 ->date(),
-                TextColumn::make('next_court_date')
-                    ->label('Next Court Date')
-                    ->badge()
-                    ->color('danger')
-                    ->date(),
-                TextColumn::make('country_of_origin')
-                ->label('Country of Origin'),
-            TextColumn::make('police_officer')
-                    ->label('Police Officer'),
-                TextColumn::make('police_contact')
-                ->label('Police Contact'),
+            TextColumn::make('next_court_date')
+                ->label('Next Court Date')
+                ->badge()
+                ->color('danger')
+                ->date(),
+            TextColumn::make('court')
+                ->label('Court of Committal'),
             ])
             ->filters([
                 // Define any filters here if needed
@@ -80,59 +81,54 @@ class ExpiredWarrants extends Page implements \Filament\Tables\Contracts\HasTabl
                 })
                 ->label('Discharge')
                 ->fillForm(fn(RemandTrial $record): array => [
-                    'serial_number' => $record->serial_number,
-                    'full_name' => $record->full_name,
-                    'age_on_admission' => $record->age_on_admission,
-                    'detention_type' => $record->detention_type,
-                    'country_of_origin' => $record->country_of_origin,
-                    'offense' => $record->offense,
-                    'court' => $record->court,
-                    'next_court_date' => $record->next_court_date,
-                    'police_station' => $record->police_station,
-                    'police_officer' => $record->police_officer,
-                    'police_contact' => $record->police_contact,
-                //'date_of_discharge' => $record->date_of_discharge,
+                'serial_number' => $record->serial_number,
+                'full_name' => $record->full_name,
+                'admission_date' => date_format($record->admission_date, 'Y-m-d'),
+                'offense' => $record->offense,
+                'court' => $record->court,
+                'next_court_date' => date_format($record->next_court_date, 'Y-m-d'),
             ])
                 ->form([
                 Group::make()
-                        ->columns(2)
-                        ->schema([
-                            TextInput::make('offense')
+                    ->columns(2)
+                    ->schema([
+                    TextInput::make("serial_number")
+                        ->label('Serial Number')
+                        ->readOnly(),
+                    TextInput::make("full_name")
+                        ->label("Prisoner's Name")
+                        ->readOnly(),
+                    TextInput::make('offense')
                         ->label('Offense')
                         ->readOnly(),
-                            TextInput::make('court')
-                        ->label('Court')
+                    TextInput::make('admission_date')
+                        ->label('Date of Admission')
+                        ->readOnly(),
+                    TextInput::make('court')
+                        ->label('Court of Committal')
                         ->readOnly(),
                     TextInput::make('next_court_date')
                         ->label('Next Court Date')
                         ->readOnly(),
-                            TextInput::make('police_station')
-                        ->label('Police Station')
-                        ->readOnly(),
-                            TextInput::make('police_officer')
-                                ->label('Police Officer')
-                        ->readOnly(),
-                            TextInput::make('police_contact')
-                                ->label('Police Contact')
-                        ->readOnly(),
-                        ]),
-                    Section::make('Discharge Details')
-                        ->columns(2)
-                        ->schema([
-                            DatePicker::make('date_of_discharge')
-                                ->required()
-                                ->default(now())
-                                ->placeholder('e.g. 2023-12-31')
-                                ->label('Date of Discharge'),
-                            Select::make('mode_of_discharge')
-                                ->required()
-                                ->options([
-                                    'discharged' => 'Discharged',
-                                    'acquitted_and_discharged' => 'Acquitted and Discharged',
-                                    'bail_bond' => 'Bail Bond',
-                                    'escape' => 'Escape',
-                                    'death' => 'Death',
-                                    'other' => 'Other',
+                    ]),
+                Section::make('Discharge Details')
+                    ->columns(2)
+                    ->schema([
+                        DatePicker::make('date_of_discharge')
+                            ->required()
+                            ->default(now())
+                        ->maxDate(now())
+                        ->placeholder('e.g. 2023-12-31')
+                        ->label('Date of Discharge'),
+                    Select::make('mode_of_discharge')
+                        ->required()
+                        ->options([
+                            'discharged' => 'Discharged',
+                            'acquitted_and_discharged' => 'Acquitted and Discharged',
+                            'bail_bond' => 'Bail Bond',
+                            'escape' => 'Escape',
+                            'death' => 'Death',
+                        'others' => 'Others',
                                 ])
                                 ->label('Mode of Discharge'),
                         ])->columns(2),

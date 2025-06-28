@@ -46,6 +46,7 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                     ->searchable()
                 ->label("Name of Prisoner"),
             TextColumn::make('offense')
+                ->badge()
                 ->label('Offence'),
             TextColumn::make('admission_date')
                 ->date()
@@ -57,7 +58,6 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                 ->date(),
             TextColumn::make('court')
                 ->label('Court of Committal'),
-
         ])
             ->filters([
                 // Define any filters here if needed
@@ -83,15 +83,9 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                     'serial_number' => $record->serial_number,
                 'full_name' => $record->full_name,
                 'admission_date' => date_format($record->admission_date, 'Y-m-d'),
-                'age_on_admission' => $record->age_on_admission,
-                'detention_type' => $record->detention_type,
-                'country_of_origin' => $record->country_of_origin,
                 'offense' => $record->offense,
                 'court' => $record->court,
                 'next_court_date' => date_format($record->next_court_date, 'Y-m-d'),
-                'police_station' => $record->police_station,
-                'police_officer' => $record->police_officer,
-                'police_contact' => $record->police_contact,
             ])
                 ->form([
                 Group::make()
@@ -128,12 +122,9 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
                     Select::make('mode_of_discharge')
                         ->required()
                         ->options([
-                            'discharged' => 'Discharged',
-                            'acquitted_and_discharged' => 'Acquitted and Discharged',
-                            'bail_bond' => 'Bail Bond',
                             'escape' => 'Escape',
                             'death' => 'Death',
-                            'other' => 'Other',
+                        'others' => 'Others',
                         ])
                         ->label('Mode of Discharge'),
                     ])->columns(2),

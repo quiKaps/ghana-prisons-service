@@ -57,27 +57,19 @@ class RemandDischarge extends Page implements \Filament\Tables\Contracts\HasTabl
                 ->label('Mode of Discharge')
                 ->badge()
                 ->color(fn($state) => match ($state) {
-                    'discharged' => 'success',
-                    'acquitted_and_discharged' => 'primary',
-                    'bail_bond' => 'info',
                     'escape' => 'danger',
                     'death' => 'gray',
                     'other' => 'secondary',
                     default => 'secondary',
                 })
                 ->formatStateUsing(fn($state) => match ($state) {
-                    'discharged' => 'Discharged',
-                    'acquitted_and_discharged' => 'Acquitted and Discharged',
-                    'bail_bond' => 'Bail Bond',
-                    'escape' => 'Escape',
+                'escape' => 'Escape',
                     'death' => 'Death',
                     'other' => 'Other',
                     default => ucfirst($state),
                 }),
 
-            TextColumn::make('police_contact')
-                    ->label('Police Contact'),
-            ])
+        ])
             ->filters([
                 // Define any filters here if needed
             ])

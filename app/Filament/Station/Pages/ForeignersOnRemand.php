@@ -55,9 +55,8 @@ class ForeignersOnRemand extends Page implements \Filament\Tables\Contracts\HasT
                     ->label('Next Court Date')
                     ->date(),
 
-            TextColumn::make('police_contact')
-                    ->label('Police Contact'),
-            ])
+
+        ])
             ->filters([
                 // Define any filters here if needed
             ])
