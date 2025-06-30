@@ -3,8 +3,10 @@
 namespace App\Filament\Station\Resources;
 
 use Filament\Forms;
+use Faker\Core\File;
 use Filament\Tables;
 use App\Models\Inmate;
+use App\Models\Station;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -15,8 +17,11 @@ use App\Actions\SecureEditAction;
 use App\Actions\SecureDeleteAction;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Radio;
+use Illuminate\Support\Facades\Date;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Illuminate\Support\Facades\Session;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,7 +29,8 @@ use Filament\Forms\Components\CheckboxList;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Station\Resources\InmateResource\Pages;
 use App\Filament\Station\Resources\InmateResource\RelationManagers;
-use Faker\Core\File;
+use Dom\Text;
+use Filament\Forms\Components\TextInput;
 
 class InmateResource extends Resource
 
@@ -49,25 +55,26 @@ class InmateResource extends Resource
         if (Session::has('remand_id')) {
             $remand = RemandTrial::find(Session::pull('remand_id')); // 👈 pull instead of get
             if ($remand) {
-                Session::put('remand_id', $remand->id); // temporarily store it again for afterCreate
+                Session::put('used_remand_id', $remand->id); // temporarily store it again for afterCreate
             }
         }
         return $form
             ->schema([
-            Section::make('Inmate Information')
+            Section::make("Penal Record")
+                ->description('Please provide the penal information of the prisoner.')
                 ->columns(2)
                 ->schema([
                 Group::make()
                     ->schema([
                     Group::make()
                     ->schema([
-                                FileUpload::make('photo')
-                                    ->label('Inmate Photo')
+                        FileUpload::make('photo')
+                            ->label('Prisoner Photo')
                                     ->placeholder("Upload Prisoner's Photo")
                                     ->visibility('public')
                                     ->image()
                                     ->openable()
-                                    ->uploadingMessage('Uploading inmate photo...')->columnSpan(1)
+                            ->uploadingMessage('Uploading photo...')->columnSpan(1)
                             ])->columns(2)
                     ])->columnSpanFull(),
                 Forms\Components\TextInput::make('serial_number')
@@ -77,23 +84,13 @@ class InmateResource extends Resource
                     ->placeholder('Serial Number eg. NSM/01/25')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('full_name')
-                    ->label("Prisoner's Full Name")
+                    ->label("Name of Prisoner")
                     ->default($remand?->full_name)
                     ->required()
                     ->placeholder('Enter Full Name')
                     ->maxLength(255),
                 Group::make()
                     ->schema([
-                    Forms\Components\Radio::make('gender')
-                        ->label('Gender')
-                        ->inline()
-                        ->default($remand?->gender)
-                        ->inlineLabel(false)
-                        ->options([
-                            'male' => "Male",
-                            'female' => 'Female'
-                        ])
-                        ->required(),
                     Forms\Components\TextInput::make('age_on_admission')
                         ->minValue(16)
                         ->maxValue(100)
@@ -132,11 +129,13 @@ class InmateResource extends Resource
                         ->label('Date of Sentence')
                         ->required(),
                     Forms\Components\DatePicker::make('EPD')
-                        ->label('EPD (Estimated Prison Discharge)')
+                        ->label('EPD (Earliest Possible Date of Discharge)')
                         ->minDate(now())
-                        ->placeholder('Enter EPD (optional)'),
+                        ->placeholder('Select EPD')
+                        ->required(),
                     Forms\Components\DatePicker::make('LPD')
-                        ->label('LPD (Legal Prison Discharge)')
+                        ->label('LPD (Latest Possible Date of Discharge)')
+                        ->placeholder('Select LPD')
                         ->minDate(now())
                         ->required(),
                     Forms\Components\TextInput::make('court_of_committal')
@@ -167,8 +166,43 @@ class InmateResource extends Resource
                         ])->columnSpanFull()
                         ->columns(3),
                 ]),
-            Section::make('Social Background')
-                ->description('Please provide the social background information of the prisoner.')
+
+            Section::make('')
+                ->description('Transfer-In Information.')
+                ->columns(3)
+                ->schema([
+                    Forms\Components\Radio::make('transferred_inmate')
+                        ->label('Transferred Inmate')
+                        ->default('0')
+                        ->columns(2)
+                        ->live()
+                        ->options([
+                            '1' => 'Yes',
+                            '0' => 'No',
+                        ]),
+                    Select::make('transferred_from_station_id')
+                        ->label('Transferred From Station')
+                        ->placeholder('Select Transferred From Station')
+                        ->required(fn(Get $get): bool => $get('transferred_inmate') === '1')
+                        ->hidden(fn(Get $get): bool => $get('transferred_inmate') !== '1')
+                        ->options(
+                            fn() => Station::withoutGlobalScopes()
+                                ->where('id', '!=', auth()->user()->station_id)
+                                ->pluck('name', 'id')
+                                ->toArray()
+                        )
+                        ->searchable(),
+                    DatePicker::make('date_of_transfer')
+                        ->label('Transferred Date')
+                        ->required(fn(Get $get): bool => $get('transferred_inmate') === '1')
+                        ->hidden(fn(Get $get): bool => $get('transferred_inmate') !== '1')
+                        ->placeholder('Select Transferred Date')
+                        ->maxDate(now()),
+
+                ]),
+            Section::make('Disability Information')
+                ->description('Please provide the disability information of the prisoner.')
+                ->columns(3)
                 ->schema([
                 Forms\Components\Radio::make('disability')
                     ->label('Disability?')
@@ -197,6 +231,10 @@ class InmateResource extends Resource
                     ->hidden(fn(Get $get): bool => $get('disability') !== '1' || $get('disability_type') !== 'others')
                     ->required(fn(Get $get): bool => $get('disability') === '1'),
 
+                ]),
+            Section::make('Social Background')
+                ->description('Please provide the social background information of the prisoner.')
+                ->schema([
                 Forms\Components\TextInput::make('tribe')
                     ->label('Tribe')
                     ->placeholder('Enter Tribe (e.g. Ewe)'),
@@ -270,26 +308,31 @@ class InmateResource extends Resource
                     ->placeholder('Enter Next of Kin Contact')
                     ->tel()
                     ->maxLength(15),
+                ])->columns(3),
+
+            Section::make('Medical Information')
+                ->description('Please provide the medical information of the prisoner.')
+                ->columns(3)
+                ->schema([
                 CheckboxList::make('distinctive_marks')
                     ->label('Distinctive Marks')
                     ->columns(3)
                     ->live()
                     ->options([
                         'scars' => 'Scars',
-                        'tattoos' => 'Tattoos',
-                        'birthmarks' => 'Birthmarks',
-                        'piercings' => 'Piercings',
+                    'tattoos' => 'Tattoos',
                         'others' => 'Others',
                     ]),
+                Forms\Components\TextInput::make('distinctive_marks_other')
+                    ->label('Other Distinctive Marks')
+                    ->placeholder('Enter Other Distinctive Marks')
+                        ->hidden(fn(Get $get): bool => !in_array('others', (array) $get('distinctive_marks'))),
+                    Forms\Components\TextInput::make('part_of_the_body')
+                        ->label('Part of the Body')
+                        ->placeholder('Enter Part of the Body'),
+                ]),
 
-                    Forms\Components\TextInput::make('distinctive_marks_other')
-                        ->label('Other Distinctive Marks')
-                        ->placeholder('Enter Other Distinctive Marks')
-                        ->hidden(fn(Get $get): bool => !in_array('other', (array) $get('distinctive_marks')))
-                ])
-                ->columns(3),
-
-            Section::make()
+            Section::make('Goaler Information')
                 ->columns(2)
                 ->label('Goaler Information')
                 ->description('Please provide the goaler information of the prisoner.')
@@ -315,12 +358,35 @@ class InmateResource extends Resource
                         ->hidden(fn(Get $get): bool => $get('goaler') !== 'yes'),
                     ]),
 
-                Section::make('Police Information')
+            Section::make('Previous Conviction')
+                ->description('Please provide the previous conviction information of the prisoner.')
+                ->columns(3)
+                ->schema([
+                    TextInput::make('previous_sentence')
+                        ->label('Previous Sentence')
+                        ->placeholder('Enter Previous Sentence')
+                        ->maxLength(255)
+                        ->required(),
+                    TextInput::make('previous_conviction_id')
+                        ->label('Previous Offence')
+                        ->placeholder('Enter Previous Offence'),
+                    Select::make('previous_station_id')
+                        ->label('Transferred From Station')
+                        ->placeholder('Select Transferred From Station')
+                        ->options(
+                            fn() => Station::withoutGlobalScopes()
+                                ->where('id', '!=', auth()->user()->station_id)
+                                ->pluck('name', 'id')
+                                ->toArray()
+                        )
+                        ->searchable(),
+                ]),
+
+            Section::make('Police Information')
                     ->description('Please provide the police information of the prisoner.')
                     ->columns(2)
                     ->schema(
-                        [
-
+                [
                             Forms\Components\TextInput::make('police_name')
                                 ->required()
                                 ->label('Police Name')
@@ -335,10 +401,6 @@ class InmateResource extends Resource
                                 ->placeholder('Enter Police Contact'),
                         ]
                     )->columns(3),
-
-
-
-
 
             ])->columns(2);
     }

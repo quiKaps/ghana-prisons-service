@@ -29,6 +29,9 @@ class CreateInmate extends CreateRecord
 
         $data['station_id'] = $user->station_id; // Current user station id
 
+        //add gender from station type
+        $data['gender'] = $user->station?->type === 'female' ? 'female' : 'male';
+
         $data['medical_conditions'] = json_encode($data['medical_conditions'] ?? []);
         $data['allergies'] = json_encode($data['allergies'] ?? []);
         $data['languages_spoken'] = json_encode($data['languages_spoken'] ?? []);
@@ -60,7 +63,7 @@ class CreateInmate extends CreateRecord
     protected function afterCreate(): void
     {
         // Get the current form data
-        $remand_id = Session::pull('remand_id');
+        $remand_id = Session::pull('used_remand_id');
 
         if ($remand_id) {
             RemandTrial::find($remand_id)?->delete();
