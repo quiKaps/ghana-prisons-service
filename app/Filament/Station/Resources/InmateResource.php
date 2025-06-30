@@ -72,7 +72,10 @@ class InmateResource extends Resource
                             ->label('Prisoner Photo')
                                     ->placeholder("Upload Prisoner's Photo")
                                     ->visibility('public')
+                            ->previewable()
+                            ->downloadable()
                                     ->image()
+                            ->acceptedFileTypes(['image/png', 'image/jpg', 'image/jpeg'])
                                     ->openable()
                             ->uploadingMessage('Uploading photo...')->columnSpan(1)
                             ])->columns(2)
@@ -102,6 +105,7 @@ class InmateResource extends Resource
                     Forms\Components\Select::make('offence')
                         ->required()
                         ->label('Offence')
+                        ->live()
                         ->placeholder('Select an Offence')
                         ->options([
                             'assault' => 'Assault',
@@ -116,6 +120,12 @@ class InmateResource extends Resource
                             'unlawful_entry' => 'Unlawful Entry',
                             'others' => 'Others'
                         ]),
+                    Forms\Components\TextInput::make('other_offence')
+                        ->label('Other Offence')
+                        ->required()
+                        ->hidden(fn(Get $get): bool => !in_array('others', (array) $get('offence')))
+                        ->placeholder('Enter Other Offence')
+                        ->maxLength(255),
                     Forms\Components\TextInput::make('sentence')
                         ->label('Sentence')
                         ->required()
@@ -142,8 +152,7 @@ class InmateResource extends Resource
                         ->label('Court of Committal')
                         ->required()
                         ->placeholder('Enter Court of Committal')
-                        ->maxLength(255)
-                        ->columnSpan(2),
+                        ->maxLength(255),
                     Forms\Components\Select::make('cell_id')
                         ->label('Select Inmate Cell')
                         ->required()
@@ -437,29 +446,29 @@ class InmateResource extends Resource
                 ->searchable()
                 ->sortable(),
             Tables\Columns\TextColumn::make('full_name')
-                ->label("Prisoner's Name")
+                ->label("Name of Prisoner")
                 ->searchable()
                 ->sortable(),
-            Tables\Columns\TextColumn::make('gender')
-                ->searchable()
-                ->sortable()
-                ->formatStateUsing(fn(string $state): string => ucfirst($state)),
             Tables\Columns\TextColumn::make('age_on_admission')
-                ->label('Age')
+                ->label('Age on Admission')
+                ->sortable(),
+            Tables\Columns\TextColumn::make('offence')
+                ->label('Offence')
+                ->searchable()
+                ->badge()
                 ->sortable(),
             Tables\Columns\TextColumn::make('sentence')
+                ->label('Sentence')
                 ->searchable()
                 ->sortable(),
-            Tables\Columns\TextColumn::make('admission_date')
+            Tables\Columns\TextColumn::make('date_sentenced')
+                ->label('Date of Sentence')
                 ->date()
                 ->sortable(),
-            Tables\Columns\TextColumn::make('cell.cell_number')
-                ->label('Cell')
-                ->searchable()
-                ->sortable()
-                ->formatStateUsing(
-                fn($record) => $record->cell ? "CELL {$record->cell->cell_number} - {$record->cell->block}" : 'No Cell Assigned'
-                ),
+            Tables\Columns\TextColumn::make('admission_date')
+                ->label('Date of Admission')
+                ->date()
+                ->sortable(),
             ])
             ->filters([
             //
