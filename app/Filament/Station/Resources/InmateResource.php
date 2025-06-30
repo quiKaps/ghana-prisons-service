@@ -167,8 +167,8 @@ class InmateResource extends Resource
                         ->columns(3),
                 ]),
 
-            Section::make('')
-                ->description('Transfer-In Information.')
+            Section::make('Transfer-In Information')
+                ->description('Please provide the transfer-in information of the prisoner.')
                 ->columns(3)
                 ->schema([
                     Forms\Components\Radio::make('transferred_inmate')
@@ -181,8 +181,8 @@ class InmateResource extends Resource
                             '0' => 'No',
                         ]),
                     Select::make('transferred_from_station_id')
-                        ->label('Transferred From Station')
-                        ->placeholder('Select Transferred From Station')
+                    ->label('Station Transferred From')
+                    ->placeholder('Select Station Transferred From')
                         ->required(fn(Get $get): bool => $get('transferred_inmate') === '1')
                         ->hidden(fn(Get $get): bool => $get('transferred_inmate') !== '1')
                         ->options(
@@ -213,9 +213,10 @@ class InmateResource extends Resource
                         '0' => 'No',
                     ])
                     ->inline(),
-                Forms\Components\Select::make('disability_type')
+                Forms\Components\CheckboxList::make('disability_type')
                     ->label('Disability Type')
-                    ->required()
+                    ->columns(2)
+                    ->required(fn(Get $get): bool => $get('disability') === '1')
                     ->live()
                     ->hidden(fn(Get $get): bool => $get('disability') === '0')
                     ->options([
@@ -228,7 +229,7 @@ class InmateResource extends Resource
                 Forms\Components\TextInput::make('disability_type_other')
                     ->label('Other Disability Type')
                     ->placeholder('Enter Other Disability Type')
-                    ->hidden(fn(Get $get): bool => $get('disability') !== '1' || $get('disability_type') !== 'others')
+                    ->hidden(fn(Get $get): bool => !in_array('others', (array) $get('disability_type')))
                     ->required(fn(Get $get): bool => $get('disability') === '1'),
 
                 ]),
@@ -389,7 +390,7 @@ class InmateResource extends Resource
                     ->label('Station Transferred From')
                     ->hidden(fn(Get $get): bool => $get('previous_conviction') !== 'yes')
                     ->required(fn(Get $get): bool => $get('previous_conviction') === 'yes')
-                    ->placeholder('Select Station Transferred From')
+                    ->placeholder('Select Previous Station')
                         ->options(
                             fn() => Station::withoutGlobalScopes()
                                 ->where('id', '!=', auth()->user()->station_id)
