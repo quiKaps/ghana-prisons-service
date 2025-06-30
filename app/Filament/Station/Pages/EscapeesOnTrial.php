@@ -86,7 +86,8 @@ class EscapeesOnTrial extends Page implements HasTable
                 // Define any filters here if needed
             ])
             ->actions([
-                Action::make('readmit')
+
+            Action::make('readmit')
                     ->label('Re-Admit')
                     ->button()
                     ->icon('heroicon-o-arrow-uturn-right')
@@ -126,8 +127,9 @@ class EscapeesOnTrial extends Page implements HasTable
                             ->title('Re-Admission Successful')
                             ->body("The {$record->full_name} has been re-admitted on {$record->detention_type}.")
                             ->send();
-                    })
+                }),
 
-            ]);
+
+        ]);
     }
 }

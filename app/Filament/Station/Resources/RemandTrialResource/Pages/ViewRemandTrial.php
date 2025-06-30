@@ -22,6 +22,20 @@ class ViewRemandTrial extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            // Show "Back to Remands" if detention_type is 'remand'
+            Actions\Action::make('back-to-remands')
+                ->label('Back to Remands')
+                ->icon('heroicon-o-arrow-left')
+                ->color('success')
+                ->visible(fn($record) => $record->detention_type === 'remand')
+                ->url(fn() => route('filament.station.pages.remand')),
+            // Show "Back to Trials" if detention_type is 'trial'
+            Actions\Action::make('back-to-trials')
+                ->label('Back to Trials')
+                ->icon('heroicon-o-arrow-left')
+                ->color('success')
+                ->visible(fn($record) => $record->detention_type === 'trial')
+                ->url(fn() => route('filament.station.pages.trials')),
             Actions\Action::make('Print')
                 ->color('info')
                 ->icon('heroicon-s-printer'),

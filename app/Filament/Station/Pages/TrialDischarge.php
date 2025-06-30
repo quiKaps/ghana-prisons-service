@@ -82,7 +82,6 @@ class TrialDischarge extends Page implements \Filament\Tables\Contracts\HasTable
             ->filters([
                 // Define any filters here if needed
             ])
-            ->actions([
-            ]);
+            ->actions([]);
     }
 }
