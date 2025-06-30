@@ -288,8 +288,8 @@ class InmateResource extends Resource
                     ->placeholder('Enter Occupation')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('next_of_kin_name')
-                    ->label('Next of Kin Name')
-                    ->placeholder('Enter Next of Kin Name'),
+                    ->label('Name of Next of Kin')
+                    ->placeholder('eg. Nana Kwame'),
                 Forms\Components\Select::make('next_of_kin_relationship')
                     ->label('Next of Kin Relationship')
                     ->placeholder('Select Relationship')
@@ -304,14 +304,14 @@ class InmateResource extends Resource
                         'other' => 'Other',
                     ]),
                 Forms\Components\TextInput::make('next_of_kin_contact')
-                    ->label('Next of Kin Contact')
-                    ->placeholder('Enter Next of Kin Contact')
+                    ->label('Contact of Next of Kin')
+                    ->placeholder('Enter Contact of Next of Kin')
                     ->tel()
                     ->maxLength(15),
                 ])->columns(3),
 
-            Section::make('Medical Information')
-                ->description('Please provide the medical information of the prisoner.')
+            Section::make('Distinctive Body Marks')
+                ->description('Please provide the distinctive body marks information of the prisoner.')
                 ->columns(3)
                 ->schema([
                 CheckboxList::make('distinctive_marks')
@@ -362,17 +362,34 @@ class InmateResource extends Resource
                 ->description('Please provide the previous conviction information of the prisoner.')
                 ->columns(3)
                 ->schema([
-                    TextInput::make('previous_sentence')
+                Radio::make('previous_conviction')
+                    ->label('Previous Conviction')
+                    ->default('no')
+                    ->inline()
+                    ->live()
+                    ->columnSpanFull()
+                    ->inlineLabel(false)
+                    ->options([
+                        'yes' => 'Yes',
+                        'no' => 'No',
+                    ])
+                    ->required(),
+                TextInput::make('previous_sentence')
                         ->label('Previous Sentence')
                         ->placeholder('Enter Previous Sentence')
                         ->maxLength(255)
-                        ->required(),
+                    ->hidden(fn(Get $get): bool => $get('previous_conviction') !== 'yes')
+                    ->required(fn(Get $get): bool => $get('previous_conviction') === 'yes'),
                     TextInput::make('previous_conviction_id')
                         ->label('Previous Offence')
-                        ->placeholder('Enter Previous Offence'),
+                    ->required(fn(Get $get): bool => $get('previous_conviction') === 'yes')
+                    ->hidden(fn(Get $get): bool => $get('previous_conviction') !== 'yes')
+                    ->placeholder('Enter Previous Offence'),
                     Select::make('previous_station_id')
-                        ->label('Transferred From Station')
-                        ->placeholder('Select Transferred From Station')
+                    ->label('Station Transferred From')
+                    ->hidden(fn(Get $get): bool => $get('previous_conviction') !== 'yes')
+                    ->required(fn(Get $get): bool => $get('previous_conviction') === 'yes')
+                    ->placeholder('Select Station Transferred From')
                         ->options(
                             fn() => Station::withoutGlobalScopes()
                                 ->where('id', '!=', auth()->user()->station_id)
