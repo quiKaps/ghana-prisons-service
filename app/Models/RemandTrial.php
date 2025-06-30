@@ -39,6 +39,7 @@ class RemandTrial extends Model
     protected $casts = [
         'admission_date' => 'date',
         'next_court_date' => 'date',
+        're_admission_date' => 'date',
         'age_on_admission' => 'integer',
     ];
 

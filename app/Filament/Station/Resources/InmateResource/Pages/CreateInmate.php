@@ -6,6 +6,7 @@ use Filament\Actions;
 use App\Models\Inmate;
 use App\Models\RemandTrial;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Station\Resources\InmateResource;
@@ -56,17 +57,19 @@ class CreateInmate extends CreateRecord
         ];
     }
 
-    // protected function afterCreate(): void
-    // {
-    //     if (request()->has('from_remand')) {
-    //         dd('here');
-    //         RemandTrial::find(request('from_remand'))?->delete();
+    protected function afterCreate(): void
+    {
+        // Get the current form data
+        $remand_id = Session::pull('remand_id');
 
-    //         Notification::make()
-    //             ->title('Inmate Re-admitted')
-    //             ->body("{$this->record->full_name} has been successfully re-admitted.")
-    //             ->success()
-    //             ->send();
-    //     }
-    // }
+        if ($remand_id) {
+            RemandTrial::find($remand_id)?->delete();
+
+            Notification::make()
+                ->title('Inmate Re-admitted')
+                ->body("{$this->record->full_name} has been successfully re-admitted.")
+                ->success()
+                ->send();
+        }
+    }
 }

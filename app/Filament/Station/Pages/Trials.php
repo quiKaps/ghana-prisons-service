@@ -151,9 +151,10 @@ class Trials extends Page implements HasTable
                 ->icon('heroicon-s-arrow-path')
                 ->color('info')
                 ->button()
-                ->action(fn($record) => redirect()->route('filament.station.resources.inmates.create', [
-                    'from_remand' => $record->id,
-                ]))
+                ->action(function ($record) {
+                    session(['remand_id' => $record->id]);
+                    return redirect()->route('filament.station.resources.inmates.create');
+                })
                 ->requiresConfirmation()
                 ->modalHeading('Re-admit this inmate?')
                 ->modalSubmitActionLabel('Proceed to Admission'),

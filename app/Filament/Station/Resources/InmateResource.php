@@ -15,6 +15,7 @@ use App\Actions\SecureEditAction;
 use App\Actions\SecureDeleteAction;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Radio;
+use Illuminate\Support\Facades\Session;
 use Filament\Tables\Actions\DeleteAction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -41,8 +42,11 @@ class InmateResource extends Resource
 
         $remand = null;
 
-        if (request()->has('from_remand')) {
-            $remand = RemandTrial::find(request('from_remand'));
+        if (Session::has('remand_id')) {
+            $remand = RemandTrial::find(Session::pull('remand_id')); // 👈 pull instead of get
+            if ($remand) {
+                Session::put('remand_id', $remand->id); // temporarily store it again for afterCreate
+            }
         }
         return $form
             ->schema([
@@ -50,6 +54,10 @@ class InmateResource extends Resource
                     ->schema([
                         Forms\Components\Section::make("Inmate's Personal Information")
                     ->schema([
+                    Forms\Components\TextInput::make('remand_id')
+                        ->hidden()
+                        ->dehydrated()
+                        ->default($remand?->id),
                     Forms\Components\TextInput::make('serial_number')
                         ->label('Serial Number')
                         ->required()
@@ -84,6 +92,7 @@ class InmateResource extends Resource
                                 Forms\Components\TextInput::make('age_on_admission')
                                     ->minValue(16)
                                     ->maxValue(100)
+                        ->default($remand?->age_on_admission)
                                     ->numeric()
                                     ->label('Age on Admission')
                                     ->required()

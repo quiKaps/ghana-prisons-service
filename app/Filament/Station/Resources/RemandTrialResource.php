@@ -103,9 +103,9 @@ class RemandTrialResource extends Resource
                     Forms\Components\Select::make('country_of_origin')
                         ->options(config('countries'))
                         ->searchable()
-                        ->placeholder('Select Nationality')
+                        ->placeholder('Select Country of Origin')
                         ->required()
-                        ->label('Nationality'),
+                        ->label('Country of Origin'),
                     FileUpload::make('warrant')
                         ->label("Upload Warrant")
                         ->acceptedFileTypes(['application/pdf'])
