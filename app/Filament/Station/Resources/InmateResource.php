@@ -387,7 +387,7 @@ class InmateResource extends Resource
                     ->hidden(fn(Get $get): bool => $get('previous_conviction') !== 'yes')
                     ->placeholder('Enter Previous Offence'),
                     Select::make('previous_station_id')
-                    ->label('Station Transferred From')
+                    ->label('Previous Station')
                     ->hidden(fn(Get $get): bool => $get('previous_conviction') !== 'yes')
                     ->required(fn(Get $get): bool => $get('previous_conviction') === 'yes')
                     ->placeholder('Select Previous Station')
