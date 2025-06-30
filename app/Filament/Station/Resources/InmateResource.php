@@ -480,6 +480,8 @@ class InmateResource extends Resource
                     ->label('Profile')
                     ->icon('heroicon-o-user'),
                 Action::make('Transfer')->icon('heroicon-o-arrow-right-on-rectangle'),
+                Action::make('Special Discharge')->icon('heroicon-o-arrow-right-on-rectangle'),
+                Action::make('Transfer')->icon('heroicon-o-arrow-right-on-rectangle'),
                 Action::make('Additional Sentence')->icon('heroicon-o-plus-circle'),
                 Action::make('Amnesty')->icon('heroicon-o-sparkles'),
                 Action::make('Sentence Reduction')->icon('heroicon-o-arrow-trending-down'),
