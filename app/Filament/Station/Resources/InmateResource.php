@@ -487,19 +487,12 @@ class InmateResource extends Resource
                 Tables\Actions\ViewAction::make()
                     ->label('Profile')
                     ->icon('heroicon-o-user'),
-                Action::make('Transfer')->icon('heroicon-o-arrow-right-on-rectangle')
-                    ->hidden(fn($record) => in_array($record->sentence, ['life', 'death'])),
-                Action::make('Special Discharge')->icon('heroicon-o-arrow-right-on-rectangle')
-                    ->hidden(fn($record) => in_array($record->sentence, ['life', 'death'])),
-                Action::make('Transfer')
-                    ->hidden(fn($record) => $record->sentence == 'life')
-                    ->icon('heroicon-o-arrow-right-on-rectangle'),
-                Action::make('Additional Sentence')->icon('heroicon-o-plus-circle')
-                    ->hidden(fn($record) => in_array($record->sentence, ['life', 'death'])),
-                Action::make('Amnesty')->icon('heroicon-o-sparkles')
-                    ->hidden(fn($record) => in_array($record->sentence, ['life', 'death'])),
+                Action::make('Transfer')->icon('heroicon-o-arrow-right-on-rectangle'),
+                Action::make('Special Discharge')->icon('heroicon-o-arrow-right-on-rectangle'),
+                Action::make('Transfer')->icon('heroicon-o-arrow-right-on-rectangle'),
+                Action::make('Additional Sentence')->icon('heroicon-o-plus-circle'),
+                Action::make('Amnesty')->icon('heroicon-o-sparkles'),
                 Action::make('Sentence Reduction')
-                    ->hidden(fn($record) => in_array($record->sentence, ['life', 'death']))
                     ->icon('heroicon-o-arrow-trending-down'),
                 SecureEditAction::make('edit', 'filament.station.resources.inmates.edit')
                     ->modalWidth('md')
