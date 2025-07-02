@@ -15,7 +15,9 @@ return new class extends Migration
         Schema::create('inmates', function (Blueprint $table) {
             $table->id();
             $table->string('prisoner_picture')->nullable();
-            $table->string('serial_number')->unique();
+            $table->string('serial_number')
+                ->nullable()
+                ->unique();
             $table->string('full_name');
             $table->enum('gender', ['male', 'female']);
             $table->enum('married_status', ['single', 'married', 'divorced', 'widowed'])->nullable();
@@ -32,8 +34,10 @@ return new class extends Migration
             $table->foreignId('station_id')->nullable()->constrained('stations');
             $table->foreignId('cell_id')->nullable()->constrained('cells');
             $table->string('court_of_committal')->nullable();
-            $table->date('EPD');
-            $table->date('LPD');
+            $table->date('EPD')
+                ->nullable();
+            $table->date('LPD')
+                ->nullable();
             $table->string('next_of_kin_name')->nullable();
             $table->string('next_of_kin_relationship')->nullable();
             $table->string('next_of_kin_contact')->nullable();
@@ -57,7 +61,7 @@ return new class extends Migration
             $table->boolean('transferred_out')->nullable();
             $table->integer('station_transferred_to_id')->nullable();
             $table->date('date_transferred_out')->nullable();
-            $table->json('warrant_document')->nullable();
+            $table->string('warrant_document')->nullable();
             $table->json('disability_type')->nullable();
             $table->json('goaler_document')->nullable();
             $table->timestamps();

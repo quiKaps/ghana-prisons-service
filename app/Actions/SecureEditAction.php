@@ -35,7 +35,7 @@ class SecureEditAction extends Action
                 }
 
                 return redirect()->route(
-                    $routeName ?? 'filament.admin.resources.remand-trials.edit',
+                $routeName,
                     ['record' => $record]
                 );
             });
