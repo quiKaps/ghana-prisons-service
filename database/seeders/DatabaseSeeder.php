@@ -28,14 +28,6 @@ class DatabaseSeeder extends Seeder
         // Seed the database with station-related data
         $this->call(StationSeeder::class);
         Cell::factory(1000)->create();
-        $batchSize = 1000; // Number of records per batch
-        $totalRecords = 50000; // Total number of records to create
-
-        for ($i = 0; $i < $totalRecords / $batchSize; $i++) {
-            Inmate::factory($batchSize)->create();
-            //generate 1k remand and trial inmates
-            RemandTrial::factory(1000)->create();
-        }
 
         User::factory()->create([
             'name' => fake()->name(),
@@ -46,5 +38,13 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ]);
+        $batchSize = 1000; // Number of records per batch
+        $totalRecords = 50000; // Total number of records to create
+
+        for ($i = 0; $i < $totalRecords / $batchSize; $i++) {
+            Inmate::factory($batchSize)->create();
+            //generate 1k remand and trial inmates
+            RemandTrial::factory($batchSize)->create();
+        }
     }
 }

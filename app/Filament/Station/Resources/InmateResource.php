@@ -68,16 +68,16 @@ class InmateResource extends Resource
                     ->schema([
                     Group::make()
                     ->schema([
-                        FileUpload::make('photo')
+                        FileUpload::make('prisoner_picture')
                             ->label('Prisoner Photo')
-                                    ->placeholder("Upload Prisoner's Photo")
+                            ->placeholder("Upload Prisoner's Picture")
                                     ->visibility('public')
                             ->previewable()
                             ->downloadable()
                                     ->image()
                             ->acceptedFileTypes(['image/png', 'image/jpg', 'image/jpeg'])
                                     ->openable()
-                            ->uploadingMessage('Uploading photo...')->columnSpan(1)
+                            ->uploadingMessage('Uploading picture...')->columnSpan(1)
                             ])->columns(2)
                     ])->columnSpanFull(),
                 Forms\Components\TextInput::make('serial_number')
@@ -180,20 +180,20 @@ class InmateResource extends Resource
                 ->description('Please provide the transfer-in information of the prisoner.')
                 ->columns(3)
                 ->schema([
-                    Forms\Components\Radio::make('transferred_inmate')
+                Forms\Components\Radio::make('transferred_in')
                         ->label('Transferred Inmate')
-                        ->default('0')
+                    ->default(0)
                         ->columns(2)
                         ->live()
                         ->options([
-                            '1' => 'Yes',
-                            '0' => 'No',
+                    1 => 'Yes',
+                    0 => 'No',
                         ]),
-                    Select::make('transferred_from_station_id')
+                Select::make('station_transferred_from_id')
                     ->label('Station Transferred From')
                     ->placeholder('Select Station Transferred From')
-                        ->required(fn(Get $get): bool => $get('transferred_inmate') === '1')
-                        ->hidden(fn(Get $get): bool => $get('transferred_inmate') !== '1')
+                    ->required(fn(Get $get): bool => $get('transferred_in') === 1)
+                    ->hidden(fn(Get $get): bool => $get('transferred_in') !== 1)
                         ->options(
                             fn() => Station::withoutGlobalScopes()
                                 ->where('id', '!=', auth()->user()->station_id)
@@ -201,10 +201,10 @@ class InmateResource extends Resource
                                 ->toArray()
                         )
                         ->searchable(),
-                    DatePicker::make('date_of_transfer')
+                DatePicker::make('date_transferred_in')
                         ->label('Transferred Date')
-                        ->required(fn(Get $get): bool => $get('transferred_inmate') === '1')
-                        ->hidden(fn(Get $get): bool => $get('transferred_inmate') !== '1')
+                    ->required(fn(Get $get): bool => $get('transferred_in') === 1)
+                    ->hidden(fn(Get $get): bool => $get('transferred_in') !== 1)
                         ->placeholder('Select Transferred Date')
                         ->maxDate(now()),
 
@@ -216,18 +216,18 @@ class InmateResource extends Resource
                 Forms\Components\Radio::make('disability')
                     ->label('Disability?')
                     ->live()
-                    ->default('0')
+                    ->default(0)
                     ->options([
-                        '1' => 'Yes',
-                        '0' => 'No',
+                    1 => 'Yes',
+                    0 => 'No',
                     ])
                     ->inline(),
                 Forms\Components\CheckboxList::make('disability_type')
                     ->label('Disability Type')
                     ->columns(2)
-                    ->required(fn(Get $get): bool => $get('disability') === '1')
+                    ->required(fn(Get $get): bool => $get('disability') === 1)
                     ->live()
-                    ->hidden(fn(Get $get): bool => $get('disability') === '0')
+                    ->hidden(fn(Get $get): bool => $get('disability') === 0)
                     ->options([
                         'hearing impairment' => 'Hearing Impairment',
                         'visual impairment' => 'Visual Impairment',
@@ -324,9 +324,8 @@ class InmateResource extends Resource
                 ->description('Please provide the distinctive body marks information of the prisoner.')
                 ->columns(3)
                 ->schema([
-                CheckboxList::make('distinctive_marks')
+                Select::make('distinctive_marks')
                     ->label('Distinctive Marks')
-                    ->columns(3)
                     ->live()
                     ->options([
                         'scars' => 'Scars',
@@ -353,10 +352,10 @@ class InmateResource extends Resource
                         ->inline()
                         ->live()
                         ->inlineLabel(false)
-                        ->options([
-                            'yes' => 'Yes',
-                            'no' => 'No',
-                        ])
+                    ->options([
+                    1 => 'Yes',
+                    0 => 'No',
+                ])
                         ->required(),
                     FileUpload::make('goaler_document')
                         ->label('Goaler Document')
@@ -365,14 +364,14 @@ class InmateResource extends Resource
                         ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
                         ->openable()
                         ->uploadingMessage('Uploading goaler document...')
-                        ->hidden(fn(Get $get): bool => $get('goaler') !== 'yes'),
+                    ->hidden(fn(Get $get): bool => $get('goaler') !== 1),
                     ]),
 
             Section::make('Previous Conviction')
                 ->description('Please provide the previous conviction information of the prisoner.')
                 ->columns(3)
                 ->schema([
-                Radio::make('previous_conviction')
+                Radio::make('previously_convicted')
                     ->label('Previous Conviction')
                     ->default('no')
                     ->inline()
@@ -380,25 +379,25 @@ class InmateResource extends Resource
                     ->columnSpanFull()
                     ->inlineLabel(false)
                     ->options([
-                        'yes' => 'Yes',
-                        'no' => 'No',
+                    1 => 'Yes',
+                    0 => 'No',
                     ])
                     ->required(),
                 TextInput::make('previous_sentence')
                         ->label('Previous Sentence')
                         ->placeholder('Enter Previous Sentence')
                         ->maxLength(255)
-                    ->hidden(fn(Get $get): bool => $get('previous_conviction') !== 'yes')
-                    ->required(fn(Get $get): bool => $get('previous_conviction') === 'yes'),
-                    TextInput::make('previous_conviction_id')
+                    ->hidden(fn(Get $get): bool => $get('previous_conviction') !== 1)
+                    ->required(fn(Get $get): bool => $get('previous_conviction') === 1),
+                TextInput::make('previous_offence')
                         ->label('Previous Offence')
-                    ->required(fn(Get $get): bool => $get('previous_conviction') === 'yes')
-                    ->hidden(fn(Get $get): bool => $get('previous_conviction') !== 'yes')
+                    ->required(fn(Get $get): bool => $get('previous_conviction') === 1)
+                    ->hidden(fn(Get $get): bool => $get('previous_conviction') !== 1)
                     ->placeholder('Enter Previous Offence'),
                     Select::make('previous_station_id')
                     ->label('Previous Station')
-                    ->hidden(fn(Get $get): bool => $get('previous_conviction') !== 'yes')
-                    ->required(fn(Get $get): bool => $get('previous_conviction') === 'yes')
+                    ->hidden(fn(Get $get): bool => $get('previous_conviction') !== 1)
+                    ->required(fn(Get $get): bool => $get('previous_conviction') === 1)
                     ->placeholder('Select Previous Station')
                         ->options(
                             fn() => Station::withoutGlobalScopes()
@@ -484,7 +483,8 @@ class InmateResource extends Resource
                 Action::make('Transfer')->icon('heroicon-o-arrow-right-on-rectangle'),
                 Action::make('Additional Sentence')->icon('heroicon-o-plus-circle'),
                 Action::make('Amnesty')->icon('heroicon-o-sparkles'),
-                Action::make('Sentence Reduction')->icon('heroicon-o-arrow-trending-down'),
+                Action::make('Sentence Reduction')
+                    ->icon('heroicon-o-arrow-trending-down'),
                 SecureEditAction::make('edit', 'filament.admin.resources.inmates.edit')
                     ->modalWidth('md')
                     ->modalHeading('Protected Data Access')

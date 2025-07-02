@@ -25,7 +25,6 @@ class InmateFactory extends Factory
             'gender' => $this->faker->randomElement(['male', 'female']),
             'married_status' => $this->faker->randomElement(['single', 'married', 'divorced', 'widowed']),
             'age_on_admission' => $this->faker->numberBetween(18, 80),
-            'date_of_birth' => $this->faker->date(),
             'offence' => $this->faker->randomElement([
                 'assault',
                 'causing_harm',
@@ -43,35 +42,49 @@ class InmateFactory extends Factory
             'admission_date' => $this->faker->date(),
             'date_sentenced' => $this->faker->date(),
             'previously_convicted' => $this->faker->boolean(),
+            'previous_sentence' => $this->faker->numberBetween(1, 40),
+            'previous_offence' => $this->faker->sentence(1),
+            'previous_station_id' => Station::inRandomOrder()->first()->id,
             'station_id' => Station::inRandomOrder()->first()->id, // Foreign key from database
             'cell_id' => Cell::inRandomOrder()->first()->id,       // Foreign key from database
             'court_of_committal' => $this->faker->city,
             'EPD' => $this->faker->dateTimeBetween('tomorrow', '+5 years')->format('Y-m-d'),
             'LPD' => $this->faker->dateTimeBetween('tomorrow', '+10 years')->format('Y-m-d'),
-            'photo' => $this->faker->imageUrl(),
-            'fingerprint' => Str::random(20),
-            'signature' => Str::random(20),
+            'prisoner_picture' => $this->faker->imageUrl(),
             'next_of_kin_name' => $this->faker->name,
             'next_of_kin_relationship' => $this->faker->randomElement(['spouse', 'parent', 'sibling', 'friend']),
             'next_of_kin_contact' => $this->faker->phoneNumber,
-            'medical_conditions' => json_encode($this->faker->randomElements(['Diabetes', 'Hypertension', 'None'], 2)),
-            'allergies' => json_encode($this->faker->randomElements(['Peanuts', 'Seafood', 'None'], 2)),
             'religion' => $this->faker->randomElement(['Christianity', 'Islam', 'Hinduism', 'Atheist']),
             'nationality' => $this->faker->country,
             'education_level' => $this->faker->randomElement(['no_formal', 'primary', 'secondary', 'tertiary']),
             'occupation' => $this->faker->jobTitle,
             'hometown' => $this->faker->city,
             'tribe' => $this->faker->word,
-            'distinctive_marks' => $this->faker->sentence(3),
+            // Using json_encode to store arrays as JSON strings for database compatibility
+            'distinctive_marks' => json_encode($this->faker->randomElements(
+                ['Tribal Mark', 'Scar', 'Tattoo', 'Birthmark', 'Burn', 'Mole', 'Missing Finger', 'Amputation', 'Piercing', 'None'],
+                2
+            )),
+            // Using json_encode to store arrays as JSON strings for database compatibility
             'languages_spoken' => json_encode($this->faker->randomElements(['English', 'French', 'Spanish', 'None'], 2)),
             'disability' => $this->faker->boolean(),
-            'disability_type' => $this->faker->optional()->word,
+            'disability_type' => json_encode($this->faker->randomElements([
+                'Visual impairment',
+                'Hearing impairment',
+                'Physical disability',
+                'Intellectual disability',
+                'Mental health condition',
+                'Speech impairment',
+                'Learning disability',
+                'Chronic illness',
+                'Others'
+            ], 2)),
             'police_name' => $this->faker->name,
             'police_station' => $this->faker->city,
             'police_contact' => $this->faker->phoneNumber,
             'goaler' => $this->faker->boolean(),
-            'goaler_document' => $this->faker->optional()->word,
-            'warrant_document' => $this->faker->optional()->word,
+
+
         ];
     }
 }
