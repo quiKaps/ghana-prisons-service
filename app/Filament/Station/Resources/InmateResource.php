@@ -360,48 +360,55 @@ class InmateResource extends Resource
                 ->description('Please provide the previous conviction information of the prisoner.')
                 ->columnSpanFull()
                 ->schema([
-                    Repeater::make('members')
-                        ->label('Previous Conviction Information')
-                        ->defaultItems(1)
+                Radio::make('previously_convicted')
+                    ->label('Previous Conviction')
+                    ->default(0)
+                    ->inline()
+                    ->live()
+                    ->columnSpanFull()
+                    ->inlineLabel(false)
+                    ->options([
+                        1 => 'Yes',
+                        0 => 'No',
+                    ])
+                    ->required(),
+
+
+                ]),
+            Repeater::make('previous_convictions')
+                ->addActionLabel('Add Previous Conviction Details')
+                ->defaultItems(1)
+                ->columnSpanFull()
+                ->hidden(fn(Get $get): bool => $get('previously_convicted') != 1)
+                ->schema([
+                    Group::make()
+                        ->columns(3)
                         ->schema([
-                            Radio::make('previously_convicted')
-                                ->label('Previous Conviction')
-                        ->default(0)
-                        ->inline()
-                        ->live()
-                        ->columnSpanFull()
-                        ->inlineLabel(false)
-                        ->options([
-                            1 => 'Yes',
-                            0 => 'No',
-                        ])
-                        ->required(),
                     TextInput::make('previous_sentence')
                         ->label('Previous Sentence')
                         ->placeholder('Enter Previous Sentence')
                         ->maxLength(255)
-                        ->hidden(fn(Get $get): bool => $get('previously_convicted') != 1)
-                        ->required(fn(Get $get): bool => $get('previously_convicted') == 1),
+                        ->columnSpan(1)
+                        ->required(),
                     TextInput::make('previous_offence')
                         ->label('Previous Offence')
-                        ->required(fn(Get $get): bool => $get('previously_convicted') == 1)
-                        ->hidden(fn(Get $get): bool => $get('previously_convicted') != 1)
+                        ->required()
+                        ->columnSpan(1)
                         ->placeholder('Enter Previous Offence'),
                     Select::make('previous_station_id')
                         ->label('Previous Station')
-                        ->hidden(fn(Get $get): bool => $get('previously_convicted') != 1)
-                        ->required(fn(Get $get): bool => $get('previously_convicted') == 1)
+                        ->required()
+                        ->columnSpan(1)
                         ->placeholder('Select Previous Station')
                         ->options(
                             fn() => Station::withoutGlobalScopes()
                             ->where('id', '!=', (auth()->user()?->station_id ?? null))
+                            ->where('category', (auth()->user()?->station?->category))
                                 ->pluck('name', 'id')
                                 ->toArray()
                         )
                         ->searchable(),
-                    ])
-                    ->columns(2)
-                    ->itemLabel(fn(array $state): ?string => $state['name'] ?? null),
+                ])
                 ]),
 
             Section::make('Police Information')

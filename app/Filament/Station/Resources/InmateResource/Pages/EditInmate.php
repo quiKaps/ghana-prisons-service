@@ -17,24 +17,46 @@ class EditInmate extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
-            ViewAction::make()
-                ->label('Profile')
-                ->color('primary')
-                ->icon('heroicon-o-user'),
-            Action::make('Transfer')
-                ->color('info')
-                ->icon('heroicon-o-arrow-right-on-rectangle'),
-            Action::make('Additional Sentence')
-                ->color('green')
-                ->icon('heroicon-o-plus-circle'),
-            Action::make('Amnesty')
-                ->color('warning')
-                ->icon('heroicon-o-sparkles'),
-            Action::make('Sentence Reduction')
-                ->label('Sentence Reduction')
-                ->color('purple')
-                ->icon('heroicon-o-arrow-trending-down'),
+            Action::make('back')
+                ->label('Back to Convicts')
+                ->color('success')
+                ->icon('heroicon-o-arrow-left')
+                ->url(InmateResource::getUrl('index')),
+
+            Action::make('view')
+                ->label('View Profile')
+                ->icon('heroicon-o-user')
+                ->url(fn() => InmateResource::getUrl('view', ['record' => $this->getRecord()]))
+                ->color('blue'),
+
+            Actions\DeleteAction::make()
+                ->label('Delete')
+                ->icon('heroicon-o-trash')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->form([
+                    \Filament\Forms\Components\TextInput::make('password')
+                        ->label('Confirm Password')
+                        ->placeholder('Enter your password')
+                        ->password()
+                        ->required(),
+                ])
+                ->action(function (array $data, $record) {
+                    if (! \Illuminate\Support\Facades\Hash::check($data['password'], auth()->user()->password)) {
+                        \Filament\Notifications\Notification::make()
+                            ->title('Incorrect Password')
+                            ->danger()
+                            ->body('You must confirm your password to delete this record.')
+                            ->send();
+                        return;
+                    }
+                    $record->delete();
+
+                    \Filament\Notifications\Notification::make()
+                        ->success()
+                        ->title('Record Deleted')
+                        ->send();
+                }),
         ];
     }
 

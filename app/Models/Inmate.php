@@ -61,6 +61,7 @@ class Inmate extends Model
         'police_contact',
         'station_id',
         'gender',
+        'previous_convictions'
     ];
 
     protected $casts = [
@@ -71,6 +72,7 @@ class Inmate extends Model
         'admission_date' => 'date',
         'date_sentenced' => 'date',
         'goaler_document' => 'array',
+        'previous_convictions' => 'array',
     ];
 
 

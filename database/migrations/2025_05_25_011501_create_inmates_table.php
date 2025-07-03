@@ -64,6 +64,7 @@ return new class extends Migration
             $table->string('warrant_document')->nullable();
             $table->json('disability_type')->nullable();
             $table->json('goaler_document')->nullable();
+            $table->json('previous_convictions')->nullable();
             $table->timestamps();
         });
     }
