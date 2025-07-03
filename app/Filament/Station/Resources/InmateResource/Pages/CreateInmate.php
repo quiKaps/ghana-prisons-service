@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Session;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Station\Resources\InmateResource;
+use App\Helpers\FormHelper;
 
 class CreateInmate extends CreateRecord
 {
@@ -32,16 +33,11 @@ class CreateInmate extends CreateRecord
         //add gender from station type
         $data['gender'] = $user->station?->type === 'female' ? 'female' : 'male';
 
-        $data['medical_conditions'] = json_encode($data['medical_conditions'] ?? []);
-        $data['allergies'] = json_encode($data['allergies'] ?? []);
         $data['languages_spoken'] = json_encode($data['languages_spoken'] ?? []);
+        // Ensure disability is boolean
         $data['disability'] = (bool) $data['disability'];
 
-        $data['goaler_document'] = empty($data['goaler_document']) ? null : $data['goaler_document'];
-        $data['warrant_document'] = empty($data['warrant_document']) ? null : $data['warrant_document'];
-        //$data['goaler'] = (bool) $data['goaler'];
-
-        // Debugging line to inspect the data before creation
+        $data['goaler'] = (bool) $data['goaler'];
 
         return $data;
     }

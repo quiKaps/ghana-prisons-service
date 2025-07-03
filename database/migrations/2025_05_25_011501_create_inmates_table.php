@@ -20,7 +20,7 @@ return new class extends Migration
                 ->unique();
             $table->string('full_name');
             $table->enum('gender', ['male', 'female']);
-            $table->enum('married_status', ['single', 'married', 'divorced', 'widowed'])->nullable();
+            $table->enum('married_status', ['single', 'married', 'divorced', 'widowed', 'separated'])->nullable();
             $table->integer('age_on_admission')->unsigned();
             //$table->date('date_of_birth')->nullable();
             $table->longText('offence');

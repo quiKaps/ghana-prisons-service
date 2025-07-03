@@ -34,7 +34,8 @@ class Inmate extends Model
         'transferred_in',
         'station_transferred_from_id',
         'date_transferred_in',
-        'disability_type_other',
+        'disability',
+        'disability_type',
         'tribe',
         'languages_spoken',
         'hometown',
@@ -65,9 +66,11 @@ class Inmate extends Model
     protected $casts = [
         'distinctive_marks' => 'array',
         'languages_spoken' => 'array',
+        'disability_type' => 'array',
         'disability' => 'boolean',
         'admission_date' => 'date',
         'date_sentenced' => 'date',
+        'goaler_document' => 'array',
     ];
 
 

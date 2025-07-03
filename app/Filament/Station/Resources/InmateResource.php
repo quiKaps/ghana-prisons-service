@@ -18,20 +18,15 @@ use App\Actions\SecureEditAction;
 use App\Actions\SecureDeleteAction;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Radio;
-use Illuminate\Support\Facades\Date;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\Session;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Tables\Actions\DeleteAction;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\CheckboxList;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Station\Resources\InmateResource\Pages;
-use App\Filament\Station\Resources\InmateResource\RelationManagers;
 
 class InmateResource extends Resource
 
@@ -54,7 +49,7 @@ class InmateResource extends Resource
         $remand = null;
 
         if (Session::has('remand_id')) {
-            $remand = RemandTrial::find(Session::pull('remand_id')); // 👈 pull instead of get
+            $remand = RemandTrial::find(Session::pull('remand_id')); // 👈 pull prisoner on trial id form sessiin
             if ($remand) {
                 Session::put('used_remand_id', $remand->id); // temporarily store it again for afterCreate
             }
@@ -168,9 +163,10 @@ class InmateResource extends Resource
                         ->columnSpan(2)
                         ->placeholder('Upload Warrant Document')
                         ->visibility('private')
-                        ->multiple()
                         ->acceptedFileTypes(['application/pdf'])
-                        ->openable()
+                        ->downloadable()
+                        ->helperText('Only PDF files are allowed for upload.')
+                        ->previewable()
                                 ->uploadingMessage('Uploading warrant document...'),
                         ])->columnSpanFull()
                         ->columns(3),
@@ -211,36 +207,29 @@ class InmateResource extends Resource
                 ]),
             Section::make('Disability Information')
                 ->description('Please provide the disability information of the prisoner.')
-                ->columns(3)
+                ->columns(2)
                 ->schema([
                 Forms\Components\Radio::make('disability')
                     ->label('Disability?')
-                    ->live()
-                    ->default(0)
-                    ->options([
-                    1 => 'Yes',
-                    0 => 'No',
-                    ])
-                    ->inline(),
-                Forms\Components\CheckboxList::make('disability_type')
-                    ->label('Disability Type')
+                    ->default(fn($record) => $record?->disability ?? false)
                     ->columns(2)
-                    ->required(fn(Get $get): bool => $get('disability') == 1)
                     ->live()
-                    ->hidden(fn(Get $get): bool => $get('disability') == 0)
                     ->options([
+                        true => 'Yes',
+                        false => 'No',
+                    ]),
+                TagsInput::make('disability_type')
+                    ->hidden(fn(Get $get): bool => $get('disability') == false)
+                    ->required(fn(Get $get): bool => $get('disability') == true)
+                    ->placeholder('Select or Enter Disability Type')
+                    ->helperText('Press enter after typing to add a disability type.')
+                    ->label('Disability Type')
+                    ->suggestions([
                         'hearing impairment' => 'Hearing Impairment',
                         'visual impairment' => 'Visual Impairment',
                         'speaking impairment' => 'Speaking Impairment',
-                        'mobility impairment' => 'Mobility Impairment',
-                        'others' => 'Others',
+                    'mobility impairment' => 'Mobility Impairment',
                     ]),
-                Forms\Components\TextInput::make('disability_type_other')
-                    ->label('Other Disability Type')
-                    ->placeholder('Enter Other Disability Type')
-                    ->hidden(fn(Get $get): bool => !in_array('others', (array) $get('disability_type')))
-                    ->required(fn(Get $get): bool => $get('disability') == 1),
-
                 ]),
             Section::make('Social Background')
                 ->description('Please provide the social background information of the prisoner.')
@@ -294,6 +283,12 @@ class InmateResource extends Resource
                         'no_religion' => 'No Religion',
                     ]),
 
+                TextInput::make('religion_other')
+                    ->label('Other Religion')
+                    ->placeholder('Enter Other Religion')
+                    ->hidden(fn(Get $get): bool => !in_array('other_religion', (array) $get('religion')))
+                    ->required(fn(Get $get): bool => $get('religion') == 'other_religion'),
+
                 Forms\Components\TextInput::make('occupation')
                     ->label('Occupation')
                     ->placeholder('Enter Occupation')
@@ -301,19 +296,9 @@ class InmateResource extends Resource
                 Forms\Components\TextInput::make('next_of_kin_name')
                     ->label('Name of Next of Kin')
                     ->placeholder('eg. Nana Kwame'),
-                Forms\Components\Select::make('next_of_kin_relationship')
+                Forms\Components\TextInput::make('next_of_kin_relationship')
                     ->label('Next of Kin Relationship')
-                    ->placeholder('Select Relationship')
-                    ->options([
-                        'father' => 'Father',
-                        'mother' => 'Mother',
-                        'brother' => 'Brother',
-                        'sister' => 'Sister',
-                        'spouse' => 'Spouse',
-                        'child' => 'Child',
-                        'friend' => 'Friend',
-                        'other' => 'Other',
-                    ]),
+                    ->placeholder('eg. Brother, Sister, Spouse'),
                 Forms\Components\TextInput::make('next_of_kin_contact')
                     ->label('Contact of Next of Kin')
                     ->placeholder('Enter Contact of Next of Kin')
@@ -323,23 +308,23 @@ class InmateResource extends Resource
 
             Section::make('Distinctive Body Marks')
                 ->description('Please provide the distinctive body marks information of the prisoner.')
-                ->columns(3)
+                ->columns(2)
                 ->schema([
-                Select::make('distinctive_marks')
+
+                TagsInput::make('distinctive_marks')
+                    ->helperText('Select all that apply')
                     ->label('Distinctive Marks')
-                    ->live()
-                    ->options([
+                    ->placeholder('Enter Distinctive Marks')
+                    ->suggestions([
                         'scars' => 'Scars',
                     'tribal_marks' => 'Tribal Marks',
                     'birthmarks' => 'Birthmarks',
                     'tattoos' => 'Tattoos',
                         'others' => 'Others',
                     ]),
-                Forms\Components\TextInput::make('distinctive_marks_other')
-                    ->label('Other Distinctive Marks')
-                    ->placeholder('Enter Other Distinctive Marks')
-                        ->hidden(fn(Get $get): bool => !in_array('others', (array) $get('distinctive_marks'))),
-                    Forms\Components\TextInput::make('part_of_the_body')
+
+                Forms\Components\TextInput::make('part_of_the_body')
+                    ->hidden(fn(Get $get): bool => empty($get('distinctive_marks')))
                         ->label('Part of the Body')
                         ->placeholder('Enter Part of the Body'),
                 ]),
@@ -366,6 +351,8 @@ class InmateResource extends Resource
                         ->visibility('private')
                         ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
                         ->openable()
+                    ->previewable()
+                    ->multiple()
                         ->uploadingMessage('Uploading goaler document...')
                         ->hidden(fn(Get $get): bool => $get('goaler') != 1),
                 ]),
