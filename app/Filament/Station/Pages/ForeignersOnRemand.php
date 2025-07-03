@@ -18,7 +18,7 @@ class ForeignersOnRemand extends Page implements \Filament\Tables\Contracts\HasT
 
     protected static string $view = 'filament.station.pages.foreigners-on-remand';
 
-    protected static ?string $navigationGroup = 'Remand and Trials';
+    protected static ?string $navigationGroup = 'Remands';
 
     protected static ?string $navigationLabel = 'Foreigners - Remand';
 

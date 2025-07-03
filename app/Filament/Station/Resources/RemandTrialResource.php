@@ -2,19 +2,20 @@
 
 namespace App\Filament\Station\Resources;
 
-use App\Filament\Station\Resources\RemandTrialResource\Pages;
-use App\Filament\Station\Resources\RemandTrialResource\RelationManagers;
-use App\Models\RemandTrial;
 use Filament\Forms;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\RemandTrial;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Group;
+use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Station\Resources\RemandTrialResource\Pages;
+use App\Filament\Station\Resources\RemandTrialResource\RelationManagers;
 
 class RemandTrialResource extends Resource
 {
@@ -49,8 +50,8 @@ class RemandTrialResource extends Resource
                                 ])->columns(2)
                         ])->columnSpan(2),
                     Forms\Components\TextInput::make('serial_number')
-                                    ->required()
-                                    ->unique(ignoreRecord: true)
+
+                        ->unique(ignoreRecord: true)
                                     ->placeholder('e.g. NSW/06/25')
                                     ->label('Serial Number'),
                     Forms\Components\TextInput::make('full_name')
@@ -85,6 +86,9 @@ class RemandTrialResource extends Resource
                             Forms\Components\Radio::make('gender')
                                 ->label('Gender')
                                 ->inline()
+                            ->disabled()
+                            ->default(Auth::user()->station?->category)
+                            ->dehydrated()
                                 ->inlineLabel(false)
                                 ->options([
                                     'male' => "Male",

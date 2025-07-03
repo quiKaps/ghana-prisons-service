@@ -22,7 +22,7 @@ class EscapeesOnRemand extends Page implements HasTable
 
     protected static string $view = 'filament.station.pages.escapees-on-remand';
 
-    protected static ?string $navigationGroup = 'Escapees';
+    protected static ?string $navigationGroup = 'Remands';
 
     protected static ?string $navigationLabel = 'Escape List - Remand';
 

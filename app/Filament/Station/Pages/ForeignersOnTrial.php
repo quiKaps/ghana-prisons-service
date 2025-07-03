@@ -26,7 +26,7 @@ class ForeignersOnTrial extends Page implements HasTable
 
     protected static string $view = 'filament.station.pages.foreigners-on-trial';
 
-    protected static ?string $navigationGroup = 'Remand and Trials';
+    protected static ?string $navigationGroup = 'Trials';
 
     protected static ?string $navigationLabel = 'Foreigners - Trial';
 

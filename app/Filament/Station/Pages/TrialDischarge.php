@@ -28,7 +28,7 @@ class TrialDischarge extends Page implements \Filament\Tables\Contracts\HasTable
 
     protected static ?string $model = DischargedInmates::class;
 
-    protected static ?string $navigationGroup = 'Remand and Trials';
+    protected static ?string $navigationGroup = 'Trials';
 
     public function table(Table $table): Table
     {

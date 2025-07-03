@@ -37,7 +37,7 @@ class Trials extends Page implements HasTable
 
     protected static ?string $model = RemandTrial::class;
 
-    protected static ?string $navigationGroup = 'Remand and Trials';
+    protected static ?string $navigationGroup = 'Trials';
 
 
     public function table(Table $table): Table

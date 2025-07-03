@@ -35,7 +35,7 @@ class InmateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationGroup = 'Inmate Management';
+    protected static ?string $navigationGroup = 'Convicts';
 
     protected static ?string $navigationLabel = 'Convicts List';
 
@@ -69,6 +69,7 @@ class InmateResource extends Resource
                             ->placeholder("Upload Prisoner's Picture")
                                     ->visibility('public')
                             ->previewable()
+                            ->default($remand?->picture)
                             ->downloadable()
                                     ->image()
                             ->acceptedFileTypes(['image/png', 'image/jpg', 'image/jpeg'])
@@ -102,6 +103,7 @@ class InmateResource extends Resource
                         ->required()
                         ->label('Offence')
                         ->live()
+                        ->default($remand?->offense)
                         ->placeholder('Select an Offence')
                         ->options([
                             'assault' => 'Assault',
@@ -146,6 +148,7 @@ class InmateResource extends Resource
                     Forms\Components\TextInput::make('court_of_committal')
                         ->label('Court of Committal')
                         ->required()
+                        ->default($remand?->court)
                         ->placeholder('Enter Court of Committal')
                         ->maxLength(255),
                     Forms\Components\Select::make('cell_id')
@@ -312,7 +315,7 @@ class InmateResource extends Resource
                 ->schema([
 
                 TagsInput::make('distinctive_marks')
-                    ->helperText('Select all that apply')
+                    ->helperText('Select all that apply or type and press ENTER when you are done')
                     ->label('Distinctive Marks')
                     ->placeholder('Enter Distinctive Marks')
                     ->suggestions([
@@ -336,7 +339,7 @@ class InmateResource extends Resource
                 ->schema([
                     Radio::make('goaler')
                         ->label('Goaler')
-                        ->default('no')
+                    ->default(0)
                         ->inline()
                         ->live()
                         ->inlineLabel(false)
@@ -418,16 +421,19 @@ class InmateResource extends Resource
                 [
                             Forms\Components\TextInput::make('police_name')
                                 ->required()
-                                ->label('Police Name')
+                        ->default($remand?->police_officer)
+                        ->label('Police Name')
                                 ->placeholder('Enter Police Officer Name'),
                             Forms\Components\TextInput::make('police_station')
                                 ->label('Police Station')
                                 ->required()
-                                ->placeholder('Enter Police Station')
+                        ->default($remand?->police_station)
+                        ->placeholder('Enter Police Station')
                                 ->maxLength(255),
                             Forms\Components\TextInput::make('police_contact')
                                 ->label('Police Contact')
-                                ->placeholder('Enter Police Contact'),
+                        ->default($remand?->police_contact)
+                        ->placeholder('Enter Police Contact'),
                         ]
                     )->columns(3),
 

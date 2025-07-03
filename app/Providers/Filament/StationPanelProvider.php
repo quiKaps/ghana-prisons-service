@@ -67,7 +67,7 @@ class StationPanelProvider extends PanelProvider
             NavigationItem::make('Convict Admission Form')
                     ->url(fn(): string => CreateInmate::getUrl())
                     ->icon('heroicon-o-user-plus')
-                    ->group('Inmate Management')
+                ->group('Convicts')
                     ->isActiveWhen(fn() => request()->url() === InmateResource::getUrl('create'))
                 ->sort(3),
                 NavigationItem::make('Add Users')

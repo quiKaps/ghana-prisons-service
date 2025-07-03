@@ -21,7 +21,7 @@ class Remand extends Page implements \Filament\Tables\Contracts\HasTable
 
     protected static string $view = 'filament.station.pages.remand';
 
-    protected static ?string $navigationGroup = 'Remand and Trials';
+    protected static ?string $navigationGroup = 'Remands';
 
     protected static ?string $navigationLabel = 'All Remands';
 

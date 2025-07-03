@@ -18,24 +18,47 @@ class ViewInmate extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            //back to convicts actions
             Action::make('back')
                 ->label('Back to Convicts')
                 ->color('success')
                 ->icon('heroicon-o-arrow-left')
                 ->url(InmateResource::getUrl('index')),
+            //back to all convicts actions
+
+            //print action starts
             Action::make('print')
                 ->label('Print Profile')
-                ->color('info')
+                ->color('warning')
                 ->icon('heroicon-o-printer'),
+            //print action ends
             ActionGroup::make([
-                Action::make('Transfer')->icon('heroicon-o-arrow-right-on-rectangle'),
-                Action::make('Special Discharge')->icon('heroicon-o-arrow-right-on-rectangle'),
-                Action::make('Additional Sentence')->icon('heroicon-o-plus-circle'),
-                Action::make('Amnesty')->icon('heroicon-o-sparkles'),
+                //transfer action starts
+                Action::make('Transfer')
+                    ->icon('heroicon-o-arrow-right-on-rectangle'),
+                //transfer action ends
+
+                //special discharge action starts
+                Action::make('Special Discharge')
+                    ->icon('heroicon-o-arrow-right-on-rectangle'),
+                //special discharge action ends
+
+                // additional sentence action starts
+                Action::make('Additional Sentence')
+                    ->icon('heroicon-o-plus-circle'),
+                //additional sentence action ends
+
+                //amnesty action ends
+                Action::make('Amnesty')
+                    ->icon('heroicon-o-sparkles'),
+                //amnesty action ends
+
+                //sentence reduction action starts
                 Action::make('Sentence Reduction')
                     ->icon('heroicon-o-arrow-trending-down'),
+                //sentence reduction action ends
 
-
+                //edit action starts
                 Actions\Action::make('edit')
                     ->label('Edit')
                     ->icon('heroicon-o-pencil-square')
@@ -64,7 +87,9 @@ class ViewInmate extends ViewRecord
                             ['record' => $record]
                         );
                     }),
+                //edit action ends
 
+                //delete action starts
                 Actions\DeleteAction::make()
                     ->label('Delete')
                     ->icon('heroicon-o-trash')
@@ -93,6 +118,7 @@ class ViewInmate extends ViewRecord
                             ->title('Record Deleted')
                             ->send();
                     }),
+                //delete action ends
             ])
                 ->button()
                 ->label('More Actions'),

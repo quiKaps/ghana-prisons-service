@@ -30,6 +30,8 @@ class ConvictDischargeResource extends Resource
 
     protected static ?string $navigationLabel = 'Convicts Discharge';
 
+    protected static ?string $navigationGroup = 'Convicts';
+
     protected static ?string $modelLabel = 'Convicts Discharge';
 
     protected ?string $subheading = 'List of inmates scheduled for discharge tomorrow';

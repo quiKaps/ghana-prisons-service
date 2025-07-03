@@ -26,7 +26,7 @@ class ConvictedForiegners extends Page implements \Filament\Tables\Contracts\Has
 
     protected static string $view = 'filament.station.resources.inmate-resource.pages.convicted-foriegners';
 
-    protected static ?string $navigationGroup = 'Trials';
+    protected static ?string $navigationGroup = 'Convicts';
 
     protected static ?string $navigationLabel = 'Foreigners - Convicts';
 

@@ -22,7 +22,7 @@ class EscapeesOnTrial extends Page implements HasTable
 
     protected static string $view = 'filament.station.pages.escapees-on-trial';
 
-    protected static ?string $navigationGroup = 'Escapees';
+    protected static ?string $navigationGroup = 'Trials';
 
     protected static ?string $navigationLabel = 'Escape List - Trial';
 

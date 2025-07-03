@@ -15,6 +15,7 @@ use App\Helpers\FormHelper;
 class CreateInmate extends CreateRecord
 {
     protected static string $resource = InmateResource::class;
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $user = Auth::user();
@@ -31,7 +32,7 @@ class CreateInmate extends CreateRecord
         $data['station_id'] = $user->station_id; // Current user station id
 
         //add gender from station type
-        $data['gender'] = $user->station?->type === 'female' ? 'female' : 'male';
+        $data['gender'] = $user->station?->category === 'female' ? 'female' : 'male';
 
         $data['languages_spoken'] = json_encode($data['languages_spoken'] ?? []);
         // Ensure disability is boolean
