@@ -12,10 +12,11 @@ use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\RemandTrial;
-use Filament\Actions\Action;
 use Filament\Resources\Resource;
 use App\Actions\SecureEditAction;
 use App\Actions\SecureDeleteAction;
+use Filament\Tables\Actions\Action;
+use Illuminate\Validation\Rules\In;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -24,6 +25,7 @@ use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\Session;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use App\Filament\Station\Resources\InmateResource\Pages;
@@ -419,18 +421,16 @@ class InmateResource extends Resource
                     ->columns(2)
                     ->schema(
                 [
-                            Forms\Components\TextInput::make('police_name')
-                                ->required()
+                    Forms\Components\TextInput::make('police_name')
                         ->default($remand?->police_officer)
                         ->label('Police Name')
                                 ->placeholder('Enter Police Officer Name'),
-                            Forms\Components\TextInput::make('police_station')
-                                ->label('Police Station')
-                                ->required()
+                    Forms\Components\TextInput::make('police_station')
+                        ->label('Police Station')
                         ->default($remand?->police_station)
                         ->placeholder('Enter Police Station')
                                 ->maxLength(255),
-                            Forms\Components\TextInput::make('police_contact')
+                    Forms\Components\TextInput::make('police_contact')
                                 ->label('Police Contact')
                         ->default($remand?->police_contact)
                         ->placeholder('Enter Police Contact'),
@@ -487,13 +487,336 @@ class InmateResource extends Resource
                 Tables\Actions\ViewAction::make()
                     ->label('Profile')
                     ->icon('heroicon-o-user'),
-                Action::make('Transfer')->icon('heroicon-o-arrow-right-on-rectangle'),
-                Action::make('Special Discharge')->icon('heroicon-o-arrow-right-on-rectangle'),
-                Action::make('Transfer')->icon('heroicon-o-arrow-right-on-rectangle'),
-                Action::make('Additional Sentence')->icon('heroicon-o-plus-circle'),
-                Action::make('Amnesty')->icon('heroicon-o-sparkles'),
-                Action::make('Sentence Reduction')
-                    ->icon('heroicon-o-arrow-trending-down'),
+
+                //transfer action
+                Action::make('transfer')
+                    ->label('Transfer')
+                    ->icon('heroicon-o-arrow-right-on-rectangle')
+                    ->color('success')
+                    ->fillForm(fn(Inmate $record): array => [
+                        'serial_number' => $record->serial_number,
+                        'full_name' => $record->full_name,
+                        'sentence' => $record->sentence,
+                        'offence' => $record->offence,
+                    ])->form([
+                        Group::make()
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('serial_number')
+                                    ->readOnly(),
+                                TextInput::make('full_name')
+                                    ->label("Prisoner's Name")
+                                    ->readonly(),
+                                TextInput::make('sentence')
+                                    ->label('Sentence')
+                                    ->readonly(),
+                                TextInput::make('offence')
+                                    ->label('Offence')
+                                    ->readonly(),
+                                DatePicker::make('date_of_transfer')
+                                    ->label('Date of Transfer')
+                                    ->default(now())
+                                    ->maxDate(now())
+                                    ->required(),
+                                Select::make('station_transferred_to_id')
+                                    ->label('Transfer To: (Station)')
+                                    ->required()
+                                    ->options(
+                                        fn() => Station::withoutGlobalScopes()
+                                            ->where('id', '!=', auth()->user()->station_id)
+                                            ->pluck('name', 'id')
+                                            ->toArray()
+                                    )
+                                    ->searchable(),
+                            ])
+
+                    ])
+
+                    ->modalHeading('Prisoner Transfer')
+                    ->modalSubmitActionLabel('Transfer Prisoner')
+                    ->action(function (array $data, Inmate $record): void {
+                        $record->author()->associate($data['authorId']);
+                        $record->save();
+                        Notification::make()
+                            ->success()
+                            ->title('Transfer Successful')
+                            ->body("The {$record->full_name} has been transferred.")
+                            ->send();
+                    }),
+                //transfer action end
+
+                // special discharge action
+                Action::make('special_discharge')
+                    ->label('Special Discharge')
+                    ->icon('heroicon-o-arrow-right-on-rectangle')
+                    ->color('info')
+                    ->fillForm(fn(Inmate $record): array => [
+                        'serial_number' => $record->serial_number,
+                        'full_name' => $record->full_name,
+                        'sentence' => $record->sentence,
+                        'offence' => $record->offence,
+                    ])->form([
+                        Group::make()
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('serial_number')
+                                    ->readOnly(),
+                                TextInput::make('full_name')
+                                    ->label("Prisoner's Name")
+                                    ->readonly(),
+                                TextInput::make('sentence')
+                                    ->label('Sentence')
+                                    ->readonly(),
+                                TextInput::make('offence')
+                                    ->label('Offence')
+                                    ->readonly(),
+                                Select::make('mode_of_discharge')
+                                    ->label('Mode of Discharge')
+                                    ->options([
+                                        'amnesty' => 'Amnesty',
+                                        'fine_paid' => 'Fine Paid',
+                                        'presidential_pardon' => 'Presidential Pardon',
+                                        'acquitted_and_discharged' => 'Acquitted and Discharged',
+                                        'bail_bond' => 'Bail Bond',
+                                        'reduction_of_sentence' => 'Reduction of Sentence',
+                                        'escape' => 'Escape',
+                                        'death' => 'Death',
+                                        'one_third_remission' => '1/3 Remission',
+                                        'other' => 'Other',
+                                    ])
+                                    ->required(),
+                                DatePicker::make('date_of_discharge')
+                                    ->label('Date of Discharge')
+                                    ->default(now())
+                                    ->maxDate(now())
+                                    ->required(),
+                                FileUpload::make('discharge_document')
+                                    ->label('Discharge Document')
+                                    ->placeholder('Upload Discharge Document')
+                                    ->visibility('private')
+                                    ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
+                                    ->openable()
+                                    ->previewable()
+                                    ->uploadingMessage('Uploading discharge document...'),
+
+                            ])
+
+                    ])
+
+                    ->modalHeading('Special Discharge')
+                    ->modalSubmitActionLabel('Discharge Prisoner')
+                    ->action(function (array $data, Inmate $record): void {
+                        $record->author()->associate($data['authorId']);
+                        $record->save();
+                        Notification::make()
+                            ->success()
+                            ->title('Discharge Successful')
+                            ->body("The {$record->full_name} has been discharged.")
+                            ->send();
+                    }),
+                // special discharge action end
+
+                //sentence reduction action
+                Action::make('sentence_reduction')
+                    ->label('Sentence Reduction')
+                    ->icon('heroicon-o-arrow-trending-down')
+                    ->color('success')
+                    ->fillForm(fn(Inmate $record): array => [
+                        'serial_number' => $record->serial_number,
+                        'full_name' => $record->full_name,
+                        'sentence' => $record->sentence,
+                        'offence' => $record->offence,
+                    ])->form([
+                        Group::make()
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('serial_number')
+                                    ->readOnly(),
+                                TextInput::make('full_name')
+                                    ->label("Prisoner's Name")
+                                    ->readonly(),
+                                TextInput::make('sentence')
+                                    ->label('Sentence')
+                                    ->readonly(),
+                                TextInput::make('offence')
+                                    ->label('Offence')
+                                    ->readonly(),
+                                TextInput::make('reduced_sentence')
+                                    ->label('Reduced Sentence')
+                                    ->placeholder('Enter Reduced Sentence')
+                                    ->required(),
+                                DatePicker::make('EPD')
+                                    ->label('EPD (Earliest Possible Date of Discharge)')
+                                    ->required(),
+                                DatePicker::make('LPD')
+                                    ->label('LPD (Latest Possible Date of Discharge)')
+                                    ->required(),
+                                FileUpload::make('reduction_document')
+                                    ->label('Upload Document')
+                                    ->placeholder('Upload Reduction Document')
+                                    ->visibility('private')
+                                    ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
+                                    ->openable()
+                                    ->previewable()
+                                    ->uploadingMessage('Uploading reduction document...'),
+                            ])
+
+                    ])
+
+                    ->modalHeading('Sentence Reduction')
+                    ->modalSubmitActionLabel('Reduce Sentence')
+                    ->action(function (array $data, Inmate $record): void {
+                        $record->author()->associate($data['authorId']);
+                        $record->save();
+                        Notification::make()
+                            ->success()
+                            ->title('Sentence Reduction Successful')
+                            ->body("The {$record->full_name} has had their sentence reduced.")
+                            ->send();
+                    }),
+                //sentence reduction action end
+
+                // additional sentence action
+                Action::make('additional_sentence')
+                    ->label('Additional Sentence')
+                    ->icon('heroicon-o-plus-circle')
+                    ->color('warning')
+                    ->fillForm(fn(Inmate $record): array => [
+                        'serial_number' => $record->serial_number,
+                        'full_name' => $record->full_name,
+
+                    ])->form([
+                        Group::make()
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('serial_number')
+                                    ->readOnly(),
+                                TextInput::make('full_name')
+                                    ->label("Prisoner's Name")
+                                    ->readonly(),
+                                TextInput::make('sentence')
+                                    ->label('Sentence')
+                                    ->required(),
+                                TextInput::make('offence')
+                                    ->label('Offence')
+                                    ->required(),
+                                TextInput::make('warrant')
+                                    ->label('Warrant')
+                                    ->placeholder('Enter Warrant')
+                                    ->required(),
+                                TextInput::make('total_sentence')
+                                    ->label('Total Sentence')
+                                    ->placeholder('Enter Total Sentence') //should be the sum of the current sentence and the additional sentence
+                                    ->required(),
+                                DatePicker::make('EPD')
+                                    ->label('EPD (Earliest Possible Date of Discharge)')
+                                    ->required(),
+                                DatePicker::make('LPD')
+                                    ->label('LPD (Latest Possible Date of Discharge)')
+                                    ->required(),
+                                FileUpload::make('reduction_document')
+                                    ->label('Upload Document')
+                                    ->placeholder('Upload Reduction Document')
+                                    ->visibility('private')
+                                    ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
+                                    ->openable()
+                                    ->previewable()
+                                    ->uploadingMessage('Uploading reduction document...'),
+                            ])
+
+                    ])
+
+                    ->modalHeading('Additional Sentence')
+                    ->modalSubmitActionLabel('Add Sentence')
+                    ->action(function (array $data, Inmate $record): void {
+                        $record->author()->associate($data['authorId']);
+                        $record->save();
+                        Notification::make()
+                            ->success()
+                            ->title('Additional Sentence Successful')
+                            ->body("The {$record->full_name} has had their additional sentence added.")
+                            ->send();
+                    }),
+                // additional sentence action end
+
+                // amnesty action
+                //this form is for convicts who are comdemned to death or life imprisonment only show for those inmates)
+
+                Action::make('amnesty')
+                    ->label('Amnesty')
+                    ->icon('heroicon-o-sparkles')
+                    ->color('red')
+                    ->fillForm(fn(Inmate $record): array => [
+                        'serial_number' => $record->serial_number,
+                        'full_name' => $record->full_name,
+                        'sentence' => $record->sentence,
+                        'offence' => $record->offence,
+
+                    ])->form([
+                        Group::make()
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('serial_number')
+                                    ->readOnly(),
+                                TextInput::make('full_name')
+                                    ->label("Prisoner's Name")
+                                    ->readonly(),
+                                TextInput::make('sentence')
+                                    ->label('Sentence')
+                                    ->required(),
+                                TextInput::make('offence')
+                                    ->label('Offence')
+                                    ->required(),
+                                Select::make('commutted_sentence')
+                                    ->label('Commutted Sentence')
+                                    ->live()
+                                    ->options([
+                                        'life' => 'Life',
+                                        '20_years' => '20 Years',
+                                        'others' => 'Others',
+                                    ])
+                                    ->required(),
+                                Select::make('commutted_by')
+                                    ->label('Commuted By')
+                                    ->options([
+                                        'amnesty' => 'Amnesty',
+                                        'others' => 'Others',
+                                    ]),
+                                DatePicker::make('EPD')
+                                    ->label('EPD (Earliest Possible Date of Discharge)')
+                                    ->required(fn(Get $get): bool => $get('commutted_sentence') == '20_years'),
+                                DatePicker::make('LPD')
+                                    ->label('LPD (Latest Possible Date of Discharge)')
+                                    ->required(fn(Get $get): bool => $get('commutted_sentence') == '20_years'),
+                                DatePicker::make('date_of_amnesty')
+                                    ->label('Date of Amnesty')
+                                    ->required()
+                                    ->default(now()),
+                                FileUpload::make('reduction_document')
+                                    ->label('Upload Document')
+                                    ->placeholder('Upload Reduction Document')
+                                    ->visibility('private')
+                                    ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
+                                    ->openable()
+                                    ->previewable()
+                                    ->uploadingMessage('Uploading reduction document...'),
+                            ])
+
+                    ])
+
+                    ->modalHeading('Convict Amnesty')
+                    ->modalSubmitActionLabel('Grant Amnesty')
+                    ->action(function (array $data, Inmate $record): void {
+                        $record->author()->associate($data['authorId']);
+                        $record->save();
+                        Notification::make()
+                            ->success()
+                            ->title('Convict Amnesty Successful')
+                            ->body("The {$record->full_name} has been granted amnesty.")
+                            ->send();
+                    }),
+                // amnesty action end
+
                 SecureEditAction::make('edit', 'filament.station.resources.inmates.edit')
                     ->modalWidth('md')
                     ->modalHeading('Protected Data Access')

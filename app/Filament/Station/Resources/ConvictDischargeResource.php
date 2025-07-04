@@ -28,11 +28,11 @@ class ConvictDischargeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationLabel = 'Convicts Discharge';
+    protected static ?string $navigationLabel = 'Convicts Discharged';
 
     protected static ?string $navigationGroup = 'Convicts';
 
-    protected static ?string $modelLabel = 'Convicts Discharge';
+    protected static ?string $modelLabel = 'Convicts Discharged';
 
     protected ?string $subheading = 'List of inmates scheduled for discharge tomorrow';
 

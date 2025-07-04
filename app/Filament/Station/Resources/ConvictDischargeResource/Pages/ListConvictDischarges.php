@@ -13,7 +13,7 @@ class ListConvictDischarges extends ListRecords
 {
     protected static string $resource = ConvictDischargeResource::class;
 
-
+    protected ?string $subheading = 'Manage and track discharged prisoners.';
 
     public function getTabs(): array
     {
@@ -22,15 +22,15 @@ class ListConvictDischarges extends ListRecords
 
 
         $counts = Inmate::whereIn('lpd', [$today, $tomorrow])
-            ->selectRaw('lpd, COUNT(*) as count')
-            ->groupBy('lpd')
+            ->selectRaw('epd, COUNT(*) as count')
+            ->groupBy('epd')
             ->pluck('count', 'lpd');
 
         return [
-            'Today' => Tab::make('Today')
-                ->modifyQueryUsing(fn(Builder $query) => $query->whereDate('lpd', $today))
+            'oneThirdRemission' => Tab::make('1/3rd Remission')
+                ->modifyQueryUsing(fn(Builder $query) => $query->whereDate('epd', $today))
                 ->badge(fn() => $counts->get($today, 0)),
-            'Incoming Discharge' => Tab::make('Incoming Discharge')
+            'special_discharge' => Tab::make('Special Discharge')
                 ->modifyQueryUsing(fn(Builder $query) => $query->whereDate('lpd', $tomorrow))
                 ->badge(fn() => $counts->get($tomorrow, 0)),
         ];
