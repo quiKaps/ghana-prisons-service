@@ -33,8 +33,8 @@ class ListInmates extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('goaler', true))
                 ->badge(Inmate::where('goaler', true)->count()),
             'Condemn' => Tab::make('Condemn')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('offence', 'condemn'))
-                ->badge(fn() => Inmate::where('offence', 'condemn')->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('sentence', 'death'))
+                ->badge(fn() => Inmate::where('sentence', 'death')->count()),
             'Manslaughter' => Tab::make('Manslaughter')
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('offence', 'manslaughter'))
                 ->badge(fn() => Inmate::where('offence', 'manslaughter')->count()),
@@ -42,8 +42,8 @@ class ListInmates extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('offence', 'murder'))
                 ->badge(fn() => Inmate::where('offence', 'murder')->count()),
             'Lifer' => Tab::make('Lifer')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('offence', 'lifer'))
-                ->badge(fn() => Inmate::where('offence', 'lifer')->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('sentence', 'life'))
+                ->badge(fn() => Inmate::where('sentence', 'life')->count()),
             'Others' => Tab::make('Others')
                 ->modifyQueryUsing(fn(Builder $query) => $query->whereNotIn('offence', [
                     'assault',
