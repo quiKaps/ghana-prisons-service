@@ -65,6 +65,7 @@ return new class extends Migration
             $table->json('disability_type')->nullable();
             $table->json('goaler_document')->nullable();
             $table->json('previous_convictions')->nullable();
+            $table->boolean('is_discharged')->default(false); // Indicates if the inmate has been discharged
             $table->timestamps();
         });
     }

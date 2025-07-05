@@ -61,7 +61,8 @@ class Inmate extends Model
         'police_contact',
         'station_id',
         'gender',
-        'previous_convictions'
+        'previous_convictions',
+        'is_discharged',
     ];
 
     protected $casts = [
@@ -115,19 +116,46 @@ class Inmate extends Model
         return $this->hasMany(Sentence::class);
     }
 
-    /**
-     * Get the inter cell transfers associated with the inmate.
-     */
-    public function interCellTransfers(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(InterCellTransfer::class);
-    }
+    // /**
+    //  * Get the inter cell transfers associated with the inmate.
+    //  */
+    // public function interCellTransfers(): \Illuminate\Database\Eloquent\Relations\HasMany
+    // {
+    //     return $this->hasMany(InterCellTransfer::class);
+    // }
 
     /**
      * Get the inter station transfers associated with the inmate.
      */
-    public function interStationTransfers(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function transfers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(InterStationTransfer::class);
+        return $this->hasMany(Transfer::class);
+    }
+
+    /**
+     * Check if the inmate was transferred out to a specific station.
+     *
+     * @param int $stationId
+     * @return bool
+     */
+    public function wasTransferredOut($stationId)
+    {
+        return $this->transfers()->where('from_station_id', $stationId)->exists();
+    }
+
+    /**
+     * Check if the inmate was transferred in from a specific station.
+     *
+     * @param int $stationId
+     * @return bool
+     */
+    public function wasTransferredIn($stationId)
+    {
+        return $this->transfers()->where('to_station_id', $stationId)->exists();
+    }
+
+    public function isDischarged(): bool
+    {
+        return $this->is_discharged;
     }
 }

@@ -19,6 +19,7 @@ use Filament\Tables\Actions\Action;
 use Illuminate\Validation\Rules\In;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Radio;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
@@ -28,6 +29,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Station\Resources\InmateResource\Pages;
 
 class InmateResource extends Resource
@@ -57,6 +59,7 @@ class InmateResource extends Resource
             }
         }
         return $form
+
             ->schema([
             Section::make("Penal Record")
                 ->description('Please provide the penal information of the prisoner.')
@@ -407,8 +410,8 @@ class InmateResource extends Resource
                         ->placeholder('Select Previous Station')
                         ->options(
                             fn() => Station::withoutGlobalScopes()
-                            ->where('id', '!=', (auth()->user()?->station_id ?? null))
-                            ->where('category', (auth()->user()?->station?->category))
+                            ->where('id', '!=', (Auth::user()?->station_id ?? null))
+                            ->where('category', (Auth::user()?->station?->category))
                                 ->pluck('name', 'id')
                                 ->toArray()
                         )
@@ -443,11 +446,12 @@ class InmateResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(
-                Inmate::query()
-                    ->whereDate('LPD', '!=', now()->toDateString())
-                    ->orderByDesc('created_at')
-            )
+            ->modifyQueryUsing(function (Builder $query) {
+
+                return $query->where('is_discharged', false)
+                    ->whereDate('EPD', '>=', now()->toDateString())
+                    ->orderByDesc('created_at');
+            })
             ->columns([
             Tables\Columns\TextColumn::make('serial_number')
                 ->label('Serial Number')
@@ -523,25 +527,50 @@ class InmateResource extends Resource
                                     ->required()
                                     ->options(
                                         fn() => Station::withoutGlobalScopes()
-                                            ->where('id', '!=', auth()->user()->station_id)
+                                ->where('id', '!=', Auth::user()->station_id)
                                             ->pluck('name', 'id')
                                             ->toArray()
                                     )
                                     ->searchable(),
-                            ])
-
+                        TextInput::make('reason')
+                            ->label('Reason for Transfer')
+                            ->placeholder('Enter reason for transfer')
+                            ->required(),
                     ])
-
+                ])
                     ->modalHeading('Prisoner Transfer')
                     ->modalSubmitActionLabel('Transfer Prisoner')
                     ->action(function (array $data, Inmate $record): void {
-                        $record->author()->associate($data['authorId']);
-                        $record->save();
+                    try {
+                        \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
+                            \App\Models\Transfer::create([
+                                'inmate_id' => $record->id,
+                                'from_station_id' => Auth::user()->station_id,
+                                'to_station_id' => $data['station_transferred_to_id'],
+                                'transfer_date' => $data['date_of_transfer'],
+                                'status' => 'completed',
+                                'reason' => $data['reason'],
+                                'requested_by' => Auth::id(),
+                                'approved_by' => null,
+                                'rejected_by' => null,
+                            ]);
+                            $record->station_id = $data['station_transferred_to_id'];
+                            //if use online, i will have to set inmate transfered in as 1 and station transfered from
+                            $record->save();
+                        });
+
                         Notification::make()
                             ->success()
-                            ->title('Transfer Successful')
-                            ->body("The {$record->full_name} has been transferred.")
+                            ->title('Transfer Request Submitted')
+                            ->body("The transfer request for {$record->full_name} has been submitted.")
                             ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Transfer Failed')
+                            ->body('An error occurred: ' . $e->getMessage())
+                            ->send();
+                    }
                     }),
                 //transfer action end
 
@@ -606,13 +635,33 @@ class InmateResource extends Resource
                     ->modalHeading('Special Discharge')
                     ->modalSubmitActionLabel('Discharge Prisoner')
                     ->action(function (array $data, Inmate $record): void {
-                        $record->author()->associate($data['authorId']);
-                        $record->save();
+                    try {
+                        \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
+                            \App\Models\Discharge::create([
+                                'inmate_id' => $record->id,
+                                'discharge_type' => $data['mode_of_discharge'],
+                                'discharge_date' => $data['date_of_discharge'],
+                                //'reason' => $data['reason'],
+                                'discharge_document' => $data['discharge_document'],
+                                'discharged_by' => Auth::id(),
+                            ]);
+                            $record->is_discharged = true;
+                            //if use online, i will have to set inmate transfered in as 1 and station transfered from
+                            $record->save();
+                        });
+
                         Notification::make()
                             ->success()
-                            ->title('Discharge Successful')
-                            ->body("The {$record->full_name} has been discharged.")
+                            ->title('Discharge Request Submitted')
+                            ->body("The discharge for {$record->full_name} has been completed.")
                             ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Discharge Failed')
+                            ->body('An error occurred: ' . $e->getMessage())
+                            ->send();
+                    }
                     }),
                 // special discharge action end
 
@@ -745,7 +794,7 @@ class InmateResource extends Resource
                 Action::make('amnesty')
                     ->label('Amnesty')
                     ->icon('heroicon-o-sparkles')
-                    ->color('red')
+                    ->color('danger')
                     ->fillForm(fn(Inmate $record): array => [
                         'serial_number' => $record->serial_number,
                         'full_name' => $record->full_name,
@@ -802,8 +851,7 @@ class InmateResource extends Resource
                                     ->uploadingMessage('Uploading reduction document...'),
                             ])
 
-                    ])
-
+                ])
                     ->modalHeading('Convict Amnesty')
                     ->modalSubmitActionLabel('Grant Amnesty')
                     ->action(function (array $data, Inmate $record): void {
@@ -842,6 +890,13 @@ class InmateResource extends Resource
             //
         ];
     }
+
+    // public static function getEloquentQuery(): Builder
+    // {
+    //     return parent::getEloquentQuery()->where('is_discharged', false)
+    //         ->whereDate('EPD', '>=', now()->toDateString())
+    //         ->orderByDesc('created_at');
+    // }
 
     public static function getPages(): array
     {

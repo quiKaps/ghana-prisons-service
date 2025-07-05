@@ -121,6 +121,7 @@ class ViewInmate extends ViewRecord
                 //delete action ends
             ])
                 ->button()
+                ->visible(fn() => $this->record->is_discharged === false)
                 ->label('More Actions'),
 
         ];

@@ -14,7 +14,14 @@ return new class extends Migration
         Schema::create('transfers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('inmate_id')->constrained('inmates')->onDelete('cascade');
-
+            $table->foreignId('from_station_id')->constrained('stations')->onDelete('cascade');
+            $table->foreignId('to_station_id')->constrained('stations')->onDelete('cascade');
+            $table->date('transfer_date');
+            $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
+            $table->string('reason')->nullable();
+            $table->foreignId('requested_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('approved_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('rejected_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }
