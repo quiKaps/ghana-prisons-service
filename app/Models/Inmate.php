@@ -21,16 +21,16 @@ class Inmate extends Model
         'age_on_admission',
         'admission_date',
         'date_sentenced',
-        'offence',
-        'other_offence',
-        'sentence',
-        'EPD',
-        'LPD',
+        //'offence',
+        //'other_offence',
+        // 'sentence',
+        //'EPD',
+        //'LPD',
         'court_of_committal',
         'cell_id',
         'station_id',
         'prisoner_picture',
-        'warrant_document',
+        //'warrant_document',
         'transferred_in',
         'station_transferred_from_id',
         'date_transferred_in',
@@ -86,17 +86,13 @@ class Inmate extends Model
     }
 
     /**
-     * Scope a query to only include inmates scheduled for discharge today or
+     * Scope a query to only include inmates discharged.
      */
-    public function scopeScheduledForDischargeToday($query)
+    public function scopeDischarged($query)
     {
-        return $query->whereDate('lpd', now()->toDateString());
+        return $query->where('is_discharged', true);
     }
 
-    public function scopeScheduledDischargePassed($query)
-    {
-        return $query->whereDate('lpd', '<', now()->toDateString());
-    }
 
 
     /**
@@ -157,5 +153,10 @@ class Inmate extends Model
     public function isDischarged(): bool
     {
         return $this->is_discharged;
+    }
+
+    public function discharge(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Discharge::class);
     }
 }

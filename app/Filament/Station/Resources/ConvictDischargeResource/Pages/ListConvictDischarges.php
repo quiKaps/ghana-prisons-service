@@ -17,22 +17,59 @@ class ListConvictDischarges extends ListRecords
 
     public function getTabs(): array
     {
-        $today = now()->toDateString();
-        $tomorrow = now()->addDay()->toDateString();
+        // $today = now()->toDateString();
+        // $tomorrow = now()->addDay()->toDateString();
 
 
-        $counts = Inmate::whereIn('lpd', [$today, $tomorrow])
-            ->selectRaw('epd, COUNT(*) as count')
-            ->groupBy('epd')
-            ->pluck('count', 'lpd');
+        // $counts = Inmate::whereIn('epd', [$today, $tomorrow])
+        //     ->selectRaw('epd, COUNT(*) as count')
+        //     ->groupBy('epd')
+        //     ->pluck('count', 'epd');
 
         return [
             'oneThirdRemission' => Tab::make('1/3rd Remission')
-                ->modifyQueryUsing(fn(Builder $query) => $query->whereDate('epd', $today))
-                ->badge(fn() => $counts->get($today, 0)),
+                ->modifyQueryUsing(
+                    fn(Builder $query) =>
+                    $query->where('is_discharged', true)
+                        ->whereDoesntHave('discharge')
+                        ->orderByDesc('created_at')
+                )
+                ->badge(Inmate::where('is_discharged', true)
+                    ->whereDoesntHave('discharge')
+                    ->orderByDesc('created_at')
+                    ->count()),
             'special_discharge' => Tab::make('Special Discharge')
-                ->modifyQueryUsing(fn(Builder $query) => $query->whereDate('lpd', $tomorrow))
-                ->badge(fn() => $counts->get($tomorrow, 0)),
+                ->modifyQueryUsing(
+                    fn(Builder $query) =>
+                    $query->where('is_discharged', true)
+                        ->whereHas('discharge', function ($q) {
+                            $q->whereIn('discharge_type', [
+                                'amnesty',
+                                'fine_paid',
+                                'presidential_pardon',
+                                'acquitted_and_discharged',
+                                'bail_bond',
+                                'reduction_of_sentence',
+                                'escape',
+                                'death',
+                                'one_third_remission'
+                            ]);
+                        })
+                )
+                ->badge(fn() => Inmate::where('is_discharged', true)
+                    ->whereHas('discharge', function ($q) {
+                        $q->whereIn('discharge_type', [
+                            'amnesty',
+                            'fine_paid',
+                            'presidential_pardon',
+                            'acquitted_and_discharged',
+                            'bail_bond',
+                            'reduction_of_sentence',
+                            'escape',
+                            'death',
+                            'one_third_remission'
+                        ]);
+                    })->count()),
         ];
     }
 }
