@@ -693,20 +693,24 @@ class InmateResource extends Resource
                                     ->label('Reduced Sentence')
                                     ->placeholder('Enter Reduced Sentence')
                                     ->required(),
+                        TextInput::make('court_of_committal')
+                            ->label('Court of Committal')
+                            ->placeholder('Enter Court of Committal')
+                            ->required(),
                                 DatePicker::make('EPD')
                                     ->label('EPD (Earliest Possible Date of Discharge)')
                                     ->required(),
                                 DatePicker::make('LPD')
                                     ->label('LPD (Latest Possible Date of Discharge)')
                                     ->required(),
-                        FileUpload::make('document')
+                        FileUpload::make('warrant_document')
                                     ->label('Upload Document')
-                                    ->placeholder('Upload Reduction Document')
+                            ->placeholder('Upload Warrant Document')
                                     ->visibility('private')
                                     ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
                                     ->openable()
                                     ->previewable()
-                                    ->uploadingMessage('Uploading reduction document...'),
+                            ->uploadingMessage('Uploading warrant document...'),
                             ])
 
                     ])
@@ -714,13 +718,32 @@ class InmateResource extends Resource
                     ->modalHeading('Sentence Reduction')
                     ->modalSubmitActionLabel('Reduce Sentence')
                     ->action(function (array $data, Inmate $record): void {
-                        $record->author()->associate($data['authorId']);
-                        $record->save();
+                    try {
+                        \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
+                            \App\Models\Sentence::create([
+                                'inmate_id' => $record->id,
+                                'sentence' => $data['sentence'],
+                                'offence' => $data['offence'],
+                                'reduced_sentence' => $data['reduced_sentence'],
+                                'court_of_committal' => $data['court_of_committal'],
+                                'EPD' =>  $data['EPD'],
+                                'LPD' => $data['LPD'],
+                                'warrant_document' => $data['warrant_document'],
+                            ]);
+                        });
+
                         Notification::make()
                             ->success()
-                            ->title('Sentence Reduction Successful')
-                            ->body("The {$record->full_name} has had their sentence reduced.")
+                            ->title('Reduced Sentence Success')
+                            ->body("The reduced sentence for {$record->full_name} has been completed.")
                             ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Reduced Sentence Failed')
+                            ->body('An error occurred: ' . $e->getMessage()) // edit the error message
+                            ->send();
+                    }
                     }),
                 //sentence reduction action end
 
@@ -744,32 +767,41 @@ class InmateResource extends Resource
                                     ->readonly(),
                                 TextInput::make('sentence')
                                     ->label('Sentence')
+                            ->placeholder('Enter Sentence')
                                     ->required(),
                                 TextInput::make('offence')
                                     ->label('Offence')
+                            ->placeholder('Enter Offence')
                                     ->required(),
-                                TextInput::make('warrant')
-                                    ->label('Warrant')
-                                    ->placeholder('Enter Warrant')
-                                    ->required(),
-                                TextInput::make('total_sentence')
-                                    ->label('Total Sentence')
-                                    ->placeholder('Enter Total Sentence') //should be the sum of the current sentence and the additional sentence
-                                    ->required(),
+                        // TextInput::make('warrant')
+                        //     ->label('Warrant')
+                        //     ->placeholder('Enter Warrant')
+                        //     ->required(),
+
+                        //rectify 
+
+                        TextInput::make('total_sentence')
+                            ->label('Total Sentence')
+                            ->placeholder('Enter Total Sentence') //should be the sum of the current sentence and the additional sentence
+                            ->required(),
+                        TextInput::make('court_of_committal')
+                            ->label('Court of Committal')
+                            ->placeholder('Enter Court of Committal')
+                            ->required(),
                                 DatePicker::make('EPD')
                                     ->label('EPD (Earliest Possible Date of Discharge)')
                                     ->required(),
                                 DatePicker::make('LPD')
                                     ->label('LPD (Latest Possible Date of Discharge)')
                                     ->required(),
-                        FileUpload::make('document')
+                        FileUpload::make('warrant_document')
                                     ->label('Upload Document')
-                                    ->placeholder('Upload Reduction Document')
+                            ->placeholder('Upload Warrant Document')
                                     ->visibility('private')
                                     ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
                                     ->openable()
                                     ->previewable()
-                                    ->uploadingMessage('Uploading reduction document...'),
+                            ->uploadingMessage('Uploading warrant document...'),
                             ])
 
                     ])
@@ -777,13 +809,32 @@ class InmateResource extends Resource
                     ->modalHeading('Additional Sentence')
                     ->modalSubmitActionLabel('Add Sentence')
                     ->action(function (array $data, Inmate $record): void {
-                        $record->author()->associate($data['authorId']);
-                        $record->save();
+                    try {
+                        \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
+                            \App\Models\Sentence::create([
+                                'inmate_id' => $record->id,
+                                'sentence' => $data['commutted_sentence'],
+                                'offence' => $data['offence'],
+                                'total_sentence' => $data['total_sentence'],
+                                'court_of_committal' => $data['court_of_committal'],
+                                'EPD' =>  $data['EPD'],
+                                'LPD' => $data['LPD'],
+                                'warrant_document' => $data['warrant_document'],
+                            ]);
+                        });
+
                         Notification::make()
                             ->success()
-                            ->title('Additional Sentence Successful')
-                            ->body("The {$record->full_name} has had their additional sentence added.")
+                            ->title('Additional Sentence Success')
+                            ->body("The additional sentence for {$record->full_name} has been completed.")
                             ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Additional Sentence Failed')
+                            ->body('An error occurred: ' . $e->getMessage()) // edit the error message
+                            ->send();
+                    }
                     }),
                 // additional sentence action end
 
@@ -882,7 +933,7 @@ class InmateResource extends Resource
                         Notification::make()
                             ->danger()
                             ->title('Amnesty Failed')
-                            ->body('An error occurred: ' . $e->getMessage())
+                            ->body('An error occurred: ' . $e->getMessage()) // edit the error message
                             ->send();
                     }
                     }),

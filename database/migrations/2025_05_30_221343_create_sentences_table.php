@@ -17,6 +17,8 @@ return new class extends Migration
                 ->nullable()
                 ->onDelete('cascade');
             $table->string('sentence');
+            $table->string('total_sentence')->nullable(); // Total sentence duration, e.g., '5 years'
+            $table->string('reduced_sentence')->nullable(); // Officer who commuted the
             $table->string('offence');
             $table->date('EPD')->nullable();
             $table->date('LPD')->nullable();
