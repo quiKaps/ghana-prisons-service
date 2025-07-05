@@ -818,26 +818,28 @@ class InmateResource extends Resource
                                 Select::make('commutted_sentence')
                                     ->label('Commutted Sentence')
                                     ->live()
-                                    ->options([
-                                        'life' => 'Life',
-                                        '20_years' => '20 Years',
-                                        'others' => 'Others',
-                                    ])
-                                    ->required(),
-                                Select::make('commutted_by')
-                                    ->label('Commuted By')
-                                    ->options([
-                                        'amnesty' => 'Amnesty',
-                                        'others' => 'Others',
-                                    ]),
-                                DatePicker::make('EPD')
-                                    ->label('EPD (Earliest Possible Date of Discharge)')
-                            ->visible(fn(Get $get): bool => $get('commutted_sentence') == '20_years')
-                                    ->required(fn(Get $get): bool => $get('commutted_sentence') == '20_years'),
-                                DatePicker::make('LPD')
-                                    ->label('LPD (Latest Possible Date of Discharge)')
-                            ->visible(fn(Get $get): bool => $get('commutted_sentence') == '20_years')
-                            ->required(fn(Get $get): bool => $get('commutted_sentence') == '20_years'),
+                            ->options([
+                                'life' => 'Life',
+                                '20yrs_ihl' => '20 Years',
+                                'others' => 'Others',
+                            ])
+                            ->required(),
+                        Select::make('commutted_by')
+                            ->label('Commuted By')
+                            ->options([
+                                'amnesty' => 'Amnesty',
+                                'others' => 'Others',
+                            ]),
+                        DatePicker::make('EPD')
+                            ->label('EPD (Earliest Possible Date of Discharge)')
+                            ->visible(fn(Get $get): bool => $get('commutted_sentence') == '20yrs_ihl')
+                            // ->dehydrated(fn(Get $get) => $get('commutted_sentence') == '20yrs_ihl')
+                            ->required(fn(Get $get): bool => $get('commutted_sentence') == '20yrs_ihl'),
+                        DatePicker::make('LPD')
+                            ->label('LPD (Latest Possible Date of Discharge)')
+                            ->visible(fn(Get $get): bool => $get('commutted_sentence') == '20yrs_ihl')
+                            //->dehydrated(fn(Get $get) => $get('commutted_sentence') == '20yrs_ihl')
+                            ->required(fn(Get $get): bool => $get('commutted_sentence') == '20yrs_ihl'),
                                 DatePicker::make('date_of_amnesty')
                                     ->label('Date of Amnesty')
                                     ->required()
@@ -864,8 +866,8 @@ class InmateResource extends Resource
                                 'offence' => $data['offence'],
                                 'commutted_sentence' => $data['commutted_sentence'],
                                 'commutted_by' => $data['commutted_by'],
-                                'EPD' => $data['EPD'] ?? '',
-                                'LPD' => $data['LPD'] ?? '',
+                                'EPD' => array_key_exists('EPD', $data) && $data['EPD'] !== '' ? $data['EPD'] : null,
+                                'LPD' => array_key_exists('LPD', $data) && $data['LPD'] !== '' ? $data['LPD'] : null,
                                 'date_of_amnesty' => $data['date_of_amnesty'],
                                 'amnesty_document' => $data['amnesty_document'],
                             ]);
