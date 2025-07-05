@@ -38,6 +38,16 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ]);
+
+        User::factory()->create([
+            'name' => fake()->name(),
+            'email' => 'ella@gmail.com',
+            'station_id' => 2,
+            'user_type' => 'prison_admin',
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+            'remember_token' => Str::random(10),
+        ]);
         $batchSize = 1000; // Number of records per batch
         $totalRecords = 50000; // Total number of records to create
 
