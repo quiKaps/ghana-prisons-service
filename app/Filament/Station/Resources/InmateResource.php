@@ -534,8 +534,7 @@ class InmateResource extends Resource
                                     ->searchable(),
                         TextInput::make('reason')
                             ->label('Reason for Transfer')
-                            ->placeholder('Enter reason for transfer')
-                            ->required(),
+                            ->placeholder('Enter reason for transfer'),
                     ])
                 ])
                     ->modalHeading('Prisoner Transfer')
@@ -700,7 +699,7 @@ class InmateResource extends Resource
                                 DatePicker::make('LPD')
                                     ->label('LPD (Latest Possible Date of Discharge)')
                                     ->required(),
-                                FileUpload::make('reduction_document')
+                        FileUpload::make('document')
                                     ->label('Upload Document')
                                     ->placeholder('Upload Reduction Document')
                                     ->visibility('private')
@@ -763,7 +762,7 @@ class InmateResource extends Resource
                                 DatePicker::make('LPD')
                                     ->label('LPD (Latest Possible Date of Discharge)')
                                     ->required(),
-                                FileUpload::make('reduction_document')
+                        FileUpload::make('document')
                                     ->label('Upload Document')
                                     ->placeholder('Upload Reduction Document')
                                     ->visibility('private')
@@ -812,10 +811,10 @@ class InmateResource extends Resource
                                     ->readonly(),
                                 TextInput::make('sentence')
                                     ->label('Sentence')
-                                    ->required(),
+                            ->readOnly(),
                                 TextInput::make('offence')
                                     ->label('Offence')
-                                    ->required(),
+                            ->readOnly(),
                                 Select::make('commutted_sentence')
                                     ->label('Commutted Sentence')
                                     ->live()
@@ -833,35 +832,57 @@ class InmateResource extends Resource
                                     ]),
                                 DatePicker::make('EPD')
                                     ->label('EPD (Earliest Possible Date of Discharge)')
+                            ->visible(fn(Get $get): bool => $get('commutted_sentence') == '20_years')
                                     ->required(fn(Get $get): bool => $get('commutted_sentence') == '20_years'),
                                 DatePicker::make('LPD')
                                     ->label('LPD (Latest Possible Date of Discharge)')
-                                    ->required(fn(Get $get): bool => $get('commutted_sentence') == '20_years'),
+                            ->visible(fn(Get $get): bool => $get('commutted_sentence') == '20_years')
+                            ->required(fn(Get $get): bool => $get('commutted_sentence') == '20_years'),
                                 DatePicker::make('date_of_amnesty')
                                     ->label('Date of Amnesty')
                                     ->required()
                                     ->default(now()),
-                                FileUpload::make('reduction_document')
+                        FileUpload::make('amnesty_document')
                                     ->label('Upload Document')
-                                    ->placeholder('Upload Reduction Document')
+                            ->placeholder('Upload Document')
                                     ->visibility('private')
                                     ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
                                     ->openable()
                                     ->previewable()
-                                    ->uploadingMessage('Uploading reduction document...'),
+                            ->uploadingMessage('Uploading document...'),
                             ])
 
                 ])
                     ->modalHeading('Convict Amnesty')
                     ->modalSubmitActionLabel('Grant Amnesty')
                     ->action(function (array $data, Inmate $record): void {
-                        $record->author()->associate($data['authorId']);
-                        $record->save();
+                    try {
+                        \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
+                            \App\Models\Sentence::create([
+                                'inmate_id' => $record->id,
+                                'sentence' => $data['commutted_sentence'],
+                                'offence' => $data['offence'],
+                                'commutted_sentence' => $data['commutted_sentence'],
+                                'commutted_by' => $data['commutted_by'],
+                                'EPD' => $data['EPD'] ?? '',
+                                'LPD' => $data['LPD'] ?? '',
+                                'date_of_amnesty' => $data['date_of_amnesty'],
+                                'amnesty_document' => $data['amnesty_document'],
+                            ]);
+                        });
+
                         Notification::make()
                             ->success()
-                            ->title('Convict Amnesty Successful')
-                            ->body("The {$record->full_name} has been granted amnesty.")
+                            ->title('Amnesty Granted')
+                            ->body("The amnesty for {$record->full_name} has been completed.")
                             ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Amnesty Failed')
+                            ->body('An error occurred: ' . $e->getMessage())
+                            ->send();
+                    }
                     }),
                 // amnesty action end
 

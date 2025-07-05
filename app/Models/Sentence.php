@@ -17,8 +17,13 @@ class Sentence extends Model
         'offence',
         'EPD',
         'LPD',
-        'goaler_document',
+        'court_of_committal',
+        'commutted_by',
+        'commutted_sentence',
+        // 'goaler_document',
         'warrant_document',
+        'date_of_amnesty',
+        'amnesty_document',
     ];
 
 

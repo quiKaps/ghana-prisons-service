@@ -18,9 +18,14 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->string('sentence');
             $table->string('offence');
-            $table->date('EPD');
-            $table->date('LPD');
-            $table->string('goaler_document')->nullable();
+            $table->date('EPD')->nullable();
+            $table->date('LPD')->nullable();
+            $table->string('court_of_committal')->nullable();
+            $table->string('commutted_by')->nullable();
+            $table->string('commutted_sentence')->nullable();
+            // $table->string('goaler_document')->nullable();
+            $table->date('date_of_amnesty')->nullable();
+            $table->string('amnesty_document')->nullable();
             $table->string('warrant_document')->nullable();
             $table->timestamps();
         });
