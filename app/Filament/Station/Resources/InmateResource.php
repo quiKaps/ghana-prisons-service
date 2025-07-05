@@ -873,7 +873,7 @@ class InmateResource extends Resource
 
                         Notification::make()
                             ->success()
-                            ->title('Amnesty Granted')
+                            ->title('Amnesty Success')
                             ->body("The amnesty for {$record->full_name} has been completed.")
                             ->send();
                     } catch (\Throwable $e) {
