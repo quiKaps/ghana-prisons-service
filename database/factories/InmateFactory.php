@@ -20,54 +20,41 @@ class InmateFactory extends Factory
     public function definition(): array
     {
         return [
+            'prisoner_picture' => $this->faker->imageUrl(),
             'serial_number' => strtoupper(Str::random(10)),
             'full_name' => $this->faker->firstName . ' ' . $this->faker->lastName,
             'gender' => $this->faker->randomElement(['male', 'female']),
-            'married_status' => $this->faker->randomElement(['single', 'married', 'divorced', 'widowed']),
+            'married_status' => $this->faker->randomElement(['single', 'married', 'divorced', 'widowed', 'separated']),
             'age_on_admission' => $this->faker->numberBetween(18, 80),
-            'offence' => $this->faker->randomElement([
-                'assault',
-                'causing_harm',
-                'defilement',
-                'defrauding',
-                'manslaughter',
-                'murder',
-                'robbery',
-                'stealing',
-                'unlawful_damage',
-                'unlawful_entry',
-                'others'
-            ]),
-            'sentence' => $this->faker->numberBetween(1, 50) . ' years',
             'admission_date' => $this->faker->date(),
-            'date_sentenced' => $this->faker->date(),
             'previously_convicted' => $this->faker->boolean(),
-            'previous_sentence' => $this->faker->numberBetween(1, 40),
-            'previous_offence' => $this->faker->sentence(1),
-            'previous_station_id' => Station::inRandomOrder()->first()->id,
-            'station_id' => Station::inRandomOrder()->first()->id, // Foreign key from database
-            'cell_id' => Cell::inRandomOrder()->first()->id,       // Foreign key from database
-            'court_of_committal' => $this->faker->city,
-            'EPD' => $this->faker->dateTimeBetween('tomorrow', '+5 years')->format('Y-m-d'),
-            'LPD' => $this->faker->dateTimeBetween('tomorrow', '+10 years')->format('Y-m-d'),
-            'prisoner_picture' => $this->faker->imageUrl(),
-            'next_of_kin_name' => $this->faker->name,
-            'next_of_kin_relationship' => $this->faker->randomElement(['spouse', 'parent', 'sibling', 'friend']),
-            'next_of_kin_contact' => $this->faker->phoneNumber,
-            'religion' => $this->faker->randomElement(['Christianity', 'Islam', 'Hinduism', 'Atheist']),
-            'nationality' => $this->faker->country,
-            'education_level' => $this->faker->randomElement(['no_formal', 'primary', 'secondary', 'tertiary']),
-            'occupation' => $this->faker->jobTitle,
-            'hometown' => $this->faker->city,
-            'tribe' => $this->faker->word,
-            // Using json_encode to store arrays as JSON strings for database compatibility
+            'previous_sentence' => $this->faker->optional()->numberBetween(1, 40),
+            'previous_offence' => $this->faker->optional()->sentence(1),
+            'previous_station_id' => $this->faker->optional()->randomNumber(),
+            'station_id' => Station::inRandomOrder()->first()?->id,
+            'cell_id' => Cell::inRandomOrder()->first()?->id,
+            'court_of_committal' => $this->faker->optional()->city,
+            // Next of kin
+            'next_of_kin_name' => $this->faker->optional()->name,
+            'next_of_kin_relationship' => $this->faker->optional()->randomElement(['spouse', 'parent', 'sibling', 'friend']),
+            'next_of_kin_contact' => $this->faker->optional()->phoneNumber,
+            // Personal details
+            'religion' => $this->faker->optional()->randomElement(['Christianity', 'Islam', 'Hinduism', 'Atheist']),
+            'nationality' => $this->faker->optional()->country,
+            'education_level' => $this->faker->optional()->randomElement(['no_formal', 'primary', 'secondary', 'tertiary']),
+            'occupation' => $this->faker->optional()->jobTitle,
+            'hometown' => $this->faker->optional()->city,
+            'tribe' => $this->faker->optional()->word,
+            // Physical characteristics
             'distinctive_marks' => json_encode($this->faker->randomElements(
                 ['Tribal Mark', 'Scar', 'Tattoo', 'Birthmark', 'Burn', 'Mole', 'Missing Finger', 'Amputation', 'Piercing', 'None'],
                 2
             )),
-            // Using json_encode to store arrays as JSON strings for database compatibility
+            'part_of_the_body' => $this->faker->optional()->word,
+            // Languages
             'languages_spoken' => json_encode($this->faker->randomElements(['English', 'French', 'Spanish', 'None'], 2)),
-            'disability' => $this->faker->boolean(),
+            // Disability
+            'disability' => $this->faker->optional()->boolean,
             'disability_type' => json_encode($this->faker->randomElements([
                 'Visual impairment',
                 'Hearing impairment',
@@ -79,12 +66,29 @@ class InmateFactory extends Factory
                 'Chronic illness',
                 'Others'
             ], 2)),
-            'police_name' => $this->faker->name,
-            'police_station' => $this->faker->city,
-            'police_contact' => $this->faker->phoneNumber,
-            'goaler' => $this->faker->boolean(),
-
-
+            // Police details
+            'police_name' => $this->faker->optional()->name,
+            'police_station' => $this->faker->optional()->city,
+            'police_contact' => $this->faker->optional()->phoneNumber,
+            // Goaler
+            'goaler' => $this->faker->optional()->boolean,
+            'goaler_document' => json_encode([$this->faker->optional()->imageUrl()]),
+            // Transfer details
+            'transferred_in' => $this->faker->optional()->boolean,
+            'station_transferred_from_id' => $this->faker->optional()->randomNumber(),
+            'date_transferred_in' => $this->faker->optional()->date,
+            'transferred_out' => $this->faker->optional()->boolean,
+            'station_transferred_to_id' => $this->faker->optional()->randomNumber(),
+            'date_transferred_out' => $this->faker->optional()->date,
+            // Previous convictions
+            'previous_convictions' => json_encode([
+                [
+                    'offence' => $this->faker->word,
+                    'sentence' => $this->faker->numberBetween(1, 20) . ' years',
+                    'station' => $this->faker->city,
+                ]
+            ]),
+            'is_discharged' => $this->faker->boolean(false),
         ];
     }
 }

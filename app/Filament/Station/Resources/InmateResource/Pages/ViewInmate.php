@@ -3,11 +3,10 @@
 namespace App\Filament\Station\Resources\InmateResource\Pages;
 
 use Filament\Actions;
-use Filament\Actions\ViewAction;
-use App\Actions\SecureEditAction;
-use Filament\Actions\ActionGroup;
+use App\Models\Sentence;
 use Filament\Actions\Action;
-use App\Actions\SecureDeleteAction;
+use Filament\Actions\ActionGroup;
+use Illuminate\Support\Facades\Auth;
 use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Station\Resources\InmateResource;
 
@@ -74,7 +73,7 @@ class ViewInmate extends ViewRecord
                             ->required(),
                     ])
                     ->action(function (array $data, $record) {
-                        if (! \Illuminate\Support\Facades\Hash::check($data['password'], auth()->user()->password)) {
+                    if (! \Illuminate\Support\Facades\Hash::check($data['password'], Auth::user()->password)) {
                             \Filament\Notifications\Notification::make()
                                 ->title('Incorrect Password')
                                 ->body('You must confirm your password to edit this record.')
@@ -103,7 +102,7 @@ class ViewInmate extends ViewRecord
                             ->required(),
                     ])
                     ->action(function (array $data, $record) {
-                        if (! \Illuminate\Support\Facades\Hash::check($data['password'], auth()->user()->password)) {
+                    if (! \Illuminate\Support\Facades\Hash::check($data['password'], Auth::user()->password)) {
                             \Filament\Notifications\Notification::make()
                                 ->title('Incorrect Password')
                                 ->danger()
@@ -130,5 +129,23 @@ class ViewInmate extends ViewRecord
     public function getHeading(): string
     {
         return "{$this->record->full_name}'s Profile";
+    }
+
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $latestSentence = Sentence::where('inmate_id', $data['id'])
+            ->latest()
+            ->first();
+
+        $data['offence'] = $latestSentence->offence;
+        $data['sentence'] = $latestSentence->sentence;
+        $data['date_sentenced'] = $latestSentence->date_of_sentence;
+        $data['EPD'] = $latestSentence->EPD;
+        $data['LPD'] = $latestSentence->LPD;
+        $data['court_of_committal'] = $latestSentence->court_of_committal;
+        $data['warrant_document'] = $latestSentence->warrant_document;
+
+        return $data;
     }
 }

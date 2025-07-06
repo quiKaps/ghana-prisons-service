@@ -106,8 +106,9 @@ class ConvictDischargeResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return Inmate::query()
-            ->whereDate('lpd', now()->addDay()->toDateString())
+        return Inmate::whereHas('sentences', function ($query) {
+            $query->whereDate('epd', now()->addDay()->toDateString());
+        })
             ->count();
     }
 

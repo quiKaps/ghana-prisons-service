@@ -6,6 +6,7 @@ use App\Models\Cell;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Inmate;
+use App\Models\Sentence;
 use App\Models\RemandTrial;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
@@ -53,6 +54,8 @@ class DatabaseSeeder extends Seeder
 
         for ($i = 0; $i < $totalRecords / $batchSize; $i++) {
             Inmate::factory($batchSize)->create();
+
+            //Sentence::factory($batchSize)->create();
             //generate 1k remand and trial inmates
             RemandTrial::factory($batchSize)->create();
         }

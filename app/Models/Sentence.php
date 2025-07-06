@@ -14,16 +14,19 @@ class Sentence extends Model
     protected $fillable = [
         'inmate_id',
         'sentence',
+        'total_sentence',
+        'reduced_sentence',
         'offence',
         'EPD',
         'LPD',
         'court_of_committal',
         'commutted_by',
         'commutted_sentence',
+        'date_of_sentence',
         // 'goaler_document',
-        'warrant_document',
         'date_of_amnesty',
         'amnesty_document',
+        'warrant_document',
     ];
 
 

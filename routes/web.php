@@ -17,11 +17,16 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+// Add this route for viewing warrant documents
+Route::get('/storage/{document}', function () {})
+    ->name('warrant.document.view');
+
 
 Route::get('/station/inmates/{id}/edit')
     ->middleware(['auth', 'verified', 'password.confirm']);
 
 Route::middleware(['auth'])->group(function () {
+
     Route::redirect('settings', 'settings/profile');
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
     Volt::route('settings/password', 'settings.password')->name('settings.password');

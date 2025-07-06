@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('court_of_committal')->nullable();
             $table->string('commutted_by')->nullable();
             $table->string('commutted_sentence')->nullable();
+            $table->date('date_of_sentence')->nullable();
             // $table->string('goaler_document')->nullable();
             $table->date('date_of_amnesty')->nullable();
             $table->string('amnesty_document')->nullable();

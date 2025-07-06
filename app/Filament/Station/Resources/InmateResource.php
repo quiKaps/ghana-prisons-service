@@ -31,6 +31,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Station\Resources\InmateResource\Pages;
+use App\Filament\Station\Resources\InmateResource\RelationManagers\SentencesRelationManager;
 
 class InmateResource extends Resource
 
@@ -200,7 +201,7 @@ class InmateResource extends Resource
                     ->hidden(fn(Get $get): bool => $get('transferred_in') != 1)
                         ->options(
                             fn() => Station::withoutGlobalScopes()
-                                ->where('id', '!=', auth()->user()->station_id)
+                        ->where('id', '!=', Auth::user()->station_id)
                                 ->pluck('name', 'id')
                                 ->toArray()
                         )
@@ -282,6 +283,7 @@ class InmateResource extends Resource
 
                 Forms\Components\Select::make('religion')
                     ->label('Religious Background')
+                    ->live()
                     ->placeholder('Select a Religion')
                     ->options([
                         'christian' => 'Christian',
@@ -447,11 +449,20 @@ class InmateResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-
-                return $query->where('is_discharged', false)
-                    ->whereDate('EPD', '>=', now()->toDateString())
+            return $query
+                ->with('latestSentenceByDate')
+                ->where('is_discharged', false)
+                ->whereHas('sentences', function ($query) {
+                    $query->whereIn('id', function ($subquery) {
+                        $subquery->selectRaw('MAX(id)')
+                            ->from('sentences')
+                            ->whereColumn('inmate_id', 'inmates.id');
+                    })->where('EPD', '>=', now()->toDateString());
+                })
                     ->orderByDesc('created_at');
             })
+
+
             ->columns([
             Tables\Columns\TextColumn::make('serial_number')
                 ->label('Serial Number')
@@ -464,16 +475,17 @@ class InmateResource extends Resource
             Tables\Columns\TextColumn::make('age_on_admission')
                 ->label('Age on Admission')
                 ->sortable(),
-            Tables\Columns\TextColumn::make('offence')
+            Tables\Columns\TextColumn::make('latestSentenceByDate.offence')
                 ->label('Offence')
-                ->searchable()
-                ->badge()
-                ->sortable(),
-            Tables\Columns\TextColumn::make('sentence')
+                ->sortable()
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('latestSentenceByDate.sentence')
                 ->label('Sentence')
-                ->searchable()
-                ->sortable(),
-            Tables\Columns\TextColumn::make('date_sentenced')
+                ->sortable()
+                ->searchable(),
+
+            Tables\Columns\TextColumn::make('latestSentenceByDate.date_of_sentence')
                 ->label('Date of Sentence')
                 ->date()
                 ->sortable(),
@@ -722,7 +734,7 @@ class InmateResource extends Resource
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
                             \App\Models\Sentence::create([
                                 'inmate_id' => $record->id,
-                                'sentence' => $data['sentence'],
+                                'sentence' => $data['git sentence'],
                                 'offence' => $data['offence'],
                                 'reduced_sentence' => $data['reduced_sentence'],
                                 'court_of_committal' => $data['court_of_committal'],
@@ -813,7 +825,7 @@ class InmateResource extends Resource
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
                             \App\Models\Sentence::create([
                                 'inmate_id' => $record->id,
-                                'sentence' => $data['commutted_sentence'],
+                                'sentence' => $data['sentence'],
                                 'offence' => $data['offence'],
                                 'total_sentence' => $data['total_sentence'],
                                 'court_of_committal' => $data['court_of_committal'],
@@ -961,16 +973,23 @@ class InmateResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            SentencesRelationManager::class
         ];
     }
 
     // public static function getEloquentQuery(): Builder
     // {
     //     return parent::getEloquentQuery()->where('is_discharged', false)
-    //         ->whereDate('EPD', '>=', now()->toDateString())
+    //         ->whereHas('sentences', function ($query) {
+    //             $query->whereIn('id', function ($subquery) {
+    //                 $subquery->selectRaw('MAX(id)')
+    //                     ->from('sentences')
+    //                     ->whereColumn('inmate_id', 'inmates.id');
+    //             })->where('EPD', '>=', now()->toDateString());
+    //         })
     //         ->orderByDesc('created_at');
     // }
+
 
     public static function getPages(): array
     {

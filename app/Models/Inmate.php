@@ -15,54 +15,44 @@ class Inmate extends Model
 
 
     protected $fillable = [
-        'serial_number',
-        'full_name',
-        'gender',
-        'age_on_admission',
         'admission_date',
-        'date_sentenced',
-        //'offence',
-        //'other_offence',
-        // 'sentence',
-        //'EPD',
-        //'LPD',
-        'court_of_committal',
+        'age_on_admission',
         'cell_id',
-        'station_id',
-        'prisoner_picture',
-        //'warrant_document',
-        'transferred_in',
-        'station_transferred_from_id',
         'date_transferred_in',
         'disability',
         'disability_type',
-        'tribe',
-        'languages_spoken',
-        'hometown',
-        'nationality',
-        'married_status',
-        'education_level',
-        'religion',
-        'occupation',
-        'next_of_kin_name',
-        'next_of_kin_relationship',
-        'next_of_kin_contact',
         'distinctive_marks',
         'distinctive_marks_other',
-        'part_of_the_body',
+        'education_level',
+        'full_name',
+        'gender',
         'goaler',
         'goaler_document',
-        'previously_convicted',
-        'previous_sentence',
-        'previous_offence',
-        'previous_station_id',
+        'hometown',
+        'is_discharged',
+        'languages_spoken',
+        'married_status',
+        'nationality',
+        'next_of_kin_contact',
+        'next_of_kin_name',
+        'next_of_kin_relationship',
+        'occupation',
+        'religion',
+        'part_of_the_body',
+        'police_contact',
         'police_name',
         'police_station',
-        'police_contact',
-        'station_id',
-        'gender',
         'previous_convictions',
-        'is_discharged',
+        'previous_offence',
+        'previous_sentence',
+        'previous_station_id',
+        'previously_convicted',
+        'prisoner_picture',
+        'religion',
+        'serial_number',
+        'station_id',
+        'station_transferred_from_id',
+        'transferred_in',
     ];
 
     protected $casts = [
@@ -111,6 +101,13 @@ class Inmate extends Model
     {
         return $this->hasMany(Sentence::class);
     }
+
+    public function latestSentenceByDate()
+    {
+        return $this->hasOne(Sentence::class)->latestOfMany('created_at');
+    }
+
+
 
     // /**
     //  * Get the inter cell transfers associated with the inmate.

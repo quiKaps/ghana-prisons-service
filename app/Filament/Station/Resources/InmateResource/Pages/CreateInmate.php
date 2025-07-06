@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Station\Resources\InmateResource;
 use App\Helpers\FormHelper;
+use App\Models\Sentence;
 
 class CreateInmate extends CreateRecord
 {
@@ -40,8 +41,15 @@ class CreateInmate extends CreateRecord
 
         $data['goaler'] = (bool) $data['goaler'];
 
+        if ($data['religion'] === 'other_religion' && !empty($data['religion_other'])) {
+            $data['religion'] = $data['religion_other'];
+        }
+
+        unset($data['religion_other']);
+
         return $data;
     }
+
 
     public function getHeading(): string
     {
@@ -71,5 +79,20 @@ class CreateInmate extends CreateRecord
                 ->success()
                 ->send();
         }
+
+        //get the form array data
+        $data = $this->form->getState();
+
+        //create sentence for inmate after inmate is created
+        Sentence::create([
+            'inmate_id' => $this->record->id,
+            'sentence' => $data['sentence'],
+            'offence' => $data['offence'],
+            'EPD' => $data['EPD'],
+            'LPD' => $data['LPD'],
+            'court_of_committal' => $data['court_of_committal'],
+            'date_of_sentence' => $data['date_sentenced'],
+            'warrant_document' => $data['warrant_document'],
+        ]);
     }
 }
