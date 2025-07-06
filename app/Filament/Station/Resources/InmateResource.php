@@ -448,19 +448,6 @@ class InmateResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-            return $query
-                ->with('latestSentenceByDate')
-                ->where('is_discharged', false)
-                ->whereHas('sentences', function ($query) {
-                    $query->whereIn('id', function ($subquery) {
-                        $subquery->selectRaw('MAX(id)')
-                            ->from('sentences')
-                            ->whereColumn('inmate_id', 'inmates.id');
-                    })->where('EPD', '>=', now()->toDateString());
-                })
-                    ->orderByDesc('created_at');
-            })
 
 
             ->columns([
@@ -977,18 +964,25 @@ class InmateResource extends Resource
         ];
     }
 
-    // public static function getEloquentQuery(): Builder
-    // {
-    //     return parent::getEloquentQuery()->where('is_discharged', false)
-    //         ->whereHas('sentences', function ($query) {
-    //             $query->whereIn('id', function ($subquery) {
-    //                 $subquery->selectRaw('MAX(id)')
-    //                     ->from('sentences')
-    //                     ->whereColumn('inmate_id', 'inmates.id');
-    //             })->where('EPD', '>=', now()->toDateString());
-    //         })
-    //         ->orderByDesc('created_at');
-    // }
+
+
+    protected function getTableQuery(): Builder
+    {
+        return Inmate::query()
+            ->with('latestSentenceByDate')
+            ->where('is_discharged', false)
+            ->whereHas('sentences', function ($query) {
+                $query->whereIn('id', function ($subquery) {
+                    $subquery->selectRaw('MAX(id)')
+                        ->from('sentences')
+                        ->whereColumn('inmate_id', 'inmates.id');
+                })->whereNull('EPD')
+                    ->orWhere('EPD', '>', now()->toDateString());
+            })
+            ->orderByDesc('created_at');
+    }
+
+
 
 
     public static function getPages(): array
@@ -999,6 +993,7 @@ class InmateResource extends Resource
             'create' => Pages\CreateInmate::route('/create'),
             'view' => Pages\ViewInmate::route('/{record}'),
             'edit' => Pages\EditInmate::route('/{record}/edit'),
+            'upcoming-discharge' => Pages\ListUpcomingDischarge::route('upcoming')
         ];
     }
 }

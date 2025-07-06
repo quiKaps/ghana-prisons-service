@@ -90,9 +90,7 @@ class StationPanelProvider extends PanelProvider
             ])
             ->discoverResources(in: app_path('Filament/Station/Resources'), for: 'App\\Filament\\Station\\Resources')
             ->discoverPages(in: app_path('Filament/Station/Pages'), for: 'App\\Filament\\Station\\Pages')
-            ->pages([
-                \App\Filament\Station\Pages\ViewInmate::class,
-            ])
+            ->pages([])
             ->discoverWidgets(in: app_path('Filament/Station/Widgets'), for: 'App\\Filament\\Station\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

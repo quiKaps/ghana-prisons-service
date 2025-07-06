@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
         for ($i = 0; $i < $totalRecords / $batchSize; $i++) {
             Inmate::factory($batchSize)->create();
 
-            //Sentence::factory($batchSize)->create();
+            Sentence::factory($batchSize)->create();
             //generate 1k remand and trial inmates
             RemandTrial::factory($batchSize)->create();
         }

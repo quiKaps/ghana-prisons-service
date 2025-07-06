@@ -32,7 +32,7 @@ class ConvictDischargeResource extends Resource
 
     protected static ?string $navigationGroup = 'Convicts';
 
-    protected static ?string $modelLabel = 'Convicts Discharged';
+    //protected static ?string $modelLabel = 'Convicts Discharged';
 
     protected ?string $subheading = 'List of inmates scheduled for discharge tomorrow';
 
@@ -102,20 +102,5 @@ class ConvictDischargeResource extends Resource
             'view' => Pages\ViewConvictDischarge::route('/{record}'),
             'edit' => Pages\EditConvictDischarge::route('/{record}/edit'),
         ];
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        return Inmate::whereHas('sentences', function ($query) {
-            $query->whereDate('epd', now()->addDay()->toDateString());
-        })
-            ->count();
-    }
-
-
-
-    public static function getNavigationBadgeTooltip(): ?string
-    {
-        return 'The number of inmates available for discharge tomorrow';
     }
 }

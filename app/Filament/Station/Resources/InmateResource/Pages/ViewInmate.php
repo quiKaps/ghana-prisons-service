@@ -138,13 +138,14 @@ class ViewInmate extends ViewRecord
             ->latest()
             ->first();
 
-        $data['offence'] = $latestSentence->offence;
-        $data['sentence'] = $latestSentence->sentence;
-        $data['date_sentenced'] = $latestSentence->date_of_sentence;
-        $data['EPD'] = $latestSentence->EPD;
-        $data['LPD'] = $latestSentence->LPD;
-        $data['court_of_committal'] = $latestSentence->court_of_committal;
-        $data['warrant_document'] = $latestSentence->warrant_document;
+        // $data['offence'] = $latestSentence->offence;
+        // $data['sentence'] = $latestSentence->sentence;
+        // $data['date_sentenced'] = $latestSentence->date_of_sentence;
+        // $data['EPD'] = $latestSentence->EPD;
+        // $data['LPD'] = $latestSentence->LPD;
+        // $data['court_of_committal'] = $latestSentence->court_of_committal;
+        // $data['warrant_document'] = $latestSentence->warrant_document;
+
 
         return $data;
     }

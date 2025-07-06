@@ -27,7 +27,7 @@ class ListConvictDischarges extends ListRecords
         //     ->pluck('count', 'epd');
 
         return [
-            'oneThirdRemission' => Tab::make('1/3rd Remission')
+            'today' => Tab::make('Today')
                 ->modifyQueryUsing(
                     fn(Builder $query) =>
                     $query->where('is_discharged', true)
@@ -38,7 +38,18 @@ class ListConvictDischarges extends ListRecords
                     ->whereDoesntHave('discharge')
                     ->orderByDesc('created_at')
                     ->count()),
-            'special_discharge' => Tab::make('Special Discharge')
+            'tomorrow' => Tab::make('Tomorrow')
+                ->modifyQueryUsing(
+                    fn(Builder $query) =>
+                    $query->where('is_discharged', true)
+                        ->whereDoesntHave('discharge')
+                        ->orderByDesc('created_at')
+                )
+                ->badge(Inmate::where('is_discharged', true)
+                    ->whereDoesntHave('discharge')
+                    ->orderByDesc('created_at')
+                    ->count()),
+            'thisMonth' => Tab::make('This Month')
                 ->modifyQueryUsing(
                     fn(Builder $query) =>
                     $query->where('is_discharged', true)

@@ -1,3 +1,0 @@
-<x-filament-panels::page>
-    {{ $this->viewInmateInfolist }}
-</x-filament-panels::page>

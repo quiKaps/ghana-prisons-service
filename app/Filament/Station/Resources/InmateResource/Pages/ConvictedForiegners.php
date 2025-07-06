@@ -10,7 +10,6 @@ use App\Actions\SecureDeleteAction;
 use Filament\Tables\Actions\Action;
 
 
-// If SecureEditAction and SecureDeleteAction are custom, import them from their correct namespace, e.g.:
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\ActionGroup;
@@ -37,9 +36,9 @@ class ConvictedForiegners extends Page implements \Filament\Tables\Contracts\Has
         return $table
             ->query(
                 Inmate::query()
-                    ->where('nationality', '!=', 'ghana')
-                    ->whereDate('LPD', '!=', now()->toDateString())
-                    ->orderByDesc('created_at')
+                ->where('nationality', '!=', 'ghana')
+                ->with('latestSentenceByDate')
+                ->orderByDesc('created_at')
             )
             ->columns([
                 TextColumn::make('serial_number')
@@ -60,8 +59,10 @@ class ConvictedForiegners extends Page implements \Filament\Tables\Contracts\Has
                 TextColumn::make('nationality')
                     ->label('Nationality')
                     ->sortable(),
-                TextColumn::make('sentence')
+
+            TextColumn::make('latestSentenceByDate.sentence')
                     ->searchable()
+                ->label('Sentence')
                     ->sortable(),
                 TextColumn::make('admission_date')
                     ->date()

@@ -75,20 +75,20 @@ class InmateFactory extends Factory
             'goaler_document' => json_encode([$this->faker->optional()->imageUrl()]),
             // Transfer details
             'transferred_in' => $this->faker->optional()->boolean,
-            'station_transferred_from_id' => $this->faker->optional()->randomNumber(),
+            'station_transferred_from_id' => Station::inRandomOrder()->first()?->id,
             'date_transferred_in' => $this->faker->optional()->date,
             'transferred_out' => $this->faker->optional()->boolean,
-            'station_transferred_to_id' => $this->faker->optional()->randomNumber(),
+            'station_transferred_to_id' => Station::inRandomOrder()->first()?->id,
             'date_transferred_out' => $this->faker->optional()->date,
             // Previous convictions
             'previous_convictions' => json_encode([
                 [
-                    'offence' => $this->faker->word,
-                    'sentence' => $this->faker->numberBetween(1, 20) . ' years',
-                    'station' => $this->faker->city,
+                    'previous_offence' => $this->faker->word,
+                    'previous_sentence' => $this->faker->numberBetween(1, 20) . ' years',
+                    'previous_station_id' => Station::inRandomOrder()->first()?->id,
                 ]
             ]),
-            'is_discharged' => $this->faker->boolean(false),
+            'is_discharged' => true,
         ];
     }
 }
