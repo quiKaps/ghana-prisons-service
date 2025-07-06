@@ -499,8 +499,8 @@ class InmateResource extends Resource
                     ->fillForm(fn(Inmate $record): array => [
                         'serial_number' => $record->serial_number,
                         'full_name' => $record->full_name,
-                        'sentence' => $record->sentence,
-                        'offence' => $record->offence,
+                    'sentence' => $record->latestSentenceByDate->sentence,
+                    'offence' => $record->latestSentenceByDate->offence,
                     ])->form([
                         Group::make()
                             ->columns(2)
@@ -580,8 +580,8 @@ class InmateResource extends Resource
                     ->fillForm(fn(Inmate $record): array => [
                         'serial_number' => $record->serial_number,
                         'full_name' => $record->full_name,
-                        'sentence' => $record->sentence,
-                        'offence' => $record->offence,
+                    'sentence' => $record->latestSentenceByDate->sentence,
+                    'offence' => $record->latestSentenceByDate->offence,
                     ])->form([
                         Group::make()
                             ->columns(2)
@@ -671,8 +671,8 @@ class InmateResource extends Resource
                     ->fillForm(fn(Inmate $record): array => [
                         'serial_number' => $record->serial_number,
                         'full_name' => $record->full_name,
-                        'sentence' => $record->sentence,
-                        'offence' => $record->offence,
+                    'sentence' => $record->latestSentenceByDate->sentence,
+                    'offence' => $record->latestSentenceByDate->offence,
                     ])->form([
                         Group::make()
                             ->columns(2)
@@ -847,8 +847,8 @@ class InmateResource extends Resource
                     ->fillForm(fn(Inmate $record): array => [
                         'serial_number' => $record->serial_number,
                         'full_name' => $record->full_name,
-                        'sentence' => $record->sentence,
-                        'offence' => $record->offence,
+                    'sentence' => $record->latestSentenceByDate->offence,
+                    'offence' => $record->latestSentenceByDate->offence,
 
                     ])->form([
                         Group::make()
