@@ -761,7 +761,9 @@ class InmateResource extends Resource
                     ->fillForm(fn(Inmate $record): array => [
                         'serial_number' => $record->serial_number,
                         'full_name' => $record->full_name,
-
+                    'sentence' => $record->latestSentenceByDate->sentence,
+                    'offence' => $record->latestSentenceByDate->offence,
+                    'date_of_sentence' => $record->sentences->first()->date_of_sentence
                     ])->form([
                         Group::make()
                             ->columns(2)
@@ -779,13 +781,11 @@ class InmateResource extends Resource
                                     ->label('Offence')
                             ->placeholder('Enter Offence')
                                     ->required(),
-                        // TextInput::make('warrant')
-                        //     ->label('Warrant')
-                        //     ->placeholder('Enter Warrant')
-                        //     ->required(),
-
+                        TextInput::make('date_of_sentence')
+                            ->label('Date_of_Sentence')
+                            ->placeholder('Enter Date Sentence')
+                            ->readOnly(),
                         //rectify 
-
                         TextInput::make('total_sentence')
                             ->label('Total Sentence')
                             ->placeholder('Enter Total Sentence') //should be the sum of the current sentence and the additional sentence
@@ -820,9 +820,10 @@ class InmateResource extends Resource
                             \App\Models\Sentence::create([
                                 'inmate_id' => $record->id,
                                 'sentence' => $data['sentence'],
-                                'offence' => $data['offence'],
-                                'total_sentence' => $data['total_sentence'],
+                                'offence' => $data['total_sentence'],
+                                'total_sentence' => $data['total_sentence'], //this is redundant
                                 'court_of_committal' => $data['court_of_committal'],
+                                'date_of_sentence' => $record->sentences->first()->date_of_sentence,
                                 'EPD' =>  $data['EPD'],
                                 'LPD' => $data['LPD'],
                                 'warrant_document' => $data['warrant_document'],
