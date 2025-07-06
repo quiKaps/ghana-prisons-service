@@ -727,7 +727,7 @@ class InmateResource extends Resource
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
                             \App\Models\Sentence::create([
                                 'inmate_id' => $record->id,
-                                'sentence' => $data['git sentence'],
+                                'sentence' => $data['sentence'],
                                 'offence' => $data['offence'],
                                 'date_of_sentence' => $data['date_of_sentence'],
                                 'reduced_sentence' => $data['reduced_sentence'],
