@@ -33,12 +33,19 @@ class ListInmates extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('goaler', true))
                 ->badge(Inmate::where('goaler', true)->count()),
             'Condemn' => Tab::make('Condemn')
-                ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('sentences', function ($query) {
-                    $query->where('sentence', 'death');
-                }))
-                ->badge(fn() => Inmate::whereHas('sentences', function ($query) {
-                    $query->where('sentence', 'death');
-                })->count()),
+                ->modifyQueryUsing(function (Builder $query) {
+                    return $query
+                        ->with('latestSentenceByDate')
+                        ->whereHas('latestSentenceByDate', function ($query) {
+                            $query->where('sentence', 'death');
+                        });
+                })
+                ->badge(
+                    fn() => Inmate::whereHas(
+                        'latestSentenceByDate',
+                        fn($q) => $q->where('sentence', 'death')
+                    )->count()
+                ),
             'Manslaughter' => Tab::make('Manslaughter')
                 ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('sentences', function ($query) {
                     $query->where('offence', 'manslaughter');
