@@ -74,16 +74,18 @@ class EditInmate extends EditRecord
             ->latest()
             ->first();
 
-        $data['offence'] = $latestSentence->offence;
-        $data['sentence'] = $latestSentence->sentence;
-        $data['date_sentenced'] = $latestSentence->date_of_sentence;
-        $data['EPD'] = $latestSentence->EPD;
-        $data['LPD'] = $latestSentence->LPD;
-        $data['court_of_committal'] = $latestSentence->court_of_committal;
-        $data['warrant_document'] = $latestSentence->warrant_document;
+        if ($latestSentence != null) {
+            $data['offence'] = $latestSentence?->offence;
+            $data['sentence'] = $latestSentence?->sentence;
+            $data['date_sentenced'] = $latestSentence?->date_of_sentence;
+            $data['EPD'] = $latestSentence?->EPD;
+            $data['LPD'] = $latestSentence?->LPD;
+            $data['court_of_committal'] = $latestSentence?->court_of_committal;
+            $data['warrant_document'] = $latestSentence?->warrant_document;
 
-        Session::put('latestSentenceId', $latestSentence->id); // temporarily store it again for afterCreate
+            Session::put('latestSentenceId', $latestSentence?->id); // temporarily store it again for afterCreate
 
+        }
 
         return $data;
     }

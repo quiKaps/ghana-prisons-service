@@ -142,7 +142,8 @@ class InmateResource extends Resource
                         ->default(now()),
                     Forms\Components\DatePicker::make('date_sentenced')
                         ->label('Date of Sentence')
-                        ->required(),
+                        ->readOnly(fn(string $context) => $context === 'edit')
+                        ->required(fn(string $context) => $context === 'create'),
                     Forms\Components\DatePicker::make('EPD')
                         ->label('EPD (Earliest Possible Date of Discharge)')
                         ->minDate(now())
