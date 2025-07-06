@@ -674,6 +674,7 @@ class InmateResource extends Resource
                         'full_name' => $record->full_name,
                     'sentence' => $record->latestSentenceByDate->sentence,
                     'offence' => $record->latestSentenceByDate->offence,
+                    'date_of_sentence' => $record->sentences->first()->date_of_sentence
                     ])->form([
                         Group::make()
                             ->columns(2)
@@ -693,6 +694,10 @@ class InmateResource extends Resource
                                     ->label('Reduced Sentence')
                                     ->placeholder('Enter Reduced Sentence')
                                     ->required(),
+                        TextInput::make('date_of_sentence')
+                            ->label('Date_of_Sentence')
+                            ->placeholder('Enter Date Sentence')
+                            ->readOnly(),
                         TextInput::make('court_of_committal')
                             ->label('Court of Committal')
                             ->placeholder('Enter Court of Committal')
@@ -724,6 +729,7 @@ class InmateResource extends Resource
                                 'inmate_id' => $record->id,
                                 'sentence' => $data['git sentence'],
                                 'offence' => $data['offence'],
+                                'date_of_sentence' => $data['date_of_sentence'],
                                 'reduced_sentence' => $data['reduced_sentence'],
                                 'court_of_committal' => $data['court_of_committal'],
                                 'EPD' =>  $data['EPD'],
