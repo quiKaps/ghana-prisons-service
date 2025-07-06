@@ -819,8 +819,8 @@ class InmateResource extends Resource
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
                             \App\Models\Sentence::create([
                                 'inmate_id' => $record->id,
-                                'sentence' => $data['sentence'],
-                                'offence' => $data['total_sentence'],
+                                'sentence' => $data['total_sentence'],
+                                'offence' => $data['offence'],
                                 'total_sentence' => $data['total_sentence'], //this is redundant
                                 'court_of_committal' => $data['court_of_committal'],
                                 'date_of_sentence' => $record->sentences->first()->date_of_sentence,
