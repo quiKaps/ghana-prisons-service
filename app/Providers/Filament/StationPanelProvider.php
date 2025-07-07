@@ -44,48 +44,37 @@ class StationPanelProvider extends PanelProvider
             'primary' => Color::hex('#654321'),
             ])
             ->navigationGroups([
-                NavigationGroup::make()
-                ->collapsible(false)
-                    ->label('General Management'),
-                NavigationGroup::make()
-                ->collapsible(false)
-                    ->label('Inmate Management'),
-                NavigationGroup::make()
-                ->collapsible(false)
-                ->label('Cell Management'),
             NavigationGroup::make()
                 ->collapsible(false)
                 ->label('Remand and Trials'),
+
             NavigationGroup::make()
                 ->collapsible(false)
-                ->label('Escapees'),
-            NavigationGroup::make()
-                ->collapsible(false)
-                ->label('User Management'),
+                ->label('Facility Management'),
             ])
             ->navigationItems([
             NavigationItem::make('Convict Admission Form')
                     ->url(fn(): string => CreateInmate::getUrl())
                     ->icon('heroicon-o-user-plus')
                 ->group('Convicts')
-                    ->isActiveWhen(fn() => request()->url() === InmateResource::getUrl('create'))
+                ->isActiveWhen(fn() => request()->url() === InmateResource::getUrl('create'))
                 ->sort(3),
                 NavigationItem::make('Add Users')
                     ->url(fn(): string => CreateUser::getUrl())
                     ->icon('heroicon-o-user-plus')
-                    ->group('User Management')
+                ->group('Facility Management')
                 ->isActiveWhen(fn() => request()->routeIs('filament.station.pages.create-user'))
                     ->sort(3),
             NavigationItem::make('Remand & Trial Admission Form')
                 ->url(fn(): string => CreateRemandTrial::getUrl())
                 ->icon('heroicon-o-user-plus')
-                ->group('Inmate Management')
+                ->group('Remand and Trials')
                 ->isActiveWhen(fn() => request()->url() === RemandTrialResource::getUrl('create'))
                 ->sort(3),
             NavigationItem::make('Forigners - Convicts')
                 ->url(fn(): string => ConvictedForiegners::getUrl())
                 ->icon('heroicon-o-user-plus')
-                ->group('Inmate Management')
+                ->group('Convicts')
                 ->isActiveWhen(fn() => request()->url() === fn(): string => ConvictedForiegners::getUrl())
             ])
             ->discoverResources(in: app_path('Filament/Station/Resources'), for: 'App\\Filament\\Station\\Resources')

@@ -39,7 +39,7 @@ class TrialResource extends Resource
 
     protected static ?string $model = RemandTrial::class;
 
-    protected static ?string $navigationGroup = 'Trials';
+    protected static ?string $navigationGroup = 'Remand and Trials';
 
     public static function form(Form $form): Form
     {
@@ -206,7 +206,7 @@ class TrialResource extends Resource
             Action::make('Admit as Convict')
                     ->icon('heroicon-s-arrow-path')
                     ->color('info')
-                ->hidden(fn(RemandTrial $record) => $record->mode_of_discharge == 'escape' && $record->is_discharged)
+                ->visible(fn(RemandTrial $record) => $record->mode_of_discharge != 'escape' && !$record->is_discharged)
                 ->button()
                     ->action(function ($record) {
                         session(['remand_id' => $record->id]);

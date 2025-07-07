@@ -38,7 +38,7 @@ class ListRemands extends ListRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make('All')
+            'active' => Tab::make('Active')
                 ->modifyQueryUsing(fn(Builder $query) => $query
                 ->where('is_discharged',  false)
                 ->where('next_court_date', '>=', now()))

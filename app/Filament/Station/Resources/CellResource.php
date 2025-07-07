@@ -20,7 +20,7 @@ class CellResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-table-cells';
 
-    protected static ?string $navigationGroup = 'Cell Management';
+    protected static ?string $navigationGroup = 'Facility Management';
 
 
 

@@ -31,7 +31,7 @@ use App\Filament\Station\Resources\RemandResource\Pages\CreateRemand;
 
 class RemandResource extends Resource
 {
-    protected static ?string $navigationGroup = 'Remands';
+    protected static ?string $navigationGroup = 'Remand and Trials';
 
     protected static ?string $navigationLabel = 'All Remands';
 

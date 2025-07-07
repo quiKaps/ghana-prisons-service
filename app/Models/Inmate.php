@@ -18,7 +18,6 @@ class Inmate extends Model
         'admission_date',
         'age_on_admission',
         'cell_id',
-        'date_transferred_in',
         'disability',
         'disability_type',
         'distinctive_marks',
@@ -51,8 +50,12 @@ class Inmate extends Model
         'religion',
         'serial_number',
         'station_id',
+        'date_transferred_in',
         'station_transferred_from_id',
         'transferred_in',
+        'transferred_out',
+        'date_transferred_out',
+        'station_transferred_to_id'
     ];
 
     protected $casts = [

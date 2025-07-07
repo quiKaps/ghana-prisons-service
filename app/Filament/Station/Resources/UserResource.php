@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Group;
+use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,7 +27,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationGroup = 'User Management';
+    protected static ?string $navigationGroup = 'Facility Management';
 
     protected static ?string $navigationLabel = 'All Users';
 
@@ -251,7 +252,7 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('station_id', auth()->user()->station_id);
+            ->where('station_id', Auth::user()->station_id);
     }
 
     public static function getPages(): array

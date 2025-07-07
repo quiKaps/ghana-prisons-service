@@ -70,10 +70,10 @@ return new class extends Migration
 
             // Transfer details
             $table->boolean('transferred_in')->nullable();
-            $table->integer('station_transferred_from_id')->nullable();
+            $table->foreignId('station_transferred_from_id')->nullable()->constrained('stations')->nullOnDelete();
             $table->date('date_transferred_in')->nullable();
             $table->boolean('transferred_out')->nullable();
-            $table->integer('station_transferred_to_id')->nullable();
+            $table->foreignId('station_transferred_to_id')->nullable()->constrained('stations')->nullOnDelete();
             $table->date('date_transferred_out')->nullable();
 
             // Previous convictions

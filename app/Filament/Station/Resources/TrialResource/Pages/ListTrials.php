@@ -40,7 +40,7 @@ class ListTrials extends ListRecords
     public function getTabs(): array
     {
         return [
-            'all' => Tab::make('All')
+            'active' => Tab::make('Active')
                 ->modifyQueryUsing(fn(Builder $query) => $query
                 ->where('detention_type', 'trial')
                 ->where('is_discharged', false))
