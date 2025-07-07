@@ -42,7 +42,8 @@ class ListTrials extends ListRecords
         return [
             'all' => Tab::make('All')
                 ->modifyQueryUsing(fn(Builder $query) => $query
-                    ->where('next_court_date', '>=', now()))
+                ->where('detention_type', 'trial')
+                ->where('is_discharged', false))
                 ->badge(RemandTrial::where('detention_type', 'trial')
                     ->where('is_discharged', false)->count()),
 
@@ -55,6 +56,27 @@ class ListTrials extends ListRecords
                     ->where('detention_type', 'trial')
                     ->where('country_of_origin', '!=', 'ghana')
                     ->count()),
+
+            'escape' => Tab::make('Escapees')
+                ->modifyQueryUsing(fn(Builder $query) => $query
+                    ->where('is_discharged', true)
+                    ->where('detention_type', 'trial')
+                    ->where('mode_of_discharge', 'escape'))
+                ->badge(RemandTrial::where('is_discharged', true)
+                    ->where('detention_type', 'trial')
+                    ->where('mode_of_discharge',  'escape')
+                    ->count()),
+
+            'discharged' => Tab::make('Discharged')
+                ->modifyQueryUsing(fn(Builder $query) => $query
+                    ->where('is_discharged', true)
+                    ->where('detention_type', 'trial')
+                    ->where('mode_of_discharge', '!=', 'escape'))
+                ->badge(RemandTrial::where('is_discharged', true)
+                    ->where('detention_type', 'trial')
+                    ->where('mode_of_discharge', '!=', 'escape')
+                    ->count()),
+
         ];
     }
 }

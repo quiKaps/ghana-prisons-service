@@ -27,6 +27,7 @@ use App\Filament\Station\Resources\TrialResource\Pages\EditTrial;
 use App\Filament\Station\Resources\TrialResource\Pages\ListTrials;
 use App\Filament\Station\Resources\TrialResource\RelationManagers;
 use App\Filament\Station\Resources\TrialResource\Pages\CreateTrial;
+use PhpParser\Node\Stmt\TryCatch;
 
 class TrialResource extends Resource
 {
@@ -51,11 +52,11 @@ class TrialResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(RemandTrial::query()
-                ->where('detention_type', 'trial')
-                //->where('next_court_date', '>=', now())
-                ->where('is_discharged', false)
-                ->orderBy('created_at', 'DESC'))
+            // ->query(RemandTrial::query()
+            //     ->where('detention_type', 'trial')
+            //     //->where('next_court_date', '>=', now())
+            //     ->where('is_discharged', false)
+            //     ->orderBy('created_at', 'DESC'))
             ->emptyStateHeading('No prisoner On Trial Found')
             ->emptyStateDescription('Station has no prisoners on trial yet...')
             ->emptyStateIcon('heroicon-s-user')
@@ -87,7 +88,8 @@ class TrialResource extends Resource
                 //Discharge Action
                 Action::make('Discharge')
                     ->color('green')
-                    ->button()
+                ->hidden(fn(RemandTrial $record) => $record->is_discharged)
+                ->button()
                     ->icon('heroicon-m-arrow-right-start-on-rectangle')
                     ->modalHeading('Trial Discharge')
                     ->modalSubmitActionLabel('Discharge Prisoner')
@@ -107,7 +109,7 @@ class TrialResource extends Resource
                                 ->send();
                         } catch (\Throwable $e) {
                             Notification::make()
-                                ->success()
+                        ->error()
                                 ->title('Error Discharging Prisoner')
                                 ->body("Discharge failed with error {$e}")
                                 ->send();
@@ -167,13 +169,45 @@ class TrialResource extends Resource
                                     ->label('Mode of Discharge'),
                             ])->columns(2),
                     ]),
-                //Discharge ends
+            //Discharge ends
 
-                //readmission starts
-                Action::make('Re-admission')
+            //readmit as trial starts
+
+            Action::make('Re-Admit')
+                ->icon('heroicon-s-arrow-uturn-left')
+                ->color('info')
+                ->visible(fn(RemandTrial $record) => $record->mode_of_discharge == 'escape' && $record->is_discharged)
+                ->button()
+                ->action(function ($record) {
+                    try {
+                        $record->update([
+                            'is_discharged' => false,
+                        ]);
+                        Notification::make()
+                            ->success()
+                            ->title('Readmission Successfull')
+                            ->body("{$record->full_name} has been readmitted on trial successfully.")
+                            ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->error()
+                            ->title('Error')
+                            ->body("Readmission unsuccessfully with error: {$e}")
+                            ->send();
+                    }
+                })
+                ->requiresConfirmation()
+                ->modalHeading('Re-admit this inmate?')
+                ->modalSubmitActionLabel('Readmit Escapee'),
+
+            //readmit as trial ends
+
+            //readmission starts
+            Action::make('Admit as Convict')
                     ->icon('heroicon-s-arrow-path')
                     ->color('info')
-                    ->button()
+                ->hidden(fn(RemandTrial $record) => $record->mode_of_discharge == 'escape' && $record->is_discharged)
+                ->button()
                     ->action(function ($record) {
                         session(['remand_id' => $record->id]);
                         return redirect()->route('filament.station.resources.inmates.create');
