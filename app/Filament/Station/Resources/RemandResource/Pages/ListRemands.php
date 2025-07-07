@@ -40,7 +40,8 @@ class ListRemands extends ListRecords
         return [
             'all' => Tab::make('All')
                 ->modifyQueryUsing(fn(Builder $query) => $query
-                    ->where('next_court_date', '>=', now()))
+                ->where('is_discharged',  false)
+                ->where('next_court_date', '>=', now()))
                 ->badge(RemandTrial::where('detention_type', 'remand')
                     ->where('is_discharged', false)->count()),
 
@@ -72,6 +73,16 @@ class ListRemands extends ListRecords
                 ->badge(RemandTrial::where('is_discharged', true)
                     ->where('detention_type', 'remand')
                     ->where('mode_of_discharge',  'escape')
+                    ->count()),
+
+            'discharged' => Tab::make('Discharged')
+                ->modifyQueryUsing(fn(Builder $query) => $query
+                    ->where('is_discharged', true)
+                    ->where('detention_type', 'remand')
+                    ->where('mode_of_discharge', '!=', 'escape'))
+                ->badge(RemandTrial::where('is_discharged', true)
+                    ->where('detention_type', 'remand')
+                    ->where('mode_of_discharge', '!=', 'escape')
                     ->count()),
 
 

@@ -94,88 +94,147 @@ class RemandResource extends Resource
             ->actions([
                 Action::make('Discharge')
                     ->color('green')
-                    ->hidden(
-                        fn(RemandTrial $record) =>
-                        $record->is_discharged && $record->mode_of_discharge === 'escape'
-                    )
-                    ->button()
-                    ->icon('heroicon-m-arrow-right-start-on-rectangle')
-                    ->modalHeading('Remand Discharge')
-                    ->modalSubmitActionLabel('Discharge Prisoner')
-                    ->action(function (array $data, RemandTrial $record) {
+                ->hidden(fn(RemandTrial $record) => $record->is_discharged)
+                ->button()
+                ->icon('heroicon-m-arrow-right-start-on-rectangle')
+                ->modalHeading('Remand Discharge')
+                ->modalSubmitActionLabel('Discharge Prisoner')
+                ->action(function (array $data, RemandTrial $record) {
 
-                        try {
-                            $record->update([
-                                'is_discharged' => true,
-                                'mode_of_discharge' => $data['mode_of_discharge'],
-                                'discharged_by' => Auth::id(),
-                                'date_of_discharge' => $data['date_of_discharge'],
-                            ]);
+                try {
+                    $record->update([
+                        'is_discharged' => true,
+                        'mode_of_discharge' => $data['mode_of_discharge'],
+                        'discharged_by' => Auth::id(),
+                        'date_of_discharge' => $data['date_of_discharge'],
+                    ]);
 
-                            Notification::make()
-                                ->success()
-                                ->title('Prisoner Discharged')
-                                ->body("{$record->full_name} has been discharged successfully.")
-                                ->send();
-                        } catch (\Throwable $e) {
-                            Notification::make()
-                                ->success()
-                                ->title('Error Discharging Prisoner')
-                                ->body("Discharge failed with error {$e}")
-                                ->send();
-                        }
-                    })
-                    ->label('Discharge')
-                    ->fillForm(fn(RemandTrial $record): array => [
-                        'serial_number' => $record->serial_number,
-                        'full_name' => $record->full_name,
-                        'admission_date' => date_format($record->admission_date, 'Y-m-d'),
-                        'offense' => $record->offense,
-                        'court' => $record->court,
-                        'next_court_date' => date_format($record->next_court_date, 'Y-m-d'),
-                    ])
-                    ->form([
-                        Group::make()
-                            ->columns(2)
-                            ->schema([
-                                TextInput::make("serial_number")
-                                    ->label('Serial Number')
-                                    ->readOnly(),
-                                TextInput::make("full_name")
-                                    ->label("Prisoner's Name")
-                                    ->readOnly(),
-                                TextInput::make('offense')
-                                    ->label('Offense')
-                                    ->readOnly(),
-                                TextInput::make('admission_date')
-                                    ->label('Date of Admission')
-                                    ->readOnly(),
-                                TextInput::make('court')
-                                    ->label('Court of Committal')
-                                    ->readOnly(),
-                                TextInput::make('next_court_date')
-                                    ->label('Next Court Date')
-                                    ->readOnly(),
-                            ]),
-                        Section::make('Discharge Details')
-                            ->columns(2)
-                            ->schema([
-                                DatePicker::make('date_of_discharge')
-                                    ->required()
-                                    ->default(now())
-                                    ->maxDate(now())
-                                    ->placeholder('e.g. 2023-12-31')
-                                    ->label('Date of Discharge'),
-                                Select::make('mode_of_discharge')
-                                    ->required()
-                                    ->options([
-                                        'escape' => 'Escape',
-                                        'death' => 'Death',
-                                        'others' => 'Others',
-                                    ])
-                                    ->label('Mode of Discharge'),
-                            ])->columns(2),
-                    ]),
+                        Notification::make()
+                            ->success()
+                            ->title('Prisoner Discharged')
+                            ->body("{$record->full_name} has been discharged successfully.")
+                            ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->success()
+                            ->title('Error Discharging Prisoner')
+                            ->body("Discharge failed with error {$e}")
+                            ->send();
+                    }
+                })
+                ->label('Discharge')
+                ->fillForm(fn(RemandTrial $record): array => [
+                    'serial_number' => $record->serial_number,
+                    'full_name' => $record->full_name,
+                    'admission_date' => date_format($record->admission_date, 'Y-m-d'),
+                    'offense' => $record->offense,
+                    'court' => $record->court,
+                    'next_court_date' => date_format($record->next_court_date, 'Y-m-d'),
+                ])
+                ->form([
+                    Group::make()
+                        ->columns(2)
+                        ->schema([
+                            TextInput::make("serial_number")
+                                ->label('Serial Number')
+                                ->readOnly(),
+                            TextInput::make("full_name")
+                                ->label("Prisoner's Name")
+                                ->readOnly(),
+                            TextInput::make('offense')
+                                ->label('Offense')
+                                ->readOnly(),
+                            TextInput::make('admission_date')
+                                ->label('Date of Admission')
+                                ->readOnly(),
+                            TextInput::make('court')
+                                ->label('Court of Committal')
+                                ->readOnly(),
+                            TextInput::make('next_court_date')
+                                ->label('Next Court Date')
+                                ->readOnly(),
+                        ]),
+                    Section::make('Discharge Details')
+                        ->columns(2)
+                        ->schema([
+                            DatePicker::make('date_of_discharge')
+                                ->required()
+                                ->default(now())
+                                ->maxDate(now())
+                                ->placeholder('e.g. 2023-12-31')
+                                ->label('Date of Discharge'),
+                            Select::make('mode_of_discharge')
+                                ->required()
+                                ->options([
+                                    'escape' => 'Escape',
+                                    'death' => 'Death',
+                                    'others' => 'Others',
+                                ])
+                                ->label('Mode of Discharge'),
+                        ])->columns(2),
+                ]),
+            Action::make('readmit')
+                ->color('info')
+                ->visible(fn(RemandTrial $record) => $record->is_discharged)
+                ->button()
+                ->label('Re-Admit')
+                ->icon('heroicon-m-arrow-uturn-left')
+                ->modalHeading('Re-Admit')
+                ->modalSubmitActionLabel('Re-Admit Remand')
+                ->action(function (array $data, RemandTrial $record) {
+
+                    try {
+                        $record->update([
+                            'is_discharged' => false,
+                            'mode_of_discharge' => null,
+                            'discharged_by' => null,
+                            'next_court_date' => $data['next_court_date'],
+                        ]);
+
+                        Notification::make()
+                            ->success()
+                            ->title('Prisoner Readmitted')
+                            ->body("{$record->full_name} has been readmitted successfully.")
+                            ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->success()
+                            ->title('Error')
+                            ->body("Re-admission failed with error {$e}")
+                            ->send();
+                    }
+                })
+                ->fillForm(fn(RemandTrial $record): array => [
+                    'serial_number' => $record->serial_number,
+                    'full_name' => $record->full_name,
+                    'admission_date' => date_format($record->admission_date, 'Y-m-d'),
+                    'offense' => $record->offense,
+                    'court' => $record->court,
+                ])
+                ->form([
+                    Group::make()
+                        ->columns(2)
+                        ->schema([
+                            TextInput::make("serial_number")
+                                ->label('Serial Number')
+                                ->readOnly(),
+                            TextInput::make("full_name")
+                                ->label("Prisoner's Name")
+                                ->readOnly(),
+                            TextInput::make('offense')
+                                ->label('Offense')
+                                ->readOnly(),
+                            TextInput::make('admission_date')
+                                ->label('Date of Admission')
+                                ->readOnly(),
+                            TextInput::make('court')
+                                ->label('Court of Committal')
+                                ->readOnly(),
+                            DatePicker::make('next_court_date')
+                                ->label('Next Court Date')
+                                ->required(),
+                        ]),
+                ]),
                 Action::make('Profile')
                     ->color('gray')
                     ->icon('heroicon-o-user')
