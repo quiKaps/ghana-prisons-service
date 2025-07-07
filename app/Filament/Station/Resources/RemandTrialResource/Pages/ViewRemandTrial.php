@@ -7,12 +7,15 @@ use App\Models\RemandTrial;
 use Filament\Actions\Action;
 use App\Actions\SecureEditAction;
 use Filament\Forms\Components\Group;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Forms\Components\DatePicker;
+use Illuminate\Contracts\Support\Htmlable;
+use App\Filament\Station\Resources\RemandResource;
 use App\Filament\Station\Resources\RemandTrialResource;
 
 class ViewRemandTrial extends ViewRecord
@@ -28,7 +31,7 @@ class ViewRemandTrial extends ViewRecord
                 ->icon('heroicon-o-arrow-left')
                 ->color('success')
                 ->visible(fn($record) => $record->detention_type === 'remand')
-                ->url(fn() => route('filament.station.pages.remand')),
+                ->url(fn() => route('filament.station.resources.remands.index')),
 
             // Show "Back to Trials" if detention_type is 'trial'
             Actions\Action::make('back-to-trials')
@@ -36,7 +39,7 @@ class ViewRemandTrial extends ViewRecord
                 ->icon('heroicon-o-arrow-left')
                 ->color('success')
                 ->visible(fn($record) => $record->detention_type === 'trial')
-                ->url(fn() => route('filament.station.pages.trials')),
+                ->url(fn() => route('filament.station.resources.trials.index')),
             //back to trials or remand action ends
 
             //print action starts
@@ -149,7 +152,7 @@ class ViewRemandTrial extends ViewRecord
                         ->required(),
                 ])
                 ->action(function (array $data, $record) {
-                    if (! \Illuminate\Support\Facades\Hash::check($data['password'], auth()->user()->password)) {
+                if (! \Illuminate\Support\Facades\Hash::check($data['password'], Auth::user()->password)) {
                         \Filament\Notifications\Notification::make()
                             ->title('Incorrect Password')
                             ->body('You must confirm your password to edit this record.')
@@ -168,5 +171,14 @@ class ViewRemandTrial extends ViewRecord
     public function getHeading(): string
     {
         return "{$this->record->full_name}'s Profile";
+    }
+
+    public function getSubheading(): string|Htmlable|null
+    {
+        if ($this->record->is_discharged) {
+            return "Prisoner has been discharged";
+        } else {
+            return '';
+        }
     }
 }

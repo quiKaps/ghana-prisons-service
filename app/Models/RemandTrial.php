@@ -34,13 +34,18 @@ class RemandTrial extends Model
         'police_contact',
         're_admission_date',
         'warrant',
-        'picture'
+        'picture',
+        'mode_of_discharge',
+        'is_discharged',
+        'date_of_discharge',
+        'discharged_by'
     ];
     protected $casts = [
         'admission_date' => 'date',
         'next_court_date' => 'date',
         're_admission_date' => 'date',
         'age_on_admission' => 'integer',
+        'is_discharged' => 'boolean'
     ];
 
 

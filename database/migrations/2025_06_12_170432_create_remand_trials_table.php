@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('station_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('cell_id')->nullable()->constrained()->onDelete('set null');
             $table->string('serial_number')->unique();
+            $table->string('picture')->nullable();
             $table->string('full_name');
             $table->string('gender');
             $table->string('offense');
@@ -30,7 +31,10 @@ return new class extends Migration
             $table->string('police_officer')->nullable();
             $table->string('police_contact')->nullable();
             $table->date('re_admission_date')->nullable();
-            $table->string('picture')->nullable();
+            $table->boolean('is_discharged')->default(false);
+            $table->string('mode_of_discharge')->nullable();
+            $table->foreignId('discharged_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->date('date_of_discharge')->nullable();
             $table->timestamps();
         });
     }

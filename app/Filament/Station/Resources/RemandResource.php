@@ -1,0 +1,208 @@
+<?php
+
+namespace App\Filament\Station\Resources;
+
+use Filament\Forms;
+use Filament\Tables;
+use App\Models\Remand;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use App\Models\RemandTrial;
+use Illuminate\Support\Carbon;
+use Filament\Resources\Resource;
+use App\Services\DischargeService;
+use Filament\Tables\Actions\Action;
+use Filament\Forms\Components\Group;
+use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Support\Enums\FontWeight;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\DatePicker;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Station\Resources\RemandResource\Pages;
+use App\Filament\Station\Resources\RemandResource\Pages\EditRemand;
+use App\Filament\Station\Resources\RemandResource\RelationManagers;
+use App\Filament\Station\Resources\RemandResource\Pages\ListRemands;
+use App\Filament\Station\Resources\RemandResource\Pages\CreateRemand;
+
+class RemandResource extends Resource
+{
+    protected static ?string $navigationGroup = 'Remands';
+
+    protected static ?string $navigationLabel = 'All Remands';
+
+    protected static ?string $title = 'Prisoners On Remand';
+
+    protected ?string $subheading = "View and manage remand prisoners";
+
+    protected static ?string $model = RemandTrial::class;
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                //
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            // ->query(RemandTrial::query()
+            //     ->where('detention_type', 'remand')
+            //     ->where('next_court_date', '>=', now())
+            //     ->where('is_discharged', false)
+            //     ->orderBy('created_at', 'DESC'))
+            ->columns([
+                TextColumn::make('serial_number')
+                    ->weight(FontWeight::Bold)
+                    ->label('S.N.'),
+                TextColumn::make('full_name')
+                    ->searchable()
+                    ->label("Name of Prisoner"),
+                TextColumn::make('country_of_origin')
+                    ->badge()
+                    ->label('Nationality'),
+                TextColumn::make('offense')
+                    ->badge()
+                    ->searchable()
+                    ->label('Offence'),
+                TextColumn::make('admission_date')
+                    ->date()
+                    ->searchable()
+                    ->label('Date of Admission'),
+                TextColumn::make('next_court_date')
+                    ->badge()
+                    ->color(
+                        fn($state) =>
+                        Carbon::parse($state)->isFuture() ? 'success' : 'danger'
+                    )
+                    ->label('Next Court Date')
+                    ->date(),
+                TextColumn::make('court')
+                    ->searchable()
+                    ->label('Court of Committal'),
+            ])
+            ->filters([
+                // Define any filters here if needed
+            ])
+
+            ->actions([
+                Action::make('Discharge')
+                    ->color('green')
+                    ->hidden(
+                        fn(RemandTrial $record) =>
+                        $record->is_discharged && $record->mode_of_discharge === 'escape'
+                    )
+                    ->button()
+                    ->icon('heroicon-m-arrow-right-start-on-rectangle')
+                    ->modalHeading('Remand Discharge')
+                    ->modalSubmitActionLabel('Discharge Prisoner')
+                    ->action(function (array $data, RemandTrial $record) {
+
+                        try {
+                            $record->update([
+                                'is_discharged' => true,
+                                'mode_of_discharge' => $data['mode_of_discharge'],
+                                'discharged_by' => Auth::id(),
+                                'date_of_discharge' => $data['date_of_discharge'],
+                            ]);
+
+                            Notification::make()
+                                ->success()
+                                ->title('Prisoner Discharged')
+                                ->body("{$record->full_name} has been discharged successfully.")
+                                ->send();
+                        } catch (\Throwable $e) {
+                            Notification::make()
+                                ->success()
+                                ->title('Error Discharging Prisoner')
+                                ->body("Discharge failed with error {$e}")
+                                ->send();
+                        }
+                    })
+                    ->label('Discharge')
+                    ->fillForm(fn(RemandTrial $record): array => [
+                        'serial_number' => $record->serial_number,
+                        'full_name' => $record->full_name,
+                        'admission_date' => date_format($record->admission_date, 'Y-m-d'),
+                        'offense' => $record->offense,
+                        'court' => $record->court,
+                        'next_court_date' => date_format($record->next_court_date, 'Y-m-d'),
+                    ])
+                    ->form([
+                        Group::make()
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make("serial_number")
+                                    ->label('Serial Number')
+                                    ->readOnly(),
+                                TextInput::make("full_name")
+                                    ->label("Prisoner's Name")
+                                    ->readOnly(),
+                                TextInput::make('offense')
+                                    ->label('Offense')
+                                    ->readOnly(),
+                                TextInput::make('admission_date')
+                                    ->label('Date of Admission')
+                                    ->readOnly(),
+                                TextInput::make('court')
+                                    ->label('Court of Committal')
+                                    ->readOnly(),
+                                TextInput::make('next_court_date')
+                                    ->label('Next Court Date')
+                                    ->readOnly(),
+                            ]),
+                        Section::make('Discharge Details')
+                            ->columns(2)
+                            ->schema([
+                                DatePicker::make('date_of_discharge')
+                                    ->required()
+                                    ->default(now())
+                                    ->maxDate(now())
+                                    ->placeholder('e.g. 2023-12-31')
+                                    ->label('Date of Discharge'),
+                                Select::make('mode_of_discharge')
+                                    ->required()
+                                    ->options([
+                                        'escape' => 'Escape',
+                                        'death' => 'Death',
+                                        'others' => 'Others',
+                                    ])
+                                    ->label('Mode of Discharge'),
+                            ])->columns(2),
+                    ]),
+                Action::make('Profile')
+                    ->color('gray')
+                    ->icon('heroicon-o-user')
+                    ->label('Profile')
+                    ->button()
+                    ->color('blue')
+                    ->url(fn(RemandTrial $record) => route('filament.station.resources.remand-trials.view', [
+                        'record' => $record->getKey(),
+                    ])),
+            ]);
+    }
+
+
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListRemands::route('/'),
+            'create' => Pages\CreateRemand::route('/create'),
+            'edit' => Pages\EditRemand::route('/{record}/edit'),
+        ];
+    }
+}
