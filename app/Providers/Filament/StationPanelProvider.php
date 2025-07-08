@@ -43,6 +43,7 @@ class StationPanelProvider extends PanelProvider
             ->colors([
             'primary' => Color::hex('#654321'),
             ])
+            ->theme(asset('css/filament/station/theme.css'))
             ->navigationGroups([
             NavigationGroup::make()
                 ->collapsible(false)
