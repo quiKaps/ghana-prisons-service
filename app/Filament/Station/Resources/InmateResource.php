@@ -553,9 +553,12 @@ class InmateResource extends Resource
                                 'approved_by' => null,
                                 'rejected_by' => null,
                             ]);
-                            $record->station_id = $data['station_transferred_to_id'];
+                            $record->update([
+                                'transferred_out' => true,
+                                'station_transferred_to_id' => $data['station_transferred_to_id']
+                            ]);
                             //if use online, i will have to set inmate transfered in as 1 and station transfered from
-                            $record->save();
+
                         });
 
                         Notification::make()

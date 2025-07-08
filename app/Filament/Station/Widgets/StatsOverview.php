@@ -2,35 +2,51 @@
 
 namespace App\Filament\Station\Widgets;
 
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use App\Models\Inmate;
+use App\Models\RemandTrial;
+use App\Traits\Has30DayTrend;
+use Illuminate\Support\Carbon;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class StatsOverview extends BaseWidget
 {
+    use Has30DayTrend;
+
+    protected static ?int $sort = 1;
+
+
     protected function getStats(): array
     {
+
+
         return [
             Stat::make(
                 'Total locked up',
-                number_format(\App\Models\Inmate::count() + \App\Models\RemandTrial::count())
+                number_format(\App\Models\Inmate::where('is_discharged', false)->count() + \App\Models\RemandTrial::where('is_discharged', false)->count())
             )
-                ->chart([7, 2, 10, 3, 15, 4, 17])
+                ->chart($this->get30DayTrendData(Inmate::class, fn($q) => $q->where('is_discharged', false)))
                 ->description("Total number of inmates")
                 ->color('success'),
             Stat::make(
                 'Convicts',
-                number_format(\App\Models\Inmate::count())
-            )
-                ->description('Total number of convicts'),
+                number_format(\App\Models\Inmate::where('is_discharged', false)->count())
+            )->chart($this->get30DayTrendData(Inmate::class, fn($q) => $q->where('is_discharged', false)))
+                ->description('Total number of convicts currently in custody')
+                ->icon('heroicon-o-user-group')
+                ->color('primary'),
             Stat::make(
                 'Remands',
-                number_format(\App\Models\RemandTrial::where('detention_type', 'remand')->count())
+                number_format(\App\Models\RemandTrial::where('detention_type', 'remand')
+                    ->where('is_discharged', false)->count())
             )
+                ->chart($this->get30DayTrendData(RemandTrial::class, fn($q) => $q->where('detention_type', 'remand')->where('is_discharged', false)))
                 ->description("Total inmates on remand"),
             Stat::make(
                 'Trial',
-                number_format(\App\Models\RemandTrial::where('detention_type', 'trial')->count())
+                number_format(\App\Models\RemandTrial::where('detention_type', 'trial')->where('is_discharged', false)->count())
             )
+                ->chart($this->get30DayTrendData(RemandTrial::class, fn($q) => $q->where('detention_type', 'trial')->where('is_discharged', false)))
                 ->description("Total inmates on trial"),
             Stat::make(
                 'Expired Warrants',
@@ -41,12 +57,20 @@ class StatsOverview extends BaseWidget
                 )
             )
                 ->color('danger')
+                ->chart($this->get30DayTrendData(
+                    RemandTrial::class,
+                    fn($q) => $q
+                        ->where('detention_type', 'remand')
+                        ->where('is_discharged', false)
+                        ->whereDate('next_court_date', '<', now())
+                ))
                 ->description("Inmates on remand with expired warrants"),
             Stat::make(
                 'Escapees',
                 number_format(\App\Models\DischargedInmates::where('mode_of_discharge', 'escape')->count())
             )
                 ->color('warning')
+
                 ->description("Escaped inmates"),
 
             Stat::make(
