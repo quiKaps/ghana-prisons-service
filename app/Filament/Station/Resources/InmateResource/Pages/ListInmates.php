@@ -24,132 +24,47 @@ class ListInmates extends ListRecords
     public function getTabs(): array
     {
         return [
-            'All' => Tab::make('All')
-                ->badge(Inmate::count()),
+
+            'active' => Tab::make('Active')
+                ->modifyQueryUsing(fn(Builder $query) => $query->active())
+                ->badge(fn() => Inmate::active()->count()),
 
             'Recividists' => Tab::make('Recividists')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('previously_convicted', true))
-                ->badge(Inmate::where('previously_convicted', true)->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->recidivists())
+                ->badge(fn() => Inmate::recidivists()->count()),
 
             'Convict On Trial' => Tab::make('Convict on Trial')
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('goaler', true))
-                ->badge(Inmate::where('goaler', true)->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->convictOnTrial())
+                ->badge(fn() => Inmate::convictOnTrial()->count()),
 
             'Condemn' => Tab::make('Condemn')
-                ->modifyQueryUsing(
-                    fn(Builder $query) =>
-                    $query->with('latestSentenceByDate')
-                        ->whereHas(
-                            'latestSentenceByDate',
-                            fn($q) =>
-                            $q->where('sentence', 'death')
-                        )
-                )
-                ->badge(
-                fn() =>
-                Inmate::whereHas(
-                        'latestSentenceByDate',
-                    fn($q) =>
-                    $q->where('sentence', 'death')
-                    )->count()
-                ),
+                ->modifyQueryUsing(fn(Builder $query) => $query->withSentenceType('sentence', 'death'))
+                ->badge(fn() => Inmate::withSentenceType('sentence', 'death')->count()),
 
             'Manslaughter' => Tab::make('Manslaughter')
-                ->modifyQueryUsing(
-                    fn(Builder $query) =>
-                    $query->with('latestSentenceByDate')
-                        ->whereHas(
-                            'latestSentenceByDate',
-                            fn($q) =>
-                            $q->where('offence', 'manslaughter')
-                        )
-                )
-                ->badge(
-                    fn() =>
-                    Inmate::whereHas(
-                        'latestSentenceByDate',
-                        fn($q) =>
-                        $q->where('offence', 'manslaughter')
-                    )->count()
-                ),
+                ->modifyQueryUsing(fn(Builder $query) => $query->withSentenceType('offence', 'manslaughter'))
+                ->badge(fn() => Inmate::withSentenceType('offence', 'manslaughter')->count()),
 
             'Murder' => Tab::make('Murder')
-                ->modifyQueryUsing(
-                    fn(Builder $query) =>
-                    $query->with('latestSentenceByDate')
-                        ->whereHas(
-                            'latestSentenceByDate',
-                            fn($q) =>
-                            $q->where('offence', 'murder')
-                        )
-                )
-                ->badge(
-                    fn() =>
-                    Inmate::whereHas(
-                        'latestSentenceByDate',
-                        fn($q) =>
-                        $q->where('offence', 'murder')
-                    )->count()
-                ),
+                ->modifyQueryUsing(fn(Builder $query) => $query->withSentenceType('offence', 'murder'))
+                ->badge(fn() => Inmate::withSentenceType('offence', 'murder')->count()),
+
+            'Robbery' => Tab::make('Robbery')
+                ->modifyQueryUsing(fn(Builder $query) => $query->withSentenceType('offence', 'robbery'))
+                ->badge(fn() => Inmate::withSentenceType('offence', 'robbery')->count()),
 
             'Lifer' => Tab::make('Lifer')
-                ->modifyQueryUsing(
-                    fn(Builder $query) =>
-                    $query->with('latestSentenceByDate')
-                        ->whereHas(
-                            'latestSentenceByDate',
-                            fn($q) =>
-                            $q->where('sentence', 'life')
-                        )
-                )
-                ->badge(
-                    fn() =>
-                    Inmate::whereHas(
-                        'latestSentenceByDate',
-                        fn($q) =>
-                        $q->where('sentence', 'life')
-                    )->count()
-                ),
+                ->modifyQueryUsing(fn(Builder $query) => $query->withSentenceType('sentence', 'life'))
+                ->badge(fn() => Inmate::withSentenceType('sentence', 'life')->count()),
 
             'Others' => Tab::make('Others')
                 ->modifyQueryUsing(
                     fn(Builder $query) =>
-                    $query->with('latestSentenceByDate')
-                        ->whereHas(
-                            'latestSentenceByDate',
-                            fn($q) =>
-                            $q->whereNotIn('offence', [
-                                'assault',
-                                'causing_harm',
-                                'defilement',
-                                'defrauding',
-                                'manslaughter',
-                                'murder',
-                                'robbery',
-                                'stealing',
-                                'unlawful_damage',
-                                'unlawful_entry',
-                            ])
-                        )
+                $query->withSentenceType('offence', ['manslaughter', 'murder', 'robbery'], true)
                 )
                 ->badge(
                     fn() =>
-                    Inmate::whereHas(
-                        'latestSentenceByDate',
-                        fn($q) =>
-                        $q->whereNotIn('offence', [
-                            'assault',
-                            'causing_harm',
-                            'defilement',
-                            'defrauding',
-                            'manslaughter',
-                            'murder',
-                            'robbery',
-                            'stealing',
-                            'unlawful_damage',
-                            'unlawful_entry',
-                        ])
-                    )->count()
+                Inmate::withSentenceType('offence', ['manslaughter', 'murder', 'robbery'], true)->count()
                 ),
         ];
     }

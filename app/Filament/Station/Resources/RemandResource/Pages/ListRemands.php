@@ -37,55 +37,27 @@ class ListRemands extends ListRecords
 
     public function getTabs(): array
     {
+
         return [
             'active' => Tab::make('Active')
-                ->modifyQueryUsing(fn(Builder $query) => $query
-                ->where('is_discharged',  false)
-                ->where('next_court_date', '>=', now()))
-                ->badge(RemandTrial::where('detention_type', 'remand')
-                    ->where('is_discharged', false)->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND))
+                ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)->count()),
 
             'foreigner' => Tab::make('Foreigners')
-                ->modifyQueryUsing(fn(Builder $query) => $query
-                    ->where('is_discharged', false)
-                    ->where('detention_type', 'remand')
-                    ->where('country_of_origin', '!=', 'ghana'))
-                ->badge(RemandTrial::where('is_discharged', false)
-                    ->where('detention_type', 'remand')
-                    ->where('country_of_origin', '!=', 'ghana')
-                    ->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->foreigners(RemandTrial::TYPE_REMAND)->where('next_court_date', '>', today()))
+                ->badge(\App\Models\RemandTrial::foreigners(RemandTrial::TYPE_REMAND)->where('next_court_date', '>', today())->count()),
 
             'expireWarrants' => Tab::make('Expired Warrants')
-                ->modifyQueryUsing(fn(Builder $query) => $query
-                    ->where('is_discharged', false)
-                    ->where('detention_type', 'remand')
-                    ->where('next_court_date', '<', now()))
-                ->badge(RemandTrial::where('is_discharged', false)
-                    ->where('detention_type', 'remand')
-                    ->where('next_court_date', '<', now())
-                    ->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->expiredWarrants(RemandTrial::TYPE_REMAND))
+                ->badge(\App\Models\RemandTrial::expiredWarrants(RemandTrial::TYPE_REMAND)->count()),
 
             'escape' => Tab::make('Escapees')
-                ->modifyQueryUsing(fn(Builder $query) => $query
-                    ->where('is_discharged', true)
-                    ->where('detention_type', 'remand')
-                    ->where('mode_of_discharge', 'escape'))
-                ->badge(RemandTrial::where('is_discharged', true)
-                    ->where('detention_type', 'remand')
-                    ->where('mode_of_discharge',  'escape')
-                    ->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->escapees(RemandTrial::TYPE_REMAND))
+                ->badge(\App\Models\RemandTrial::escapees(RemandTrial::TYPE_REMAND)->count()),
 
             'discharged' => Tab::make('Discharged')
-                ->modifyQueryUsing(fn(Builder $query) => $query
-                    ->where('is_discharged', true)
-                    ->where('detention_type', 'remand')
-                    ->where('mode_of_discharge', '!=', 'escape'))
-                ->badge(RemandTrial::where('is_discharged', true)
-                    ->where('detention_type', 'remand')
-                    ->where('mode_of_discharge', '!=', 'escape')
-                    ->count()),
-
-
+                ->modifyQueryUsing(fn(Builder $query) => $query->discharged(RemandTrial::TYPE_REMAND))
+                ->badge(\App\Models\RemandTrial::discharged(RemandTrial::TYPE_REMAND)->count()),
         ];
     }
 }

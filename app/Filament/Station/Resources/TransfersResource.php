@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use App\Actions\SecureEditAction;
 use App\Actions\SecureDeleteAction;
+use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Station\Resources\TransfersResource\Pages;
@@ -79,21 +80,19 @@ class TransfersResource extends Resource
             ])
             ->actions([
 
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make()
-                        ->label('Profile')
-                        ->icon('heroicon-o-user'),
-                    SecureEditAction::make('edit', 'filament.station.resources.inmates.edit')
-                        ->modalWidth('md')
-                        ->modalHeading('Protected Data Access')
-                        ->modalDescription('This is a secure area of the application. Please confirm your password before continuing.')
-                        ->label('Edit'),
-                    SecureDeleteAction::make('delete')
-                        ->label('Delete'),
-                ])
-                    ->button()
-                    ->label('More Actions'),
-            ])
+
+            Action::make('Profile')
+                ->color('gray')
+                ->icon('heroicon-o-user')
+                ->button()
+                ->label('Profile')
+                ->color('blue')
+                ->url(fn(Inmate $record) => route('filament.station.resources.inmates.view', [
+                    'record' => $record->getKey(),
+                ])),
+
+
+        ])
 
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -28,33 +28,33 @@ class InmateFactory extends Factory
             'age_on_admission' => $this->faker->numberBetween(18, 80),
             'admission_date' => $this->faker->date(),
             'previously_convicted' => $this->faker->boolean(),
-            'previous_sentence' => $this->faker->optional()->numberBetween(1, 40),
-            'previous_offence' => $this->faker->optional()->sentence(1),
-            'previous_station_id' => $this->faker->optional()->randomNumber(),
+            'previous_sentence' => $this->faker->numberBetween(1, 40),
+            'previous_offence' => $this->faker->sentence(1),
+            'previous_station_id' => $this->faker->randomNumber(),
             'station_id' => Station::inRandomOrder()->first()?->id,
             'cell_id' => Cell::inRandomOrder()->first()?->id,
-            'court_of_committal' => $this->faker->optional()->city,
+            'court_of_committal' => $this->faker->city,
             // Next of kin
-            'next_of_kin_name' => $this->faker->optional()->name,
-            'next_of_kin_relationship' => $this->faker->optional()->randomElement(['spouse', 'parent', 'sibling', 'friend']),
-            'next_of_kin_contact' => $this->faker->optional()->phoneNumber,
+            'next_of_kin_name' => $this->faker->name,
+            'next_of_kin_relationship' => $this->faker->randomElement(['spouse', 'parent', 'sibling', 'friend']),
+            'next_of_kin_contact' => $this->faker->phoneNumber,
             // Personal details
-            'religion' => $this->faker->optional()->randomElement(['Christianity', 'Islam', 'Hinduism', 'Atheist']),
-            'nationality' => $this->faker->optional()->country,
-            'education_level' => $this->faker->optional()->randomElement(['no_formal', 'primary', 'secondary', 'tertiary']),
-            'occupation' => $this->faker->optional()->jobTitle,
-            'hometown' => $this->faker->optional()->city,
-            'tribe' => $this->faker->optional()->word,
+            'religion' => $this->faker->randomElement(['Christianity', 'Islam', 'Hinduism', 'Atheist']),
+            'nationality' => $this->faker->country,
+            'education_level' => $this->faker->randomElement(['no_formal', 'primary', 'secondary', 'tertiary']),
+            'occupation' => $this->faker->jobTitle,
+            'hometown' => $this->faker->city,
+            'tribe' => $this->faker->word,
             // Physical characteristics
             'distinctive_marks' => json_encode($this->faker->randomElements(
                 ['Tribal Mark', 'Scar', 'Tattoo', 'Birthmark', 'Burn', 'Mole', 'Missing Finger', 'Amputation', 'Piercing', 'None'],
                 2
             )),
-            'part_of_the_body' => $this->faker->optional()->word,
+            'part_of_the_body' => $this->faker->word,
             // Languages
             'languages_spoken' => json_encode($this->faker->randomElements(['English', 'French', 'Spanish', 'None'], 2)),
             // Disability
-            'disability' => $this->faker->optional()->boolean,
+            'disability' => $this->faker->boolean,
             'disability_type' => json_encode($this->faker->randomElements([
                 'Visual impairment',
                 'Hearing impairment',
@@ -67,19 +67,19 @@ class InmateFactory extends Factory
                 'Others'
             ], 2)),
             // Police details
-            'police_name' => $this->faker->optional()->name,
-            'police_station' => $this->faker->optional()->city,
-            'police_contact' => $this->faker->optional()->phoneNumber,
+            'police_name' => $this->faker->name,
+            'police_station' => $this->faker->city,
+            'police_contact' => $this->faker->phoneNumber,
             // Goaler
-            'goaler' => $this->faker->optional()->boolean,
-            'goaler_document' => json_encode([$this->faker->optional()->imageUrl()]),
+            'goaler' => $this->faker->boolean,
+            'goaler_document' => json_encode([$this->faker->imageUrl()]),
             // Transfer details
-            'transferred_in' => $this->faker->optional()->boolean,
+            'transferred_in' => $this->faker->boolean,
             'station_transferred_from_id' => Station::inRandomOrder()->first()?->id,
-            'date_transferred_in' => $this->faker->optional()->date,
-            'transferred_out' => $this->faker->optional()->boolean,
-            'station_transferred_to_id' => Station::inRandomOrder()->first()?->id,
-            'date_transferred_out' => $this->faker->optional()->date,
+            'date_transferred_in' => $this->faker->date,
+            //'transferred_out' => $this->faker->boolean,
+            //'station_transferred_to_id' => Station::inRandomOrder()->first()?->id,
+            //'date_transferred_out' => $this->faker->date,
             // Previous convictions
             'previous_convictions' => json_encode([
                 [
@@ -88,7 +88,7 @@ class InmateFactory extends Factory
                     'previous_station_id' => Station::inRandomOrder()->first()?->id,
                 ]
             ]),
-            'is_discharged' => true,
+            'is_discharged' => $this->faker->boolean(20),
         ];
     }
 }

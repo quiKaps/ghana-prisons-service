@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Scopes\FacilitiesScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -12,7 +13,6 @@ class Inmate extends Model
 {
     /** @use HasFactory<\Database\Factories\InmateFactory> */
     use HasFactory;
-
 
     protected $fillable = [
         'admission_date',
@@ -29,6 +29,7 @@ class Inmate extends Model
         'goaler_document',
         'hometown',
         'is_discharged',
+        'mode_of_discharge',
         'languages_spoken',
         'married_status',
         'nationality',
@@ -47,7 +48,6 @@ class Inmate extends Model
         'previous_station_id',
         'previously_convicted',
         'prisoner_picture',
-        'religion',
         'serial_number',
         'station_id',
         'date_transferred_in',
@@ -55,18 +55,31 @@ class Inmate extends Model
         'transferred_in',
         'transferred_out',
         'date_transferred_out',
-        'station_transferred_to_id'
+        'station_transferred_to_id',
+        'court_of_committal',
+        'tribe',
+        'date_of_discharge'
     ];
+
 
     protected $casts = [
         'distinctive_marks' => 'array',
         'languages_spoken' => 'array',
         'disability_type' => 'array',
-        'disability' => 'boolean',
-        'admission_date' => 'date',
-        'date_sentenced' => 'date',
         'goaler_document' => 'array',
         'previous_convictions' => 'array',
+
+        'disability' => 'boolean',
+        'is_discharged' => 'boolean',
+        'transferred_in' => 'boolean',
+        'transferred_out' => 'boolean',
+        'goaler' => 'boolean',
+        'previously_convicted' => 'boolean',
+
+        'admission_date' => 'date',
+        'date_of_discharge' => 'date',
+        'date_transferred_in' => 'date',
+        'date_transferred_out' => 'date',
     ];
 
 
@@ -158,5 +171,45 @@ class Inmate extends Model
     public function discharge(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Discharge::class);
+    }
+
+
+    //scopes
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('transferred_out', false)
+            ->where('is_discharged', false);
+    }
+
+    public function scopeRecidivists(Builder $query): Builder
+    {
+        return $query->where('transferred_out', false)->where('is_discharged', false)
+            ->where('previously_convicted', true);
+    }
+
+    public function scopeConvictOnTrial(Builder $query): Builder
+    {
+        return $query->where('transferred_out', false)
+            ->where('is_discharged', false)
+            ->where('goaler', true);
+    }
+
+    public function scopeDischargedToday(Builder $query): Builder
+    {
+        return $query->scopeDischarged()->where('transferred_out', false)
+            ->where('goaler', true);
+    }
+
+    public function scopeWithSentenceType(Builder $query, string $field, string|array $value, bool $negate = false): Builder
+    {
+        return $query->where('transferred_out', false)->where('is_discharged', false)
+            ->whereHas('latestSentenceByDate', function ($q) use ($field, $value, $negate) {
+                if ($negate) {
+                    $q->whereNotIn($field, (array) $value);
+                } else {
+                    $q->whereIn($field, (array) $value);
+                }
+            });
     }
 }

@@ -49,15 +49,20 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
         ]);
-        $batchSize = 1000; // Number of records per batch
-        $totalRecords = 50000; // Total number of records to create
+        $batchSize = 500; // Number of records per batch
+        $totalRecords = 1000; // Total number of records to create
+
+        //generate 1k remand and trial inmates
+        RemandTrial::factory(500)->create();
 
         for ($i = 0; $i < $totalRecords / $batchSize; $i++) {
-            Inmate::factory($batchSize)->create();
+            $inmates = Inmate::factory($batchSize)->create();
 
-            Sentence::factory($batchSize)->create();
-            //generate 1k remand and trial inmates
-            RemandTrial::factory($batchSize)->create();
+            foreach ($inmates as $inmate) {
+                Sentence::factory()->create([
+                    'inmate_id' => $inmate->id, // assuming 'inmate_id' is the foreign key in the sentences table
+                ]);
+            }
         }
     }
 }

@@ -98,8 +98,8 @@ class RemandTrialResource extends Resource
                         ])->columns(2),
                     Forms\Components\Select::make('detention_type')
                         ->options([
-                            'remand' => 'Remand',
-                            'trial' => 'Trial',
+                        RemandTrial::TYPE_REMAND => 'Remand',
+                        RemandTrial::TYPE_TRIAL => 'Trial',
                         ])
                         ->placeholder('Select remand or trial')
                         ->required()

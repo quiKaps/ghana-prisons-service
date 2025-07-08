@@ -37,7 +37,8 @@ class ListTransfers extends ListRecords
 
             'transferOut' => Tab::make('Transfers Out')
                 ->modifyQueryUsing(fn(Builder $query) => $query
-                    ->where('transferred_out', false))
+                ->where('transferred_out', true)
+                ->orderBy('date_transferred_out', 'DESC'))
                 ->badge(Inmate::where('transferred_out', true)
                     ->count()),
         ];

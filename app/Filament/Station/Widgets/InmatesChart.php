@@ -9,7 +9,7 @@ use Filament\Widgets\ChartWidget;
 
 class InmatesChart extends ChartWidget
 {
-    protected static ?string $heading = 'Chart';
+    protected static ?string $heading = 'Convicts';
 
     protected static ?int $sort = 3;
 

@@ -555,7 +555,8 @@ class InmateResource extends Resource
                             ]);
                             $record->update([
                                 'transferred_out' => true,
-                                'station_transferred_to_id' => $data['station_transferred_to_id']
+                                'station_transferred_to_id' => $data['station_transferred_to_id'],
+                                'date_transferred_out' => $data['date_of_transfer'],
                             ]);
                             //if use online, i will have to set inmate transfered in as 1 and station transfered from
 
@@ -647,15 +648,19 @@ class InmateResource extends Resource
                                 'discharge_document' => $data['discharge_document'],
                                 'discharged_by' => Auth::id(),
                             ]);
-                            $record->is_discharged = true;
+
+                            $record->update([
+                                'is_discharged' => true,
+                                'date_of_discharge' => $data['date_of_discharge'],
+                            ]);
+
                             //if use online, i will have to set inmate transfered in as 1 and station transfered from
-                            $record->save();
                         });
 
                         Notification::make()
                             ->success()
-                            ->title('Discharge Request Submitted')
-                            ->body("The discharge for {$record->full_name} has been completed.")
+                            ->title('Discharge Successful')
+                            ->body("{$record->full_name} has been discharged successfully.")
                             ->send();
                     } catch (\Throwable $e) {
                         Notification::make()
@@ -987,13 +992,13 @@ class InmateResource extends Resource
                     $subquery->selectRaw('MAX(id)')
                         ->from('sentences')
                         ->whereColumn('inmate_id', 'inmates.id');
-                })->whereNull('EPD')
+            })->where(function ($q) {
+                $q->whereNull('EPD')
                     ->orWhere('EPD', '>', now()->toDateString());
+            });
             })
             ->orderByDesc('created_at');
     }
-
-
 
 
     public static function getPages(): array

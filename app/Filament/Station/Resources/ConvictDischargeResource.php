@@ -78,6 +78,9 @@ class ConvictDischargeResource extends Resource
                     ->button()
                     ->label('Profile')
                     ->icon('heroicon-o-user')
+                ->url(fn(Inmate $record) => route('filament.station.resources.inmates.view', [
+                    'record' => $record->getKey(),
+                ]))
                 ->color('primary'),
         ])
             ->bulkActions([

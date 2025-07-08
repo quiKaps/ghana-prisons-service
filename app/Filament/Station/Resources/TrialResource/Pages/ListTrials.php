@@ -41,42 +41,20 @@ class ListTrials extends ListRecords
     {
         return [
             'active' => Tab::make('Active')
-                ->modifyQueryUsing(fn(Builder $query) => $query
-                ->where('detention_type', 'trial')
-                ->where('is_discharged', false))
-                ->badge(RemandTrial::where('detention_type', 'trial')
-                    ->where('is_discharged', false)->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_TRIAL))
+                ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_TRIAL)->count()),
 
             'foreigner' => Tab::make('Foreigners')
-                ->modifyQueryUsing(fn(Builder $query) => $query
-                    ->where('is_discharged', false)
-                    ->where('detention_type', 'trial')
-                    ->where('country_of_origin', '!=', 'ghana'))
-                ->badge(RemandTrial::where('is_discharged', false)
-                    ->where('detention_type', 'trial')
-                    ->where('country_of_origin', '!=', 'ghana')
-                    ->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->foreigners(RemandTrial::TYPE_TRIAL)->where('next_court_date', '>', today()))
+                ->badge(\App\Models\RemandTrial::foreigners(RemandTrial::TYPE_TRIAL)->where('next_court_date', '>', today())->count()),
 
             'escape' => Tab::make('Escapees')
-                ->modifyQueryUsing(fn(Builder $query) => $query
-                    ->where('is_discharged', true)
-                    ->where('detention_type', 'trial')
-                    ->where('mode_of_discharge', 'escape'))
-                ->badge(RemandTrial::where('is_discharged', true)
-                    ->where('detention_type', 'trial')
-                    ->where('mode_of_discharge',  'escape')
-                    ->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->escapees(RemandTrial::TYPE_TRIAL))
+                ->badge(\App\Models\RemandTrial::escapees(RemandTrial::TYPE_TRIAL)->count()),
 
             'discharged' => Tab::make('Discharged')
-                ->modifyQueryUsing(fn(Builder $query) => $query
-                    ->where('is_discharged', true)
-                    ->where('detention_type', 'trial')
-                    ->where('mode_of_discharge', '!=', 'escape'))
-                ->badge(RemandTrial::where('is_discharged', true)
-                    ->where('detention_type', 'trial')
-                    ->where('mode_of_discharge', '!=', 'escape')
-                    ->count()),
-
+                ->modifyQueryUsing(fn(Builder $query) => $query->discharged(RemandTrial::TYPE_TRIAL))
+                ->badge(\App\Models\RemandTrial::discharged(RemandTrial::TYPE_TRIAL)->count()),
         ];
     }
 }
