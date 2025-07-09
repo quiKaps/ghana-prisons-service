@@ -46,7 +46,7 @@ class StatsOverview extends BaseWidget
                 ->color('success')
                 ->chart($this->get30DayTrendData(\App\Models\Inmate::class, fn($q) => $q->where('is_discharged', false)))
                 ->chartColor('green'),
-
+            //convicts
             Stat::make(
                 'Convicts',
                 number_format(\App\Models\Inmate::active()->count())
@@ -59,10 +59,12 @@ class StatsOverview extends BaseWidget
                 ->extraAttributes([
                 'tooltip' => 'Includes only sentenced prisoners not discharged or transferred out.',
                 ]),
+            //convict ends here
 
+            //remand
             Stat::make(
-                'Remands',
-                number_format(\App\Models\RemandTrial::remand()->count())
+                'Active Remands',
+                number_format(\App\Models\RemandTrial::remand()->where('next_court_date', '>=', today())->count())
             )
                 ->description("Prisoners currently held on remand")
                 ->icon('heroicon-o-scale')

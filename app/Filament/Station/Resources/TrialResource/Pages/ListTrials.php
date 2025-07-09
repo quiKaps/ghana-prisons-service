@@ -41,8 +41,8 @@ class ListTrials extends ListRecords
     {
         return [
             'active' => Tab::make('Active')
-                ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_TRIAL))
-                ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_TRIAL)->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->trial())
+                ->badge(\App\Models\RemandTrial::trial()->count()),
 
             'upcoming' => Tab::make("Upcoming Court Date")
                 ->icon('heroicon-m-clock')

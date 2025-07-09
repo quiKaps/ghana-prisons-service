@@ -69,7 +69,6 @@ class RemandTrial extends Model
         return $this->belongsTo(Station::class);
     }
 
-
     //Scopes
 
     public function scopeRemand($query)
