@@ -77,18 +77,14 @@ class StationPanelProvider extends PanelProvider
                 ->isActiveWhen(fn() => request()->url() === EditProfilePage::getUrl())
                 ->icon('heroicon-m-user-circle')
                 ->sort(4),
-            NavigationItem::make('Remand & Trial Admission Form')
+            NavigationItem::make('Admit on Remand or Trial')
                 ->url(fn(): string => CreateRemandTrial::getUrl())
                 ->icon('heroicon-o-user-plus')
                 ->group('Remand and Trials')
                 ->isActiveWhen(fn() => request()->url() === RemandTrialResource::getUrl('create'))
                 ->sort(3),
-            NavigationItem::make('Forigners - Convicts')
-                ->url(fn(): string => ConvictedForiegners::getUrl())
-                ->icon('heroicon-o-user-plus')
-                ->group('Convicts')
-                ->isActiveWhen(fn() => request()->url() === fn(): string => ConvictedForiegners::getUrl())
-            ])
+
+        ])
             ->discoverResources(in: app_path('Filament/Station/Resources'), for: 'App\\Filament\\Station\\Resources')
             ->discoverPages(in: app_path('Filament/Station/Pages'), for: 'App\\Filament\\Station\\Pages')
             ->pages([])

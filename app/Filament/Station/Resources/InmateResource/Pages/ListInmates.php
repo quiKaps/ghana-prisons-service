@@ -30,11 +30,22 @@ class ListInmates extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->active())
                 ->badge(fn() => Inmate::active()->count()),
 
+            'foreigners' => Tab::make('Foreigners')
+                ->modifyQueryUsing(fn(Builder $query) => $query->active()
+                    ->where('nationality', '!=', 'ghana'))
+                ->badge(fn() => Inmate::active()
+                    ->where('nationality', '!=', 'ghana')
+                    ->count()),
+
+            'escape' => Tab::make('Escapees')
+                ->modifyQueryUsing(fn(Builder $query) => $query->escapees())
+                ->badge(\App\Models\Inmate::escapees()->count()),
+
             'Recidivists' => Tab::make('Recidivists')
                 ->modifyQueryUsing(fn(Builder $query) => $query->recidivists())
                 ->badge(fn() => Inmate::recidivists()->count()),
 
-            'Convict on Trial' => Tab::make('Convict on Trial')
+            'Convict on Trial' => Tab::make('On Trial')
                 ->modifyQueryUsing(fn(Builder $query) => $query->convictOnTrial())
                 ->badge(fn() => Inmate::convictOnTrial()->count()),
 

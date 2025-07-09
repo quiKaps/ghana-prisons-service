@@ -185,9 +185,11 @@ class Inmate extends Model
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->where('transferred_out', false)
-            ->orWhere('transferred_out', null);
+        return $query
+            ->whereNull('transferred_out')
+            ->where('is_discharged', false);
     }
+
 
     public function scopeRecidivists(Builder $query): Builder
     {
@@ -228,6 +230,16 @@ class Inmate extends Model
         return $query->whereHas('sentences', function ($q) use ($excluded) {
             $q->whereNotIn('offence', $excluded);
         });
+    }
+
+    public function scopeEscapees(Builder $query): Builder
+    {
+        return $query
+            ->where('is_discharged', true)
+            ->where('mode_of_discharge', 'escape')
+            ->whereHas('discharge', function ($q) {
+                $q->where('mode_of_discharge', 'escape');
+            });
     }
 
 

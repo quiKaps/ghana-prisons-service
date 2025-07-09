@@ -45,6 +45,8 @@ class ListTrials extends ListRecords
                 ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_TRIAL)->count()),
 
             'upcoming' => Tab::make("Upcoming Court Date")
+                ->icon('heroicon-m-clock')
+                ->badgeColor('danger')
                 ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND)
                     ->where('next_court_date', today()))
                 ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)

@@ -42,7 +42,7 @@ class InmateResource extends Resource
 
     protected static ?string $navigationGroup = 'Convicts';
 
-    protected static ?string $navigationLabel = 'Convicts List';
+    protected static ?string $navigationLabel = 'All Convicts';
 
     protected static ?string $modelLabel = 'Convict List';
 
@@ -651,6 +651,7 @@ class InmateResource extends Resource
 
                             $record->update([
                                 'is_discharged' => true,
+                                'mode_of_discharge' => $data['mode_of_discharge'],
                                 'date_of_discharge' => $data['date_of_discharge'],
                             ]);
 
@@ -1004,7 +1005,7 @@ class InmateResource extends Resource
     public static function getPages(): array
     {
         return [
-            'convicted-foriegners' => Pages\ConvictedForiegners::route('convicted-foriegners'),
+            //'convicted-foriegners' => Pages\ConvictedForiegners::route('convicted-foriegners'),
             'index' => Pages\ListInmates::route('/'),
             'create' => Pages\CreateInmate::route('/create'),
             'view' => Pages\ViewInmate::route('/{record}'),

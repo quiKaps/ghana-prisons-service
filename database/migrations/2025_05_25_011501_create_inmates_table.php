@@ -80,7 +80,8 @@ return new class extends Migration
             $table->json('previous_convictions')->nullable();
 
             // $table->string('warrant_document')->nullable();
-            $table->string('mode_of_discharged')->nullable();
+            $table->date('date_of_discharge')->nullable();
+            $table->string('mode_of_discharge')->nullable();
             $table->boolean('is_discharged')->default(false); // Indicates if the inmate has been discharged$table->timestamps();
             $table->timestamps();
         });
