@@ -768,10 +768,8 @@ class InmateResource extends Resource
                     ->icon('heroicon-o-plus-circle')
                     ->color('warning')
                     ->fillForm(fn(Inmate $record): array => [
-                        'serial_number' => $record->serial_number,
-                        'full_name' => $record->full_name,
-                    'sentence' => $record->latestSentenceByDate->sentence,
-                    'offence' => $record->latestSentenceByDate->offence,
+                    'serial_number' => $record->serial_number,
+                    'full_name' => $record->full_name,
                     'date_of_sentence' => $record->sentences->first()->date_of_sentence
                     ])->form([
                         Group::make()
@@ -791,7 +789,7 @@ class InmateResource extends Resource
                             ->placeholder('Enter Offence')
                                     ->required(),
                         TextInput::make('date_of_sentence')
-                            ->label('Date_of_Sentence')
+                            ->label('Date of Sentence')
                             ->placeholder('Enter Date Sentence')
                             ->readOnly(),
                         //rectify 

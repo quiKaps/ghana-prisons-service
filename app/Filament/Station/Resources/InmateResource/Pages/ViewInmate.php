@@ -323,11 +323,9 @@ class ViewInmate extends ViewRecord
                     ->icon('heroicon-o-plus-circle')
                     ->color('warning')
                     ->fillForm(fn(Inmate $record): array => [
-                        'serial_number' => $record->serial_number,
-                        'full_name' => $record->full_name,
-                        'sentence' => $record->latestSentenceByDate->sentence,
-                        'offence' => $record->latestSentenceByDate->offence,
-                        'date_of_sentence' => $record->sentences->first()->date_of_sentence
+                    'serial_number' => $record->serial_number,
+                    'full_name' => $record->full_name,
+                    'date_of_sentence' => $record->sentences->first()->date_of_sentence
                     ])->form([
                         Group::make()
                             ->columns(2)
@@ -582,17 +580,18 @@ class ViewInmate extends ViewRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $latestSentence = Sentence::where('inmate_id', $data['id'])
-            ->latest()
-            ->first();
+        $sentences = Sentence::where('inmate_id', $data['id'])->first();
+
+        $latestSentence = Sentence::where('inmate_id', $data['id'])->latest()->first();
+
 
         if ($latestSentence != null) {
-            $data['offence'] = $latestSentence?->offence;
+            $data['offence'] = $sentences?->offence;
             $data['sentence'] = $latestSentence?->sentence;
             $data['date_sentenced'] = $latestSentence?->date_of_sentence;
             $data['EPD'] = $latestSentence?->EPD;
             $data['LPD'] = $latestSentence?->LPD;
-            $data['court_of_committal'] = $latestSentence?->court_of_committal;
+            $data['court_of_committal'] = $sentences?->court_of_committal;
             $data['warrant_document'] = $latestSentence?->warrant_document;
 
             //Session::put('latestSentenceId', $latestSentence?->id); // temporarily store it again for afterCreate

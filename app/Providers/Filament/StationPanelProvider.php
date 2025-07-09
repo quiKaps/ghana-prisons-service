@@ -48,26 +48,29 @@ class StationPanelProvider extends PanelProvider
             'primary' => Color::hex('#654321'),
             ])
             ->theme(asset('css/filament/station/theme.css'))
+            ->favicon(asset('gps-logo.png'))
+            ->brandLogo(asset('gps-logo.png'))
+            ->brandLogoHeight('4rem')
+            ->brandName(Auth::user()?->station?->name ?? 'Ghana Prisons Service Portal') //tab
             ->navigationGroups([
             NavigationGroup::make()
                 ->collapsible(false)
                 ->label('Remand and Trials'),
-
             NavigationGroup::make()
                 ->collapsible(false)
                 ->label('Facility Management'),
             ])
             ->navigationItems([
             NavigationItem::make('Admit a Convict')
-                    ->url(fn(): string => CreateInmate::getUrl())
-                    ->icon('heroicon-o-user-plus')
+                ->url(fn(): string => CreateInmate::getUrl())
+                ->icon('heroicon-o-user-plus')
                 ->group('Convicts')
                 ->isActiveWhen(fn(): bool => request()->routeIs(CreateInmate::getRouteName()))
                 ->sort(3),
             NavigationItem::make('Add Users')
                 ->url(fn(): string => CreateUser::getUrl())
                 ->icon('heroicon-o-user-plus')
-                ->visible(fn() => Auth::user()->user_type === 'prison_admin')
+                ->visible(fn() => Auth::user()->user_type === 'prison_admin') //check auth
                 ->group('Facility Management')
                 ->isActiveWhen(fn() => request()->routeIs('filament.station.pages.create-user'))
                 ->sort(3),
