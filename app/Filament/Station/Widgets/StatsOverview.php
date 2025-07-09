@@ -38,7 +38,8 @@ class StatsOverview extends BaseWidget
                 'Total locked up',
                 number_format(
                     \App\Models\Inmate::active()->count() +
-                        \App\Models\RemandTrial::where('is_discharged', false)->count()
+                        \App\Models\RemandTrial::where('is_discharged', false) // Include all active inmates
+                        ->orWhere('mode_of_discharge', 'escape')->count()
                 )
             )
                 ->description("Total number of prisoners in custody")
