@@ -130,6 +130,11 @@ class Inmate extends Model
         return $this->hasOne(Sentence::class)->latestOfMany('created_at');
     }
 
+    public function earliestSentenceByDate()
+    {
+        return $this->hasOne(Sentence::class);
+    }
+
 
 
     // /**

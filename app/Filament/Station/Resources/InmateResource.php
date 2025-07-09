@@ -473,7 +473,7 @@ class InmateResource extends Resource
                 ->sortable()
                 ->searchable(),
 
-            Tables\Columns\TextColumn::make('latestSentenceByDate.date_sentenced')
+            Tables\Columns\TextColumn::make('earliestSentenceByDate.date_of_sentence')
                 ->label('Date of Sentence')
                 ->date()
                 ->sortable(),
