@@ -510,13 +510,62 @@ class ViewInmate extends ViewRecord
                     }),
                 // amnesty action end
 
-                SecureEditAction::make('edit', 'filament.station.resources.inmates.edit')
+                Actions\Action::make('edit')
+                    ->label('Edit')
+                    ->icon('heroicon-o-pencil-square')
+                    ->color('primary')
                     ->modalWidth('md')
                     ->modalHeading('Protected Data Access')
-                    ->modalDescription('This is a secure area of the application. Please confirm your password before continuing.')
-                    ->label('Edit'),
-                SecureDeleteAction::make('delete')
-                    ->label('Delete'),
+                    ->modalDescription('This is a secure area of the application. Please confirm your password within the modal before continuing.')
+                    ->form([
+                        \Filament\Forms\Components\TextInput::make('password')
+                            ->label('Confirm Password')
+                            ->placeholder('Enter your password')
+                            ->password()
+                            ->required(),
+                    ])
+                    ->action(function (array $data, $record) {
+                        if (! \Illuminate\Support\Facades\Hash::check($data['password'], Auth::user()->password)) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Incorrect Password')
+                                ->body('You must confirm your password to edit this record.')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+                        return redirect()->route(
+                            'filament.station.resources.inmates.edit',
+                            ['record' => $record]
+                        );
+                    }),
+                Actions\DeleteAction::make()
+                    ->label('Delete')
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->form([
+                        \Filament\Forms\Components\TextInput::make('password')
+                            ->label('Confirm Password')
+                            ->placeholder('Enter your password')
+                            ->password()
+                            ->required(),
+                    ])
+                    ->action(function (array $data, $record) {
+                        if (! \Illuminate\Support\Facades\Hash::check($data['password'], Auth::user()->password)) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Incorrect Password')
+                                ->danger()
+                                ->body('You must confirm your password to delete this record.')
+                                ->send();
+                            return;
+                        }
+                        $record->delete();
+
+                        \Filament\Notifications\Notification::make()
+                            ->success()
+                            ->title('Inmate Deleted')
+                            ->send();
+                    }),
             ])
                 ->button()
                 ->visible(fn() => $this->record->is_discharged === false)
