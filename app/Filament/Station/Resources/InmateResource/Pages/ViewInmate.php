@@ -588,11 +588,11 @@ class ViewInmate extends ViewRecord
         if ($latestSentence != null) {
             $data['offence'] = $sentences?->offence;
             $data['sentence'] = $latestSentence?->sentence;
-            $data['date_sentenced'] = $latestSentence?->date_of_sentence;
+            $data['date_sentenced'] = $sentences?->date_of_sentence;
             $data['EPD'] = $latestSentence?->EPD;
             $data['LPD'] = $latestSentence?->LPD;
             $data['court_of_committal'] = $sentences?->court_of_committal;
-            $data['warrant_document'] = $latestSentence?->warrant_document;
+            $data['warrant_document'] = $sentences?->warrant_document;
 
             //Session::put('latestSentenceId', $latestSentence?->id); // temporarily store it again for afterCreate
 
