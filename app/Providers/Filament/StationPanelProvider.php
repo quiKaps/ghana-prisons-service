@@ -8,7 +8,9 @@ use Filament\Widgets;
 use App\Models\RemandTrial;
 use Filament\PanelProvider;
 use Filament\Pages\Dashboard;
+use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationGroup;
@@ -27,7 +29,9 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 use App\Filament\Station\Resources\UserResource\Pages\CreateUser;
+use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use App\Filament\Station\Resources\InmateResource\Pages\CreateInmate;
 use App\Filament\Station\Resources\InmateResource\Pages\ConvictedForiegners;
 use App\Filament\Station\Resources\RemandTrialResource\Pages\CreateRemandTrial;
@@ -54,18 +58,25 @@ class StationPanelProvider extends PanelProvider
                 ->label('Facility Management'),
             ])
             ->navigationItems([
-            NavigationItem::make('Convict Admission Form')
+            NavigationItem::make('Admit a Convict')
                     ->url(fn(): string => CreateInmate::getUrl())
                     ->icon('heroicon-o-user-plus')
                 ->group('Convicts')
-                ->isActiveWhen(fn() => request()->url() === InmateResource::getUrl('create'))
+                ->isActiveWhen(fn(): bool => request()->routeIs(CreateInmate::getRouteName()))
                 ->sort(3),
-                NavigationItem::make('Add Users')
-                    ->url(fn(): string => CreateUser::getUrl())
-                    ->icon('heroicon-o-user-plus')
+            NavigationItem::make('Add Users')
+                ->url(fn(): string => CreateUser::getUrl())
+                ->icon('heroicon-o-user-plus')
+                ->visible(fn() => Auth::user()->user_type === 'prison_admin')
                 ->group('Facility Management')
                 ->isActiveWhen(fn() => request()->routeIs('filament.station.pages.create-user'))
-                    ->sort(3),
+                ->sort(3),
+            NavigationItem::make('My Account')
+                ->group('Facility Management')
+                ->url(fn(): string => EditProfilePage::getUrl())
+                ->isActiveWhen(fn() => request()->url() === EditProfilePage::getUrl())
+                ->icon('heroicon-m-user-circle')
+                ->sort(4),
             NavigationItem::make('Remand & Trial Admission Form')
                 ->url(fn(): string => CreateRemandTrial::getUrl())
                 ->icon('heroicon-o-user-plus')
@@ -95,6 +106,31 @@ class StationPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->plugins([
+                FilamentEditProfilePlugin::make()
+                    ->slug('my-profile')
+                    ->setTitle('My Profile')
+                    ->setNavigationLabel('My Profile')
+                    ->setNavigationGroup('Group Profile')
+                    ->setIcon('heroicon-o-user')
+                    ->setSort(10)
+                    ->shouldRegisterNavigation(false)
+                    ->shouldShowEmailForm()
+                    ->shouldShowDeleteAccountForm(false)
+                    ->shouldShowSanctumTokens(false)
+                    ->shouldShowBrowserSessionsForm()
+                    ->shouldShowAvatarForm()
+            ])
+            ->userMenuItems([
+                'profile' => MenuItem::make()
+                    ->label(fn() => Auth::user()->name)
+                    ->url(fn(): string => EditProfilePage::getUrl())
+                    ->icon('heroicon-m-user-circle')
+                //If you are using tenancy need to check with the visible method where ->company() is the relation between the user and tenancy model as you called
+                // ->visible(function (): bool {
+                //     return auth()->user()->company()->exists();
+                // }),
             ])
             ->authMiddleware([
                 Authenticate::class,

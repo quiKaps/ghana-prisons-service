@@ -28,7 +28,7 @@ class SentencesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('sentence'),
                 Tables\Columns\TextColumn::make('offence')->badge(),
                 Tables\Columns\TextColumn::make('EPD')->date()->label('EPD'),
-                Tables\Columns\TextColumn::make('LPD')->date()->label('EPD'),
+            Tables\Columns\TextColumn::make('LPD')->date()->label('LPD'),
                 Tables\Columns\TextColumn::make('court_of_committal')->label('Court of Committal'),
                 Tables\Columns\TextColumn::make('commutted_by')->label('Commutted By'),
                 Tables\Columns\TextColumn::make('commutted_sentence')->label('Commutted Sentence'),

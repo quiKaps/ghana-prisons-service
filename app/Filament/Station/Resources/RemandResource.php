@@ -92,7 +92,9 @@ class RemandResource extends Resource
             ])
 
             ->actions([
-                Action::make('Discharge')
+
+            //dischrge start
+            Action::make('Discharge')
                     ->color('green')
                 ->hidden(fn(RemandTrial $record) => $record->is_discharged)
                 ->button()
@@ -173,6 +175,9 @@ class RemandResource extends Resource
                                 ->label('Mode of Discharge'),
                         ])->columns(2),
                 ]),
+
+            //discharge ends here
+
             Action::make('readmit')
                 ->color('info')
                 ->visible(fn(RemandTrial $record) => $record->is_discharged)

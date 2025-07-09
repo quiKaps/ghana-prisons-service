@@ -2,9 +2,10 @@
 
 namespace App\Filament\Station\Resources\RemandTrialResource\Pages;
 
-use App\Filament\Station\Resources\RemandTrialResource;
 use Filament\Actions;
+use Illuminate\Support\Facades\Auth;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Station\Resources\RemandTrialResource;
 
 class EditRemandTrial extends EditRecord
 {
@@ -13,6 +14,25 @@ class EditRemandTrial extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+
+            // Show "Back to Remands" if detention_type is 'remand'
+            Actions\Action::make('back-to-remands')
+                ->label('Back to Remands')
+                ->icon('heroicon-o-arrow-left')
+                ->color('success')
+                ->visible(fn($record) => $record->detention_type === 'remand')
+                ->url(fn() => route('filament.station.resources.remands.index')),
+
+            // Show "Back to Trials" if detention_type is 'trial'
+            Actions\Action::make('back-to-trials')
+                ->label('Back to Trials')
+                ->icon('heroicon-o-arrow-left')
+                ->color('success')
+                ->visible(fn($record) => $record->detention_type === 'trial')
+                ->url(fn() => route('filament.station.resources.trials.index')),
+            //back to trials or remand action ends
+
+
             Actions\ViewAction::make()
                 ->label('Profile')
                 ->icon('heroicon-o-user')
@@ -30,7 +50,7 @@ class EditRemandTrial extends EditRecord
                         ->required(),
                 ])
                 ->action(function (array $data, $record) {
-                    if (! \Illuminate\Support\Facades\Hash::check($data['password'], auth()->user()->password)) {
+                if (! \Illuminate\Support\Facades\Hash::check($data['password'], Auth::user()->password)) {
                         \Filament\Notifications\Notification::make()
                             ->title('Incorrect Password')
                             ->danger()

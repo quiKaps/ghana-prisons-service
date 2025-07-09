@@ -43,6 +43,13 @@ class ListRemands extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND))
                 ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)->count()),
 
+            'upcoming' => Tab::make("Upcoming Court Date")
+                ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND)
+                    ->where('next_court_date', today()))
+                ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)
+                    ->where('next_court_date', today())
+                    ->count()),
+
             'foreigner' => Tab::make('Foreigners')
                 ->modifyQueryUsing(fn(Builder $query) => $query->foreigners(RemandTrial::TYPE_REMAND)->where('next_court_date', '>', today()))
                 ->badge(\App\Models\RemandTrial::foreigners(RemandTrial::TYPE_REMAND)->where('next_court_date', '>', today())->count()),

@@ -67,18 +67,33 @@ class ViewRemandTrial extends ViewRecord
             //discharge action starts
             Action::make('Discharge')
                 ->color('green')
+                ->hidden(fn(RemandTrial $record) => $record->is_discharged)
                 ->button()
                 ->icon('heroicon-m-arrow-right-start-on-rectangle')
-                ->modalHeading('Trial Discharge')
+                ->modalHeading('Discharge')
                 ->modalSubmitActionLabel('Discharge Prisoner')
-                ->action(function (array $data, $record) {
-                    app(\App\Services\DischargeService::class)
-                        ->dischargeInmate($record, $data);
+                ->action(function (array $data, RemandTrial $record) {
+
+                    try {
+                        $record->update([
+                            'is_discharged' => true,
+                            'mode_of_discharge' => $data['mode_of_discharge'],
+                            'discharged_by' => Auth::id(),
+                            'date_of_discharge' => $data['date_of_discharge'],
+                        ]);
+
+                        Notification::make()
+                            ->success()
+                            ->title('Prisoner Discharged')
+                            ->body("{$record->full_name} has been discharged successfully.")
+                        ->send();
+                } catch (\Throwable $e) {
                     Notification::make()
                         ->success()
-                        ->title('Prisoner Discharged')
-                        ->body("{$record->full_name} has been discharged successfully.")
+                        ->title('Error Discharging Prisoner')
+                        ->body("Discharge failed with error {$e}")
                         ->send();
+                }
                 })
                 ->label('Discharge')
                 ->fillForm(fn(RemandTrial $record): array => [
@@ -123,10 +138,7 @@ class ViewRemandTrial extends ViewRecord
                                 ->label('Date of Discharge'),
                             Select::make('mode_of_discharge')
                                 ->required()
-                                ->options([
-                                    'discharged' => 'Discharged',
-                                    'acquitted_and_discharged' => 'Acquitted and Discharged',
-                                    'bail_bond' => 'Bail Bond',
+                        ->options([
                                     'escape' => 'Escape',
                                     'death' => 'Death',
                                     'others' => 'Others',

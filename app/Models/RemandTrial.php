@@ -122,4 +122,11 @@ class RemandTrial extends Model
             ->where('is_discharged', true)
             ->where('mode_of_discharge', '!=', 'escape');
     }
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('latest', function ($query) {
+            $query->latest(); // or ->orderBy('created_at', 'desc')
+        });
+    }
 }
