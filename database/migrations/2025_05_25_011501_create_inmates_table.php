@@ -56,7 +56,7 @@ return new class extends Migration
             $table->json('languages_spoken')->nullable();
 
             // Disability
-            $table->boolean('disability')->nullable();
+            $table->boolean('disability')->default(false);
             $table->json('disability_type')->nullable();
 
             // Police details
@@ -65,14 +65,14 @@ return new class extends Migration
             $table->string('police_contact')->nullable();
 
             // Goaler
-            $table->boolean('goaler')->nullable();
+            $table->boolean('goaler')->default(false);
             $table->json('goaler_document')->nullable();
 
             // Transfer details
-            $table->boolean('transferred_in')->nullable();
+            $table->boolean('transferred_in')->default(false);
             $table->foreignId('station_transferred_from_id')->nullable()->constrained('stations')->nullOnDelete();
             $table->date('date_transferred_in')->nullable();
-            $table->boolean('transferred_out')->nullable();
+            $table->boolean('transferred_out')->default(false);
             $table->foreignId('station_transferred_to_id')->nullable()->constrained('stations')->nullOnDelete();
             $table->date('date_transferred_out')->nullable();
 

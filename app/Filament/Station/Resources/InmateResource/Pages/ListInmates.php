@@ -45,11 +45,11 @@ class ListInmates extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->recidivists())
                 ->badge(fn() => Inmate::recidivists()->count()),
 
-            'Convict on Trial' => Tab::make('On Trial')
+            'onTrial' => Tab::make('CT')
                 ->modifyQueryUsing(fn(Builder $query) => $query->convictOnTrial())
                 ->badge(fn() => Inmate::convictOnTrial()->count()),
 
-            'Condemn' => Tab::make('Condemn')
+            'condemn' => Tab::make('Condemn')
                 ->modifyQueryUsing(
                     fn(Builder $query) =>
                     $query->withSentenceType('sentence', 'death')
@@ -59,7 +59,7 @@ class ListInmates extends ListRecords
                     Inmate::withSentenceType('sentence', 'death')->count()
                 ),
 
-            'Manslaughter' => Tab::make('Manslaughter')
+            'manslaughter' => Tab::make('Manslaughter')
                 ->modifyQueryUsing(
                     fn(Builder $query) =>
                     $query->withSentenceType('offence', 'manslaughter')
@@ -69,7 +69,7 @@ class ListInmates extends ListRecords
                     Inmate::withSentenceType('offence', 'manslaughter')->count()
                 ),
 
-            'Murder' => Tab::make('Murder')
+            'murder' => Tab::make('Murder')
                 ->modifyQueryUsing(
                     fn(Builder $query) =>
                     $query->withSentenceType('offence', 'murder')
@@ -79,7 +79,7 @@ class ListInmates extends ListRecords
                     Inmate::withSentenceType('offence', 'murder')->count()
                 ),
 
-            'Robbery' => Tab::make('Robbery')
+            'robbery' => Tab::make('Robbery')
                 ->modifyQueryUsing(
                     fn(Builder $query) =>
                     $query->withSentenceType('offence', 'robbery')
@@ -89,7 +89,7 @@ class ListInmates extends ListRecords
                     Inmate::withSentenceType('offence', 'robbery')->count()
                 ),
 
-            'Lifer' => Tab::make('Lifer')
+            'lifer' => Tab::make('Lifer')
                 ->modifyQueryUsing(
                     fn(Builder $query) =>
                     $query->withSentenceType('sentence', 'life')
@@ -99,7 +99,7 @@ class ListInmates extends ListRecords
                     Inmate::withSentenceType('sentence', 'life')->count()
                 ),
 
-            'Others' => Tab::make('Others')
+            'others' => Tab::make('Others')
                 ->modifyQueryUsing(
                     fn(Builder $query) =>
                 $query->withoutOffences()

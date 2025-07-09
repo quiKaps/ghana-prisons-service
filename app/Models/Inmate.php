@@ -186,7 +186,7 @@ class Inmate extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query
-            ->whereNull('transferred_out')
+            ->where('transferred_out', false)
             ->where('is_discharged', false);
     }
 
