@@ -707,8 +707,8 @@ class InmateResource extends Resource
                             ->placeholder('Enter Date Sentence')
                             ->readOnly(),
                         TextInput::make('court_of_committal')
-                            ->label('Court of Committal')
-                            ->placeholder('Enter Court of Committal')
+                            ->label('Appellate Court')
+                            ->placeholder('Enter Appellate Court')
                             ->required(),
                                 DatePicker::make('EPD')
                                     ->label('EPD (Earliest Possible Date of Discharge)')

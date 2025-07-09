@@ -26,4 +26,10 @@ class Discharge extends Model
     protected $casts = [
         'discharge_date' => 'date',
     ];
+
+    // Inmate
+    public function discharge(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(\App\Models\Discharge::class);
+    }
 }

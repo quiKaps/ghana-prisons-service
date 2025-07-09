@@ -4,19 +4,23 @@ namespace App\Filament\Station\Widgets;
 
 use App\Models\Inmate;
 use Flowframe\Trend\Trend;
+use Illuminate\Support\Carbon;
 use Flowframe\Trend\TrendValue;
 use Filament\Widgets\ChartWidget;
 
 class InmatesChart extends ChartWidget
 {
-    protected static ?string $heading = 'Convicts';
+    protected static ?string $heading = 'Year-to-Date Convict Trends';
+
+    protected static ?string $description = 'Monthly distribution of convict admissions from January to December.';
+
 
     protected static ?int $sort = 3;
 
 
     protected function getData(): array
     {
-        $data = Trend::model(Inmate::class)
+        $data = Trend::model(\App\Models\Inmate::class)
             ->between(
                 start: now()->startOfYear(),
                 end: now()->endOfYear(),
@@ -27,16 +31,16 @@ class InmatesChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Convicts',
+                    'label' => 'Convict Admissions',
                     'data' => $data->map(fn(TrendValue $value) => $value->aggregate),
                 ],
             ],
-            'labels' => $data->map(fn(TrendValue $value) => $value->date),
+            'labels' => $data->map(fn(TrendValue $value) => Carbon::parse($value->date)->format('M')),
         ];
     }
 
     protected function getType(): string
     {
-        return 'bar';
+        return 'line';
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Cell;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Inmate;
+use App\Models\Station;
 use App\Models\Sentence;
 use App\Models\RemandTrial;
 use Illuminate\Support\Str;
@@ -22,47 +23,118 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(1)->create();
+        // 1️⃣ Create 3 stations first
+        $stations =  $this->call(StationSeeder::class);
+
+        // 2️⃣ Create 3 users, each tied to a specific station
+        //$emails = ['ohene@gmail.com', 'ella@gmail.com', 'admin@gmail.com'];
 
 
 
-        // Seed the database with station-related data
-        $this->call(StationSeeder::class);
-        Cell::factory(1000)->create();
+        // Create Ohene (prison admin at station 1)
+        User::firstOrCreate(
+            ['email' => 'ohene@gmail.com'],
+            [
+                'name' => 'Ohene',
+                'station_id' => 1,
+                'user_type' => 'prison_admin',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+                'remember_token' => Str::random(10),
+            ]
+        );
 
-        User::factory()->create([
-            'name' => fake()->name(),
-            'email' => 'ohene@gmail.com',
-            'station_id' => 1,
-            'user_type' => 'prison_admin',
-            'email_verified_at' => now(),
-            'password' => Hash::make('password'),
-            'remember_token' => Str::random(10),
-        ]);
+        // Create Ella (prison admin at station 1)
+        User::firstOrCreate(
+            ['email' => 'ella@gmail.com'],
+            [
+                'name' => 'Ella',
+                'station_id' => 1,
+                'user_type' => 'prison_admin',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+                'remember_token' => Str::random(10),
+            ]
+        );
 
-        User::factory()->create([
-            'name' => fake()->name(),
-            'email' => 'ella@gmail.com',
-            'station_id' => 2,
-            'user_type' => 'prison_admin',
-            'email_verified_at' => now(),
-            'password' => Hash::make('password'),
-            'remember_token' => Str::random(10),
-        ]);
-        $batchSize = 500; // Number of records per batch
-        $totalRecords = 1000; // Total number of records to create
+        // Create Admin (HQ admin, no station required)
+        User::firstOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin',
+                'station_id' => null,
+                'user_type' => 'hq_admin',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+                'remember_token' => Str::random(10),
+            ]
+        );
 
-        //generate 1k remand and trial inmates
-        RemandTrial::factory(500)->create();
 
-        for ($i = 0; $i < $totalRecords / $batchSize; $i++) {
-            $inmates = Inmate::factory($batchSize)->create();
 
-            foreach ($inmates as $inmate) {
-                Sentence::factory()->create([
-                    'inmate_id' => $inmate->id, // assuming 'inmate_id' is the foreign key in the sentences table
+        // 3️⃣ For each station, create cells, inmates, sentences, and remand/trials
+        foreach ($stations as $station) {
+            // Create 50 cells for this station
+            $cells = Cell::factory()->count(50)->make();
+            $station->cells()->saveMany($cells);
+
+            // Seed inmates (majority active, some discharged)
+            Inmate::factory(100)->make()->each(function ($inmate) use ($station, $cells) {
+                $cell = $cells->random();
+                $admissionDate = fake()->dateTimeBetween('-2 years', 'now');
+                $isDischarged = fake()->boolean(10); // ~20% discharged
+
+                $inmate->station()->associate($station);
+                $inmate->cell()->associate($cell);
+                $inmate->gender = $station->category;
+                $inmate->is_discharged = $isDischarged;
+                $inmate->created_at = $admissionDate;
+                $inmate->updated_at = $admissionDate;
+                $inmate->save();
+
+                // Sentence
+                $sentence = Sentence::factory()->make([
+                    'date_of_sentence' => fake()->dateTimeBetween($admissionDate, 'now')->format('Y-m-d'),
                 ]);
-            }
+                $inmate->sentences()->save($sentence);
+
+                // Discharge (if applicable)
+                if ($isDischarged) {
+                    $dischargeType = fake()->randomElement(['completed', 'parole', 'escape']);
+                    $inmate->discharge()->create([
+                        'discharge_type' => $dischargeType,
+                        'discharge_date' => fake()->dateTimeBetween($admissionDate, 'now')->format('Y-m-d'),
+                    ]);
+                }
+            });
+
+            // Seed remand/trials (majority active, some discharged, some expired warrants)
+            RemandTrial::factory(50)->make()->each(function ($remand) use ($station, $cells) {
+                $cell = $cells->random();
+                $admissionDate = fake()->dateTimeBetween('-2 years', 'now');
+                $isDischarged = fake()->boolean(5); // ~25% discharged
+                $isExpiredWarrant = fake()->boolean(15); // ~15% with expired court date
+
+                $remand->station()->associate($station);
+                $remand->cell()->associate($cell);
+                $remand->gender = $station->category;
+                $remand->is_discharged = $isDischarged;
+                $remand->created_at = $admissionDate;
+                $remand->updated_at = $admissionDate;
+
+                // Set next court date
+                $remand->next_court_date = $isExpiredWarrant
+                    ? fake()->dateTimeBetween('-6 months', '-1 day')->format('Y-m-d')
+                    : fake()->dateTimeBetween('now', '+3 months')->format('Y-m-d');
+
+                // Set discharge details if applicable
+                if ($isDischarged) {
+                    $remand->mode_of_discharge = fake()->randomElement(['completed', 'bail', 'escape']);
+                    $remand->date_of_discharge = fake()->dateTimeBetween($admissionDate, 'now')->format('Y-m-d');
+                }
+
+                $remand->save();
+            });
         }
     }
 }

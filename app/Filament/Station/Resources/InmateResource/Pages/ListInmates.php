@@ -25,47 +25,80 @@ class ListInmates extends ListRecords
     {
         return [
 
-            'active' => Tab::make('Active')
+
+            'Active' => Tab::make('Active')
                 ->modifyQueryUsing(fn(Builder $query) => $query->active())
                 ->badge(fn() => Inmate::active()->count()),
 
-            'Recividists' => Tab::make('Recividists')
+            'Recidivists' => Tab::make('Recidivists')
                 ->modifyQueryUsing(fn(Builder $query) => $query->recidivists())
                 ->badge(fn() => Inmate::recidivists()->count()),
 
-            'Convict On Trial' => Tab::make('Convict on Trial')
+            'Convict on Trial' => Tab::make('Convict on Trial')
                 ->modifyQueryUsing(fn(Builder $query) => $query->convictOnTrial())
                 ->badge(fn() => Inmate::convictOnTrial()->count()),
 
             'Condemn' => Tab::make('Condemn')
-                ->modifyQueryUsing(fn(Builder $query) => $query->withSentenceType('sentence', 'death'))
-                ->badge(fn() => Inmate::withSentenceType('sentence', 'death')->count()),
+                ->modifyQueryUsing(
+                    fn(Builder $query) =>
+                    $query->withSentenceType('sentence', 'death')
+                )
+                ->badge(
+                    fn() =>
+                    Inmate::withSentenceType('sentence', 'death')->count()
+                ),
 
             'Manslaughter' => Tab::make('Manslaughter')
-                ->modifyQueryUsing(fn(Builder $query) => $query->withSentenceType('offence', 'manslaughter'))
-                ->badge(fn() => Inmate::withSentenceType('offence', 'manslaughter')->count()),
+                ->modifyQueryUsing(
+                    fn(Builder $query) =>
+                    $query->withSentenceType('offence', 'manslaughter')
+                )
+                ->badge(
+                    fn() =>
+                    Inmate::withSentenceType('offence', 'manslaughter')->count()
+                ),
 
             'Murder' => Tab::make('Murder')
-                ->modifyQueryUsing(fn(Builder $query) => $query->withSentenceType('offence', 'murder'))
-                ->badge(fn() => Inmate::withSentenceType('offence', 'murder')->count()),
+                ->modifyQueryUsing(
+                    fn(Builder $query) =>
+                    $query->withSentenceType('offence', 'murder')
+                )
+                ->badge(
+                    fn() =>
+                    Inmate::withSentenceType('offence', 'murder')->count()
+                ),
 
             'Robbery' => Tab::make('Robbery')
-                ->modifyQueryUsing(fn(Builder $query) => $query->withSentenceType('offence', 'robbery'))
-                ->badge(fn() => Inmate::withSentenceType('offence', 'robbery')->count()),
+                ->modifyQueryUsing(
+                    fn(Builder $query) =>
+                    $query->withSentenceType('offence', 'robbery')
+                )
+                ->badge(
+                    fn() =>
+                    Inmate::withSentenceType('offence', 'robbery')->count()
+                ),
 
             'Lifer' => Tab::make('Lifer')
-                ->modifyQueryUsing(fn(Builder $query) => $query->withSentenceType('sentence', 'life'))
-                ->badge(fn() => Inmate::withSentenceType('sentence', 'life')->count()),
+                ->modifyQueryUsing(
+                    fn(Builder $query) =>
+                    $query->withSentenceType('sentence', 'life')
+                )
+                ->badge(
+                    fn() =>
+                    Inmate::withSentenceType('sentence', 'life')->count()
+                ),
 
             'Others' => Tab::make('Others')
                 ->modifyQueryUsing(
                     fn(Builder $query) =>
-                $query->withSentenceType('offence', ['manslaughter', 'murder', 'robbery'], true)
+                $query->withoutOffences()
                 )
                 ->badge(
                     fn() =>
-                Inmate::withSentenceType('offence', ['manslaughter', 'murder', 'robbery'], true)->count()
+                Inmate::withoutOffences()->count()
                 ),
+
+
         ];
     }
 }

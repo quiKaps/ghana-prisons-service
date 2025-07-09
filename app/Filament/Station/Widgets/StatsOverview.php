@@ -6,6 +6,7 @@ use App\Models\Inmate;
 use App\Models\RemandTrial;
 use App\Traits\Has30DayTrend;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
@@ -15,6 +16,16 @@ class StatsOverview extends BaseWidget
 
     protected static ?int $sort = 1;
 
+
+    protected function getHeading(): ?string
+    {
+        return Auth::user()?->station->name . " Insights";
+    }
+
+    protected function getDescription(): ?string
+    {
+        return 'Key metrics on admissions, discharges, and custody trends across your facility.';
+    }
 
     protected function getStats(): array
     {
@@ -30,7 +41,7 @@ class StatsOverview extends BaseWidget
                         \App\Models\RemandTrial::where('is_discharged', false)->count()
                 )
             )
-                ->description("Total number of inmates across all categories")
+                ->description("Total number of prisoners in custody")
                 ->icon('heroicon-o-lock-closed')
                 ->color('success')
                 ->chart($this->get30DayTrendData(\App\Models\Inmate::class, fn($q) => $q->where('is_discharged', false)))
@@ -40,20 +51,20 @@ class StatsOverview extends BaseWidget
                 'Convicts',
                 number_format(\App\Models\Inmate::active()->count())
             )
-                ->description('Convicted inmates currently in custody')
+                ->description('Convicted prisoners currently in custody')
                 ->icon('heroicon-o-user-group')
-                ->color('primary')
+                ->color('info')
                 ->chart($this->get30DayTrendData(\App\Models\Inmate::class, fn($q) => $q->where('is_discharged', false)))
                 ->chartColor('blue')
                 ->extraAttributes([
-                    'tooltip' => 'Includes only sentenced inmates not discharged or transferred out.',
+                'tooltip' => 'Includes only sentenced prisoners not discharged or transferred out.',
                 ]),
 
             Stat::make(
                 'Remands',
                 number_format(\App\Models\RemandTrial::remand()->count())
             )
-                ->description("Inmates currently held on remand")
+                ->description("Prisoners currently held on remand")
                 ->icon('heroicon-o-scale')
                 ->color('warning')
                 ->chart($this->get30DayTrendData(
@@ -61,13 +72,13 @@ class StatsOverview extends BaseWidget
                     fn($q) =>
                     $q->where('detention_type', 'remand')->where('is_discharged', false)
                 ))
-                ->chartColor('amber'),
+                ->chartColor('warning'),
 
             Stat::make(
                 'Trial',
                 number_format(\App\Models\RemandTrial::trial()->count())
             )
-                ->description("Inmates currently on trial")
+                ->description("Prisoners currently on trial")
                 ->icon('heroicon-o-briefcase')
                 ->color('info')
                 ->chart($this->get30DayTrendData(
@@ -75,7 +86,7 @@ class StatsOverview extends BaseWidget
                     fn($q) =>
                     $q->where('detention_type', 'trial')->where('is_discharged', false)
                 ))
-                ->chartColor('cyan'),
+                ->chartColor('info'),
 
             // 📂 Alerts & Exceptions
             Stat::make(
@@ -86,8 +97,9 @@ class StatsOverview extends BaseWidget
                         ->count()
                 )
             )
-                ->description("Remand inmates with expired court warrants")
+                ->description("Remand prisoners with expired court warrants")
                 ->icon('heroicon-o-exclamation-circle')
+                ->label('Expired Warrants')
                 ->color('danger')
                 ->chart($this->get30DayTrendData(
                 \App\Models\RemandTrial::class,
@@ -96,7 +108,7 @@ class StatsOverview extends BaseWidget
                         ->where('is_discharged', false)
                     ->whereDate('next_court_date', '<', today())
                 ))
-                ->chartColor('red'),
+                ->chartColor('danger'),
 
             Stat::make(
                 'Escapees',
@@ -113,9 +125,9 @@ class StatsOverview extends BaseWidget
                         ->count()
                 )
             )
-                ->description("Inmates who have escaped custody")
+                ->description("Prisoners who have escaped custody")
                 ->icon('heroicon-o-flag')
-                ->color('gray')
+                ->color('danger')
                 ->chart($this->get30DayTrendData(
                     \App\Models\Inmate::class,
                     fn($q) =>
@@ -125,7 +137,7 @@ class StatsOverview extends BaseWidget
                         $q->where('discharge_type', 'escape')
                     )
                 ))
-                ->chartColor('slate'),
+                ->chartColor('danger'),
 
             // 📂 Daily Activity
             Stat::make(
@@ -142,9 +154,9 @@ class StatsOverview extends BaseWidget
                         ->count()
                 )
             )
-                ->description("Inmates discharged from custody today")
+                ->description("Prisoners discharged from custody today")
                 ->icon('heroicon-o-arrow-up-right')
-                ->color('teal')
+                ->color('warning')
                 ->chart($this->get30DayTrendData(
                     \App\Models\Inmate::class,
                     fn($q) =>
@@ -154,9 +166,9 @@ class StatsOverview extends BaseWidget
                         $q->whereDate('discharge_date', today())
                 )
                 ))
-                ->chartColor('teal')
+                ->chartColor('warning')
                 ->extraAttributes([
-                    'tooltip' => 'Includes both convicts and remand inmates discharged today.',
+                'tooltip' => 'Includes both convicts and remand prisoners discharged today.',
                 ]),
 
             Stat::make(
@@ -167,18 +179,45 @@ class StatsOverview extends BaseWidget
                         \App\Models\RemandTrial::whereDate('created_at', today())->count()
                 )
             )
-                ->description("New inmate admissions today")
+                ->description("New prisoners admitted today")
                 ->icon('heroicon-o-plus-circle')
-                ->color('emerald')
+                ->color('success')
                 ->chart($this->get30DayTrendData(
                     \App\Models\Inmate::class,
                     fn($q) =>
                     $q->whereDate('created_at', today())
                 ))
-                ->chartColor('emerald')
+                ->chartColor('success')
                 ->extraAttributes([
                     'tooltip' => 'Includes all new admissions across remand and convict categories.',
                 ]),
+
+            // 📂 Daily Activity
+            Stat::make(
+                'Transferred Today',
+                number_format(
+                    \App\Models\Inmate::where('transferred_out', true)
+                        ->where('date_transferred_out', today())
+                        ->count()
+
+                )
+            )
+                ->description("Prisoners transferred from the facility today")
+                ->icon('heroicon-o-arrow-right-start-on-rectangle')
+                ->color('green')
+                ->chart($this->get30DayTrendData(
+                    \App\Models\Inmate::class,
+                    fn($q) =>
+                    $q->where('transferred_out', true)
+                        ->where('date_transferred_out', today())
+                        ->count()
+                ))
+                ->chartColor('green')
+                ->extraAttributes([
+                    'tooltip' => 'Includes all prisoners transferred from this facility today.',
+                ]),
+
+
         ];
     }
 }

@@ -101,6 +101,13 @@ class Inmate extends Model
 
 
 
+    public function station(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Station::class);
+    }
+
+
+
     /**
      * Get the cell associated with the inmate.
      */
@@ -179,12 +186,13 @@ class Inmate extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('transferred_out', false)
-            ->where('is_discharged', false);
+            ->orWhere('transferred_out', null);
     }
 
     public function scopeRecidivists(Builder $query): Builder
     {
-        return $query->where('transferred_out', false)->where('is_discharged', false)
+        return $query->where('transferred_out', false)
+            ->where('is_discharged', false)
             ->where('previously_convicted', true);
     }
 
@@ -211,5 +219,23 @@ class Inmate extends Model
                     $q->whereIn($field, (array) $value);
                 }
             });
+    }
+
+    public function scopeWithoutOffences($query): Builder
+    {
+        $excluded = ['death', 'manslaughter', 'murder', 'robbery', 'life'];
+
+        return $query->whereHas('sentences', function ($q) use ($excluded) {
+            $q->whereNotIn('offence', $excluded);
+        });
+    }
+
+
+
+    protected static function booted(): void
+    {
+        static::addGlobalScope('latest', function ($query) {
+            $query->latest(); // or ->orderBy('created_at', 'desc')
+        });
     }
 }
