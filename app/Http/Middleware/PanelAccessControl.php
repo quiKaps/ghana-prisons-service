@@ -42,8 +42,8 @@ class PanelAccessControl
         //         }
         //         break;
         //     default:
-        //         // Optionally, deny access for unknown user types
-        //         //abort(Response::HTTP_FORBIDDEN, 'Unauthorized access.');
+        //         
+        ////logout unauthenticated access
         //         Filament::auth()->logout();
         //         session()->flash('status', 'Unauthorized access. Please contact support if you believe this is an error.');
         //         return redirect('/login');

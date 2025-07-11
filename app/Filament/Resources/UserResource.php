@@ -13,6 +13,7 @@ use App\Actions\SecureEditAction;
 use App\Actions\SecureDeleteAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Group;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Actions\ActionGroup;

@@ -19,17 +19,6 @@ class PasswordReset
     {
 
 
-        $this->isReset();
-
-
         return $next($request);
-    }
-
-
-    public function isReset()
-    {
-        return Action::make('verefiedPassword')
-            ->modalHeading('Password Reset Prompt')
-            ->modalSubmitActionLabel('Okay');
     }
 }

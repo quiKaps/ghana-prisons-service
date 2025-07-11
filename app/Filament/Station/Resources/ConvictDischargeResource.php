@@ -67,6 +67,33 @@ class ConvictDischargeResource extends Resource
                 TextColumn::make('full_name')
                     ->searchable()
                 ->label("Prisoner's Name"),
+            TextColumn::make('discharge.discharge_type')
+                ->searchable()
+                ->badge()
+                ->color(fn(string $state): string => match ($state) {
+                    'amnesty' => 'success',
+                    'fine_paid' => 'green',
+                    'presidential_pardon' => 'info',
+                    'acquitted_and_discharged' => 'warning',
+                    'bail_bond' => 'blue',
+                    'reduction_of_sentence' => 'purple',
+                    'death' => 'danger',
+                    'one_third_remission' => 'pink',
+                    default => 'primary',
+                })
+                ->formatStateUsing(fn($state) => match ($state) {
+                    'amnesty' => 'Amnesty',
+                    'fine_paid' => 'Fine Paid',
+                    'presidential_pardon' => 'Presidential Pardon',
+                    'acquitted_and_discharged' => 'Acquitted and Discharged',
+                    'bail_bond' => 'Bail Bond',
+                    'reduction_of_sentence' => 'Reduction of Sentence',
+                    'escape' => 'Escape',
+                    'death' => 'Death',
+                    'one_third_remission' => '1/3 Remission',
+                    default => 'Unknown',
+                })
+                ->label("Mode of Discharge"),
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
                 ->date(),

@@ -57,6 +57,9 @@ class StationPanelProvider extends PanelProvider
             ->navigationGroups([
             NavigationGroup::make()
                 ->collapsible(false)
+                ->label('Convicts'),
+            NavigationGroup::make()
+                ->collapsible(false)
                 ->label('Remand and Trials'),
             NavigationGroup::make()
                 ->collapsible(false)

@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Ohene',
                 'station_id' => 1,
-                'serial_number' => "1234567",
+                'serial_number' => "1111",
                 'user_type' => 'prison_admin',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
@@ -51,7 +51,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Ella',
                 'station_id' => 1,
-                'serial_number' => "12345678",
+                'serial_number' => "1122",
                 'user_type' => 'prison_admin',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
@@ -65,6 +65,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'station_id' => null,
+                'serial_number' => "3333",
                 'user_type' => 'hq_admin',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
