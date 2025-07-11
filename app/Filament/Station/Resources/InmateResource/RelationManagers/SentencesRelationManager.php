@@ -41,7 +41,8 @@ class SentencesRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\Action::make('view_warrant_document')
                     ->label('View Warrant')
-                    ->icon('heroicon-o-document-text')
+                ->color('purple')
+                ->icon('heroicon-o-document-text')
                     ->button()
                     ->url(function ($record) {
                         $document = $record->warrant_document ?? $record->amnesty_document;

@@ -106,19 +106,19 @@ class ConvictDischargeResource extends Resource
             ])
             ->actions([
             Tables\Actions\Action::make('view_warrant_document')
-                ->label('View Warrant')
+                ->label('View Document')
                 ->icon('heroicon-o-document-text')
+                ->color('purple')
                 ->button()
                 ->url(function ($record) {
-                    $document = $record->warrant_document ?? $record->amnesty_document;
+                $document =  $record?->discharge->discharge_document;
 
                     return $document
                         ? route('warrant.document.view', ['document' => $document])
                         : null;
-                }, true)
-                ->visible(function ($record) {
-                    return (bool) ($record->warrant_document ?? $record->amnesty_document);
-                }, true)
+            }, true)
+                ->visible(fn($record) => $record?->discharge->discharge_document !== null)
+
                 ->openUrlInNewTab(),
             Tables\Actions\ViewAction::make()
                     ->button()
