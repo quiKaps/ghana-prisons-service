@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Ohene',
                 'station_id' => 1,
+                'serial_number' => "1234567",
                 'user_type' => 'prison_admin',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
@@ -50,6 +51,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Ella',
                 'station_id' => 1,
+                'serial_number' => "12345678",
                 'user_type' => 'prison_admin',
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),

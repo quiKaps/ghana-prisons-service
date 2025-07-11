@@ -247,6 +247,20 @@ class Inmate extends Model
             });
     }
 
+    public function latestSentenceByEpd()
+    {
+        return $this->hasOne(Sentence::class)->latestOfMany('epd');
+    }
+
+    public function scopeWithEpdThisMonth($query)
+    {
+        return $query->whereHas('latestSentenceByDate', function ($subQuery) {
+            $subQuery->whereBetween('epd', [
+                now()->startOfMonth(),
+                now()->endOfMonth()
+            ]);
+        });
+    }
 
 
     protected static function booted(): void

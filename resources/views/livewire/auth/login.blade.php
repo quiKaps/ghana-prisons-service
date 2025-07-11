@@ -12,8 +12,10 @@ use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
 
 new #[Layout('components.layouts.auth')] class extends Component {
-    #[Validate('required|string|email')]
-    public string $email = '';
+   
+
+    #[Validate('required|string')]
+    public string $serial_number = '';
 
     #[Validate('required|string')]
     public string $password = '';
@@ -29,11 +31,11 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         $this->ensureIsNotRateLimited();
 
-        if (!Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        if (!Auth::attempt(['serial_number' => $this->serial_number, 'password' => $this->password], $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'serial_number' => __('auth.failed'),
             ]);
         }
 
@@ -57,20 +59,22 @@ new #[Layout('components.layouts.auth')] class extends Component {
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'email' => __('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
-        ]);
+    'serial_number' => __('auth.throttle', [
+        'seconds' => $seconds,
+        'minutes' => ceil($seconds / 60),
+    ]),
+]);
+
     }
 
     /**
      * Get the authentication rate limiting throttle key.
      */
-    protected function throttleKey(): string
-    {
-        return Str::transliterate(Str::lower($this->email) . '|' . request()->ip());
-    }
+     protected function throttleKey(): string
+{
+    return Str::transliterate(Str::lower($this->serial_number) . '|' . request()->ip());
+}
+
 }; ?>
 
 <div class="flex flex-col gap-6">
@@ -81,8 +85,9 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
     <form wire:submit="login" class="flex flex-col gap-6">
         <!-- Email Address -->
-        <flux:input wire:model="email" :label="__('Email address')" type="email" required autofocus autocomplete="email"
-            placeholder="email@example.com" />
+        <flux:input wire:model="serial_number" :label="__('Serial Number')" type="text" required autofocus 
+        placeholder="e.g. SN-123456" />
+    
 
         <!-- Password -->
         <div class="relative">

@@ -24,25 +24,30 @@ class PanelAccessControl
             return redirect()->route('login');
         }
 
-        switch ($user->user_type) {
-            case 'hq_admin':
-                if (!$request->is('hq*')) {
-                    return redirect('/hq');
-                }
-                break;
-            case 'officer':
-            case 'prison_admin':
-                if (!$request->is('station*')) {
-                    return redirect('/station');
-                }
-                break;
-            default:
-                // Optionally, deny access for unknown user types
-                //abort(Response::HTTP_FORBIDDEN, 'Unauthorized access.');
-                Filament::auth()->logout();
-                session()->flash('status', 'Unauthorized access. Please contact support if you believe this is an error.');
-                return redirect('/login');
-        }
+        // switch ($user->user_type) {
+        //     case 'super_admin':
+        //         if (!$request->is('admin*')) {
+        //             return redirect('/admin');
+        //         }
+        //         break;
+        //     case 'hq_admin':
+        //         if (!$request->is('hq*')) {
+        //             return redirect('/hq');
+        //         }
+        //         break;
+        //     case 'officer':
+        //     case 'prison_admin':
+        //         if (!$request->is('station*')) {
+        //             return redirect('/station');
+        //         }
+        //         break;
+        //     default:
+        //         // Optionally, deny access for unknown user types
+        //         //abort(Response::HTTP_FORBIDDEN, 'Unauthorized access.');
+        //         Filament::auth()->logout();
+        //         session()->flash('status', 'Unauthorized access. Please contact support if you believe this is an error.');
+        //         return redirect('/login');
+        // }
 
         return $next($request);
     }

@@ -9,10 +9,17 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use App\Actions\SecureEditAction;
+use App\Actions\SecureDeleteAction;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Group;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Filament\Forms\Components\Toggle;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -31,7 +38,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationLabel = 'All Users';
 
-    protected ?string $subheading = 'Manage and track inmates currently on trial';
+    protected ?string $subheading = 'Manage and track users in this facility';
 
 
 
@@ -84,8 +91,8 @@ class UserResource extends Resource
                                 Forms\Components\TextInput::make('email')
                                     ->label('Officer Email Address')
                                     ->placeholder('e.g. example@example.com')
-                                    ->required()
-                                    ->unique(User::class, 'email', ignoreRecord: true)
+
+                        ->unique(User::class, 'email', ignoreRecord: true)
                                     ->maxLength(50),
                                 Forms\Components\Select::make('user_type')
                                     ->label('User Type')
@@ -95,19 +102,28 @@ class UserResource extends Resource
                                         'officer' => 'Prison Officer',
                         'prison_admin' => 'Prison Administrator',
                         ]),
+
+                    Toggle::make('is_active')
+                        ->label("User Active Status")
+                        ->helperText('Click to toggle user on/off')
+                        ->default(true)
+                        ->inline(false)
+                        ->onColor('success')
+                        ->onIcon('heroicon-m-bolt')
+                        ->offIcon('heroicon-o-x-circle')
                 ])->columns(2),
                     ]),
                 Group::make()
                     ->schema([
                 Forms\Components\Section::make('')
                             ->schema([
-                                FileUpload::make('photo')
+                    FileUpload::make('avatar_url')
                                     ->label('Officer Photo')
                                     ->image()
                                     ->maxSize(1024)
-                                    ->disk('public')
-                                    ->directory('officer_photos')
-                                    ->columnSpanFull(),
+                        //->disk('public')
+                        //->directory('officer_photos')
+                        ->columnSpanFull(),
                             ])->columns(1),
             ])
             ]);
@@ -117,7 +133,7 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label("Officer's Name")
+                ->label("Officer")
                     ->formatStateUsing(fn($record) => $record->serial_number . '-' . strtoupper($record->rank) . '-' . $record->name)
                     ->searchable()
                     ->sortable(),
@@ -138,8 +154,12 @@ class UserResource extends Resource
                 'prison_admin' => 'Prison Administrator',
                 default => 'Unknown',
                     }),
-                // ToggleColumn::make('is_active')
-                //     ->label('Active Status'),
+            IconColumn::make('is_active')
+                ->label('Status')
+                ->tooltip('Only active users can login and access the system')
+                ->boolean()
+                ->trueIcon('heroicon-s-check-circle')
+                ->falseIcon('heroicon-o-x-circle'),
                 IconColumn::make('password_changed_at')
                     ->label('Password Changed')
                     ->boolean()
@@ -151,9 +171,56 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-            ])
+            ActionGroup::make([
+                SecureEditAction::make('edit', 'filament.station.resources.users.edit')
+                    ->modalWidth('md')
+                    ->modalHeading('Protected Data Access')
+                    ->modalDescription('This is a secure area of the application. Please confirm your password before continuing.')
+                    ->label('Edit User')
+                    ->modalSubmitActionLabel('Authenticate'),
+                SecureDeleteAction::make('delete')
+                    ->label('Delete User'),
+                Action::make('resetpassword')
+                    ->label('Reset Password')
+                    ->icon('heroicon-s-key')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading("Reset Password")
+                    ->modalDescription('Are you sure you\'d like to proceed? This will reset user password')
+                    ->modalSubmitActionLabel('Reset Password')
+                    ->modalIcon('heroicon-s-key')
+                    ->form([
+
+                        \Filament\Forms\Components\TextInput::make('password')
+                            ->label('Confirm Password')
+                            ->placeholder('Enter your password')
+                            ->password()
+                            ->required(),
+                    ])
+                    ->action(function (array $data, $record) {
+                        if (! \Illuminate\Support\Facades\Hash::check($data['password'], Auth::user()->password)) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Incorrect Password')
+                                ->danger()
+                                ->body('You must confirm your password to complete this action.')
+                                ->send();
+
+                            return;
+                        }
+
+                        $record->update([
+                            'password' => Hash::make('password'),
+                            'password_changed_at' => null
+                        ]);
+
+                        \Filament\Notifications\Notification::make()
+                            ->success()
+                            ->title('Password reset successful!')
+                            ->send();
+                    })
+            ])->button()
+
+        ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

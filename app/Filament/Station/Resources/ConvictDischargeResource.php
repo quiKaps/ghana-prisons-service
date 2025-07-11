@@ -26,9 +26,9 @@ use App\Filament\Station\Resources\ConvictDischargeResource\RelationManagers;
 class ConvictDischargeResource extends Resource
 {
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-right-start-on-rectangle';
 
-    protected static ?string $navigationLabel = 'Convicts Discharged';
+    protected static ?string $navigationLabel = 'Convict Discharges';
 
     protected static ?string $navigationGroup = 'Convicts';
 
@@ -55,7 +55,8 @@ class ConvictDischargeResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(Inmate::discharged()->orderByDesc('created_at'))
+            ->query(Inmate::discharged())
+
             ->emptyStateHeading('No Prisoners Available for Discharge')
             ->emptyStateDescription('There are currently no prisoners available for discharge today.')
             ->emptyStateIcon('heroicon-s-user')
@@ -85,9 +86,9 @@ class ConvictDischargeResource extends Resource
         ])
             ->bulkActions([
 
-                Tables\Actions\DeleteBulkAction::make(),
+            //
 
-            ]);
+        ]);
     }
 
     public static function getRelations(): array

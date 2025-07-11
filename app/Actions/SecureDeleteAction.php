@@ -4,8 +4,9 @@ namespace App\Actions;
 
 use Closure;
 use Filament\Tables\Actions\Action;
-use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 
 class SecureDeleteAction extends Action
@@ -20,6 +21,9 @@ class SecureDeleteAction extends Action
             ->icon('heroicon-o-trash')
             ->color('danger')
             ->requiresConfirmation()
+            ->modalHeading('Toggle User Status')
+            ->modalDescription("Are you sure you'd like to delete this post? This cannot be undone.")
+            ->modalSubmitActionLabel('Yes')
             ->form([
                 \Filament\Forms\Components\TextInput::make('password')
                     ->label('Confirm Password')
@@ -28,7 +32,7 @@ class SecureDeleteAction extends Action
                     ->required(),
             ])
             ->action(function (array $data, $record) {
-                if (! \Illuminate\Support\Facades\Hash::check($data['password'], auth()->user()->password)) {
+            if (! \Illuminate\Support\Facades\Hash::check($data['password'], Auth::user()->password)) {
                     \Filament\Notifications\Notification::make()
                         ->title('Incorrect Password')
                         ->danger()

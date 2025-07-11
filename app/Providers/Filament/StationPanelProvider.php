@@ -35,6 +35,7 @@ use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use App\Filament\Station\Resources\InmateResource\Pages\CreateInmate;
 use App\Filament\Station\Resources\InmateResource\Pages\ConvictedForiegners;
 use App\Filament\Station\Resources\RemandTrialResource\Pages\CreateRemandTrial;
+use App\Http\Middleware\PasswordReset;
 
 class StationPanelProvider extends PanelProvider
 {
@@ -47,6 +48,7 @@ class StationPanelProvider extends PanelProvider
             ->colors([
             'primary' => Color::hex('#654321'),
             ])
+            ->sidebarCollapsibleOnDesktop()
             ->theme(asset('css/filament/station/theme.css'))
             ->favicon(asset('gps-logo.png'))
             ->brandLogo(asset('gps-logo.png'))
@@ -70,7 +72,7 @@ class StationPanelProvider extends PanelProvider
             NavigationItem::make('Add Users')
                 ->url(fn(): string => CreateUser::getUrl())
                 ->icon('heroicon-o-user-plus')
-                ->visible(fn() => Auth::user()->user_type === 'prison_admin') //check auth
+                ->visible(fn() => Auth::user()?->user_type === 'prison_admin')
                 ->group('Facility Management')
                 ->isActiveWhen(fn() => request()->routeIs('filament.station.pages.create-user'))
                 ->sort(3),
@@ -133,7 +135,8 @@ class StationPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            PanelAccessControl::class
+            PanelAccessControl::class,
+            PasswordReset::class,
             ]);
     }
 

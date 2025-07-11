@@ -9,6 +9,8 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use App\Actions\SecureEditAction;
+use App\Actions\SecureDeleteAction;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\Group;
 use Filament\Tables\Columns\IconColumn;
@@ -170,12 +172,15 @@ class UserResource extends Resource
             Filter::make('prison_hq_admins')
                 ->label('Prison HQ Administrators')
                 ->query(fn(Builder $query): Builder => $query->where('user_type', 'hq_admin')),
-
-
         ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+            SecureEditAction::make('edit', 'filament.station.resources.users.edit')
+                ->modalWidth('md')
+                ->modalHeading('Protected Data Access')
+                ->modalDescription('This is a secure area of the application. Please confirm your password before continuing.')
+                ->label('Edit User'),
+            SecureDeleteAction::make('delete')
+                ->label('Delete User'),
 
         ])
             ->bulkActions([
