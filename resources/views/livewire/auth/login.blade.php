@@ -85,8 +85,8 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
     <form wire:submit="login" class="flex flex-col gap-6">
         <!-- Email Address -->
-        <flux:input wire:model="serial_number" :label="__('Serial Number')" type="text" required autofocus 
-        placeholder="e.g. SN-123456" />
+        <flux:input wire:model="serial_number" :label="__('Officer Number')" type="text" required autofocus 
+        placeholder="e.g. SPO123456" />
     
 
         <!-- Password -->

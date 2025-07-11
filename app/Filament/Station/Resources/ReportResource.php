@@ -22,6 +22,14 @@ class ReportResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-bar';
 
+    protected static ?string $navigationLabel = 'Reports';
+
+    protected static ?string $navigationGroup = 'Convicts';
+
+    protected static ?string $modelLabel = 'Reports';
+
+    protected ?string $subheading = 'Access and download all prisoner data';
+
     public static function form(Form $form): Form
     {
         return $form
