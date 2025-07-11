@@ -111,13 +111,13 @@ class ConvictDischargeResource extends Resource
                 ->color('purple')
                 ->button()
                 ->url(function ($record) {
-                $document =  $record?->discharge->discharge_document;
+                $document =  $record->discharge?->discharge_document;
 
                     return $document
                         ? route('warrant.document.view', ['document' => $document])
                         : null;
             }, true)
-                ->visible(fn($record) => $record?->discharge->discharge_document !== null)
+                ->visible(fn($record) => $record->discharge?->discharge_document !== null)
 
                 ->openUrlInNewTab(),
             Tables\Actions\ViewAction::make()
