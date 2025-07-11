@@ -97,12 +97,30 @@ class ConvictDischargeResource extends Resource
                 TextColumn::make('admission_date')
                     ->label('Admission Date')
                 ->date(),
-            ])
+            TextColumn::make('discharge.discharge_date')
+                ->label('Date of Discharge')
+                ->date(),
+        ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
+            Tables\Actions\Action::make('view_warrant_document')
+                ->label('View Warrant')
+                ->icon('heroicon-o-document-text')
+                ->button()
+                ->url(function ($record) {
+                    $document = $record->warrant_document ?? $record->amnesty_document;
+
+                    return $document
+                        ? route('warrant.document.view', ['document' => $document])
+                        : null;
+                }, true)
+                ->visible(function ($record) {
+                    return (bool) ($record->warrant_document ?? $record->amnesty_document);
+                }, true)
+                ->openUrlInNewTab(),
+            Tables\Actions\ViewAction::make()
                     ->button()
                     ->label('Profile')
                     ->icon('heroicon-o-user')

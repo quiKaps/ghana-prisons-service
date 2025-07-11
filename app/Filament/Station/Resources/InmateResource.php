@@ -463,7 +463,7 @@ class InmateResource extends Resource
             Tables\Columns\TextColumn::make('age_on_admission')
                 ->label('Age on Admission')
                 ->sortable(),
-            Tables\Columns\TextColumn::make('latestSentenceByDate.offence')
+            Tables\Columns\TextColumn::make('earliestSentenceByDate.offence')
                 ->label('Offence')
                 ->sortable()
                 ->searchable(),
@@ -583,8 +583,8 @@ class InmateResource extends Resource
                     ->icon('heroicon-o-arrow-right-on-rectangle')
                     ->color('info')
                     ->fillForm(fn(Inmate $record): array => [
-                        'serial_number' => $record->serial_number,
-                        'full_name' => $record->full_name,
+                    'serial_number' => $record->serial_number,
+                    'full_name' => $record->full_name,
                     'sentence' => $record->latestSentenceByDate->sentence,
                     'offence' => $record->latestSentenceByDate->offence,
                     ])->form([
