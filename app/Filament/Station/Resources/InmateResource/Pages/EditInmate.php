@@ -2,6 +2,7 @@
 
 namespace App\Filament\Station\Resources\InmateResource\Pages;
 
+use App\Filament\Station\Pages\Dashboard;
 use Filament\Actions;
 use App\Models\Sentence;
 use Filament\Actions\Action;
@@ -14,6 +15,17 @@ use App\Filament\Station\Resources\InmateResource;
 class EditInmate extends EditRecord
 {
     protected static string $resource = InmateResource::class;
+
+    protected function authorizeAccess(): void
+    {
+        abort_unless(
+            Auth::user()->user_type === 'prison_admin',
+            403,
+            'Unauthorized Action!'
+        );
+
+        //redirect()->route(Dashboard::getRouteName());
+    }
 
     protected function getHeaderActions(): array
     {

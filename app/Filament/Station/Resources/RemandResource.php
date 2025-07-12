@@ -269,4 +269,11 @@ class RemandResource extends Resource
             'edit' => Pages\EditRemand::route('/{record}/edit'),
         ];
     }
+
+    //show resource navigation to only prison_admin
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = Auth::user();
+        return $user?->user_type === 'prison_admin';
+    }
 }

@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Hash;
 use Filament\Support\Enums\Alignment;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use App\Filament\Station\Resources\InmateResource;
+use App\Filament\Station\Resources\RemandTrialResource;
+use App\Models\RemandTrial;
 use Filament\Forms\Components\Actions\Action as FormAction;
 
 class Dashboard extends \Filament\Pages\Dashboard
@@ -138,6 +141,24 @@ class Dashboard extends \Filament\Pages\Dashboard
                 }
             })
         ;
+    }
+
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('add_inmate')
+                ->label('Admit a Convict')
+                ->url(fn() => InmateResource::getUrl('create'))
+                ->visible(fn() => Auth::user()?->user_type === 'officer')
+                ->icon('heroicon-o-plus'),
+            Action::make('add_remand_trial')
+                ->label('Admit on Remand/Trial')
+                ->visible(fn() => Auth::user()?->user_type === 'officer')
+                ->color('blue')
+                ->url(fn() => RemandTrialResource::getUrl('create'))
+                ->icon('heroicon-o-plus'),
+        ];
     }
 
     public function getTitle(): string

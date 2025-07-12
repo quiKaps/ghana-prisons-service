@@ -36,6 +36,7 @@ class ViewInmate extends ViewRecord
             Action::make('back')
                 ->label('Back to Convicts')
                 ->color('success')
+                ->visible(fn() => Auth::user()?->user_type === 'prison_admin')
                 ->icon('heroicon-o-arrow-left')
                 ->url(InmateResource::getUrl('index')),
             //back to all convicts actions
@@ -566,7 +567,7 @@ class ViewInmate extends ViewRecord
                     }),
             ])
                 ->button()
-                ->visible(fn() => $this->record->is_discharged === false)
+                ->visible(fn() => $this->record->is_discharged === false && Auth::user()?->user_type === 'prison_admin')
                 ->label('More Actions'),
 
         ];

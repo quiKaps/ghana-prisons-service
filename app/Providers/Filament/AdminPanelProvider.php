@@ -33,9 +33,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->topNavigation()
-
             ->brandLogo(asset('gps-logo.png'))
-            ->brandLogoHeight('3.5rem')
+            ->brandLogoHeight('3rem')
             ->colors([
                 'primary' => Color::hex('#654321'),
                 // 'gray' => Color::hex('#779ECB'),

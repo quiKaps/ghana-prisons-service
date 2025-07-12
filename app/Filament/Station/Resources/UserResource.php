@@ -234,7 +234,7 @@ class UserResource extends Resource
             ->schema([
                 Section::make(fn($record) => $record->serial_number . '-' . strtoupper($record->rank) . '-' . $record->name . ' Details')
                     ->schema([
-                        ImageEntry::make('photo')
+                ImageEntry::make('avatar_url')
                             ->label('Officer Photo')
                             ->disk('public')
                             ->defaultImageUrl('https://ui-avatars.com/api/?name=Officer+Photo&background=random')

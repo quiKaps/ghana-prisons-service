@@ -17,6 +17,7 @@ class CreateInmate extends CreateRecord
 {
     protected static string $resource = InmateResource::class;
 
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $user = Auth::user();
@@ -94,5 +95,18 @@ class CreateInmate extends CreateRecord
             'date_of_sentence' => $data['date_sentenced'],
             'warrant_document' => $data['warrant_document'],
         ]);
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('view', ['record' => $this->getRecord()]);
+    }
+
+    protected function getCreatedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Convict registered')
+            ->body("{$this->record->full_name} has been admited successfully.");
     }
 }

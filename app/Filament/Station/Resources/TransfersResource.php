@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use App\Actions\SecureEditAction;
 use App\Actions\SecureDeleteAction;
 use Filament\Tables\Actions\Action;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Station\Resources\TransfersResource\Pages;
@@ -92,13 +93,13 @@ class TransfersResource extends Resource
                 ])),
 
 
-        ])
-
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
+
+        // ->bulkActions([
+        //     Tables\Actions\BulkActionGroup::make([
+        //         Tables\Actions\DeleteBulkAction::make(),
+        //     ]),
+        // ]);
     }
 
     public static function getRelations(): array
@@ -112,7 +113,13 @@ class TransfersResource extends Resource
     {
         return [
             'index' => Pages\ListTransfers::route('/'),
-
         ];
+    }
+
+    //show resource navigation to only prison_admin
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = Auth::user();
+        return $user?->user_type === 'prison_admin';
     }
 }

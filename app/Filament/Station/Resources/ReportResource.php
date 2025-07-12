@@ -9,6 +9,7 @@ use App\Models\Report;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -81,13 +82,13 @@ class ReportResource extends Resource
                     ])
             ], layout: FiltersLayout::AboveContent)
             ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+            Tables\Actions\EditAction::make(),
             ]);
+        // ->bulkActions([
+        //     Tables\Actions\BulkActionGroup::make([
+        //         Tables\Actions\DeleteBulkAction::make(),
+        //     ]),
+        // ]);
     }
 
     public static function getRelations(): array
@@ -104,5 +105,12 @@ class ReportResource extends Resource
             'create' => Pages\CreateReport::route('/create'),
             'edit' => Pages\EditReport::route('/{record}/edit'),
         ];
+    }
+
+    //show resource navigation to only prison_admin
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = Auth::user();
+        return $user?->user_type === 'prison_admin';
     }
 }

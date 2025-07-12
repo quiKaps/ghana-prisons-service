@@ -247,4 +247,11 @@ class TrialResource extends Resource
             'edit' => Pages\EditTrial::route('/{record}/edit'),
         ];
     }
+
+    //show resource navigation to only prison_admin
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = Auth::user();
+        return $user?->user_type === 'prison_admin';
+    }
 }

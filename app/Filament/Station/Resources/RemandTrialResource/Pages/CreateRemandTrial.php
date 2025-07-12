@@ -44,4 +44,17 @@ class CreateRemandTrial extends CreateRecord
             $this->getCancelFormAction(),
         ];
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('view', ['record' => $this->getRecord()]);
+    }
+
+    protected function getCreatedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Prisoner registered')
+            ->body("{$this->record->full_name} has been admited successfully.");
+    }
 }

@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use App\Models\ConvictDischarge;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Support\Enums\FontWeight;
@@ -151,5 +152,12 @@ class ConvictDischargeResource extends Resource
             'view' => Pages\ViewConvictDischarge::route('/{record}'),
             'edit' => Pages\EditConvictDischarge::route('/{record}/edit'),
         ];
+    }
+
+    //show resource navigation to only prison_admin
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = Auth::user();
+        return $user?->user_type === 'prison_admin';
     }
 }

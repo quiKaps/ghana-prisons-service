@@ -8,10 +8,20 @@ use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class ListInmates extends ListRecords
 {
     protected static string $resource = InmateResource::class;
+
+    protected function authorizeAccess(): void
+    {
+        abort_unless(
+            Auth::user()->user_type === 'prison_admin',
+            403,
+            'Unauthorized Action!'
+        );
+    }
 
     protected function getHeaderActions(): array
     {
@@ -108,8 +118,6 @@ class ListInmates extends ListRecords
                     fn() =>
                 Inmate::withoutOffences()->count()
                 ),
-
-
         ];
     }
 }

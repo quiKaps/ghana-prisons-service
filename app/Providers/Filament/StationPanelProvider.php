@@ -10,8 +10,10 @@ use Filament\PanelProvider;
 use Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
+use App\Http\Middleware\UserStatus;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\PasswordReset;
 use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationGroup;
 use App\Filament\Station\Pages\ViewInmate;
@@ -35,7 +37,6 @@ use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use App\Filament\Station\Resources\InmateResource\Pages\CreateInmate;
 use App\Filament\Station\Resources\InmateResource\Pages\ConvictedForiegners;
 use App\Filament\Station\Resources\RemandTrialResource\Pages\CreateRemandTrial;
-use App\Http\Middleware\PasswordReset;
 
 class StationPanelProvider extends PanelProvider
 {
@@ -48,6 +49,7 @@ class StationPanelProvider extends PanelProvider
             ->colors([
             'primary' => Color::hex('#654321'),
             ])
+            ->topNavigation(fn() => Auth::user()?->user_type === 'officer')
             ->sidebarCollapsibleOnDesktop()
             ->theme(asset('css/filament/station/theme.css'))
             ->favicon(asset('gps-logo.png'))
@@ -110,7 +112,7 @@ class StationPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-            ])
+        ])
             ->plugins([
                 FilamentEditProfilePlugin::make()
                     ->slug('my-profile')
@@ -130,16 +132,13 @@ class StationPanelProvider extends PanelProvider
                 'profile' => MenuItem::make()
                     ->label(fn() => Auth::user()->name)
                     ->url(fn(): string => EditProfilePage::getUrl())
-                    ->icon('heroicon-m-user-circle')
-                //If you are using tenancy need to check with the visible method where ->company() is the relation between the user and tenancy model as you called
-                // ->visible(function (): bool {
-                //     return auth()->user()->company()->exists();
-                // }),
-            ])
+                ->icon('heroicon-m-user-circle')
+        ])
             ->authMiddleware([
-                Authenticate::class,
+            Authenticate::class,
             PanelAccessControl::class,
-            PasswordReset::class,
+            //PasswordReset::class,
+            UserStatus::class
             ]);
     }
 

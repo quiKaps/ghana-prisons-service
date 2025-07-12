@@ -11,6 +11,15 @@ class EditRemandTrial extends EditRecord
 {
     protected static string $resource = RemandTrialResource::class;
 
+    protected function authorizeAccess(): void
+    {
+        abort_unless(
+            Auth::user()->user_type === 'prison_admin',
+            403,
+            'Unauthorized Action!'
+        );
+    }
+
     protected function getHeaderActions(): array
     {
         return [

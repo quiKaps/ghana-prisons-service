@@ -30,7 +30,7 @@ class ViewRemandTrial extends ViewRecord
                 ->label('Back to Remands')
                 ->icon('heroicon-o-arrow-left')
                 ->color('success')
-                ->visible(fn($record) => $record->detention_type === 'remand')
+                ->visible(fn($record) => $record->detention_type === 'remand' && Auth::user()?->user_type === 'prison_admin')
                 ->url(fn() => route('filament.station.resources.remands.index')),
 
             // Show "Back to Trials" if detention_type is 'trial'
@@ -38,7 +38,7 @@ class ViewRemandTrial extends ViewRecord
                 ->label('Back to Trials')
                 ->icon('heroicon-o-arrow-left')
                 ->color('success')
-                ->visible(fn($record) => $record->detention_type === 'trial')
+                ->visible(fn($record) => $record->detention_type === 'trial' && Auth::user()?->user_type === 'prison_admin')
                 ->url(fn() => route('filament.station.resources.trials.index')),
             //back to trials or remand action ends
 
@@ -57,7 +57,7 @@ class ViewRemandTrial extends ViewRecord
                     session(['remand_id' => $record->id]);
                     return redirect()->route('filament.station.resources.inmates.create');
                 })
-                ->visible(fn($record) => $record->detention_type === 'trial')
+                ->visible(fn($record) => $record->detention_type === 'trial' && Auth::user()?->user_type === 'prison_admin')
                 ->requiresConfirmation()
                 ->modalHeading('Re-admit this inmate?')
                 ->modalSubmitActionLabel('Proceed to Admission'),
@@ -67,7 +67,7 @@ class ViewRemandTrial extends ViewRecord
             //discharge action starts
             Action::make('Discharge')
                 ->color('green')
-                ->hidden(fn(RemandTrial $record) => $record->is_discharged)
+                ->visible(fn(RemandTrial $record) => !$record->is_discharged && Auth::user()?->user_type === 'prison_admin')
                 ->button()
                 ->icon('heroicon-m-arrow-right-start-on-rectangle')
                 ->modalHeading('Discharge')
@@ -151,6 +151,8 @@ class ViewRemandTrial extends ViewRecord
 
             Actions\Action::make('edit')
                 ->label('Edit')
+                ->visible(fn() => Auth::user()?->user_type === 'prison_admin')
+
                 ->icon('heroicon-o-pencil-square')
                 ->color('primary')
                 ->modalWidth('md')
