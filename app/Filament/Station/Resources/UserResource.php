@@ -319,7 +319,7 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('station_id', Auth::user()->station_id);
+            ->where('station_id', Auth::user()?->station_id);
     }
 
     public static function getPages(): array
