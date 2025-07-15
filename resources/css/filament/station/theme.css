@@ -1,6 +1,15 @@
-@import '../../../../vendor/filament/filament/resources/css/theme.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+@import '../../../../vendor/filament/filament/resources/css/base.css';
 
 @config 'tailwind.config.js';
+
+/* filamentphp theme customization theme */
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+
      /* Sidebar container and header */
      .fi-sidebar-nav,
      .fi-sidebar-header {
@@ -20,11 +29,11 @@
   /* Main body and topbar background */
   .fi-body,
   .fi-topbar {
-    @apply bg-gray-100;
+    @apply bg-khaki;
   }
 
   .fi-topbar nav {
-    @apply bg-gray-100 ring-0 shadow-none;
+    @apply bg-khaki ring-0 shadow-none;
   }
 
   /* Sidebar group labels */
@@ -122,3 +131,4 @@
         @apply bg-cream;
     }}
 
+ 

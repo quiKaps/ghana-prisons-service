@@ -51,6 +51,7 @@ class StationPanelProvider extends PanelProvider
             ])
             ->topNavigation(fn() => Auth::user()?->user_type === 'officer')
             ->sidebarCollapsibleOnDesktop()
+            //->viteTheme('resources/css/filament/station/theme.css')
             ->theme(asset('css/filament/station/theme.css'))
             ->favicon(asset('gps-logo.png'))
             ->brandLogo(asset('gps-logo.png'))

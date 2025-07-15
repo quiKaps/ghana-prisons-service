@@ -39,7 +39,7 @@ class HQPanelProvider extends PanelProvider
             ->brandLogoHeight('4rem')
             ->brandName('HQ - Ghana Prisons Service Portal') //tab
 
-            ->theme(asset('css/filament/station/theme.css'))
+            // ->theme(asset('css/filament/station/theme.css'))
             ->colors([
                 'primary' => Color::hex('#654321'),
             ])

@@ -28,7 +28,11 @@ export default {
             'gray-dark': '#273444',
             'gray': '#8492a6',
             'gray-light': '#d3dce6',
-            'white': '#fff',
+          'white': '#fff',
+          'khaki': '#F7F1F0',
+          'tan': '#d2b48c',
+          'camel': '#c19a6b',
+            
           },
         fontFamily: {
           sans: ['Graphik', 'sans-serif'],
