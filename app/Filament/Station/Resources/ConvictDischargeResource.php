@@ -56,8 +56,6 @@ class ConvictDischargeResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(Inmate::discharged())
-
             ->emptyStateHeading('No Prisoners Available for Discharge')
             ->emptyStateDescription('There are currently no prisoners available for discharge today.')
             ->emptyStateIcon('heroicon-s-user')

@@ -3,6 +3,7 @@
 namespace App\Filament\HQ\Widgets;
 
 use App\Traits\Has30DayTrend;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Support\Facades\Auth;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -10,6 +11,7 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 class StatsOverview extends BaseWidget
 {
     use Has30DayTrend;
+    use InteractsWithPageFilters;
 
     protected static ?int $sort = 1;
 
@@ -27,6 +29,20 @@ class StatsOverview extends BaseWidget
     protected function getStats(): array
     {
 
+        $startDate = $this->filters['startDate'];
+
+        $endDate = $this->filters['endDate'];
+
+        $station = $this->filters['station_id'];
+
+        // \App\Models\Inmate::when($startDate, fn($query) => $query->whereDate('created_at', '>=', $startDate))
+        // ->when($endDate, fn($query) => $query->whereDate('created_at', '>=', $endDate))
+        // ->when($station, fn($query) => $query->whereDate('station_id', $station))
+        // ->active()->orWhere('mode_of_discharge', 'escape')->count() +
+        // \App\Models\RemandTrial::when($startDate, fn($query) => $query->whereDate('created_at', '>=', $startDate))
+        // ->when($endDate, fn($query) => $query->whereDate('created_at', '>=', $endDate))
+        // ->when($station, fn($query) => $query->whereDate('station_id', $station))->where('is_discharged', false) // Include all active inmates
+        // ->orWhere('mode_of_discharge', 'escape')->count()
 
         return [
 

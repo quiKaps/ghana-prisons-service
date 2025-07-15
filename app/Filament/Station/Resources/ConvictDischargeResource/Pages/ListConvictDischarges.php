@@ -28,25 +28,19 @@ class ListConvictDischarges extends ListRecords
         //     ->groupBy('EPD')
         //     ->pluck('count', 'EPD');
 
+
+
         return [
             'today' => Tab::make('Today')
                 ->modifyQueryUsing(
-                fn(Builder $query) => $query->whereHas('latestSentenceByDate', function ($query) {
-                    $query->whereDate('EPD', today());
-                })
+                fn(Builder $query) => $query->withEpdToday()
                 )
-                ->badge(Inmate::whereHas('latestSentenceByDate', function ($subQuery) {
-                    $subQuery->whereDate('EPD', today());
-                })->count()),
+                ->badge(Inmate::withEpdToday()->count()),
             'tomorrow' => Tab::make("Tomorrow")
                 ->modifyQueryUsing(
-                    fn(Builder $query) => $query->whereHas('latestSentenceByDate', function ($query) {
-                        $query->whereDate('EPD', today()->addDay());
-                    })
+                fn(Builder $query) => $query->withEpdTomorrow()
                 )
-                ->badge(Inmate::whereHas('latestSentenceByDate', function ($query) {
-                    $query->whereDate('EPD', today()->addDay());
-                })->count()),
+                ->badge(Inmate::withEpdTomorrow()->count()),
             'thisMonth' => Tab::make('This Month')
                 ->modifyQueryUsing(fn(Builder $query) => $query->withEpdThisMonth())
                 ->badge(Inmate::withEpdThisMonth()->count()),

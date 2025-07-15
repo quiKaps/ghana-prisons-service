@@ -6,9 +6,12 @@ use Flowframe\Trend\Trend;
 use Illuminate\Support\Carbon;
 use Flowframe\Trend\TrendValue;
 use Filament\Widgets\ChartWidget;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 
 class ConvictsChart extends ChartWidget
 {
+    use InteractsWithPageFilters;
+
     protected static ?string $heading = 'Year-to-Date Convict Trends';
 
     protected static ?string $description = 'Monthly distribution of convict admissions from January to December.';
@@ -19,10 +22,15 @@ class ConvictsChart extends ChartWidget
 
     protected function getData(): array
     {
+
+        $startDate = $this->filters['startDate'];
+
+        $endDate = $this->filters['endDate'];
+
         $data = Trend::model(\App\Models\Inmate::class)
             ->between(
-                start: now()->startOfYear(),
-                end: now()->endOfYear(),
+            start: $startDate ? Carbon::parse($startDate) : now()->startOfYear(),
+            end: $endDate ? Carbon::parse($endDate) : now()->endOfYear(),
             )
             ->perMonth()
             ->count();

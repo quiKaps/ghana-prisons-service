@@ -2,26 +2,31 @@
 
 namespace App\Filament\HQ\Pages;
 
+use App\Models\Station;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\DatePicker;
+use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
 use Filament\Forms\Components\Actions\Action as FormAction;
 
-
-class Dashboard extends \Filament\Pages\Dashboard
+class Dashboard extends BaseDashboard
 {
-    protected static ?string $navigationIcon = 'heroicon-o-home';
 
-    protected static string $view = 'filament.h-q.pages.dashboard';
+    use HasFiltersForm;
 
-    protected static ?string $title = null;
+    //protected static ?string $title = null;
 
     public $defaultAction = 'passwordResetPopUpModal';
 
@@ -160,5 +165,22 @@ class Dashboard extends \Filament\Pages\Dashboard
         }
         $name = Auth::check() ? Auth::user()->name : 'Guest';
         return "{$greeting}, {$name}";
+    }
+
+    public function filtersForm(Form $form): Form
+    {
+        return $form
+            ->schema([
+                // Section::make()
+                //     ->schema([
+                //         Select::make('station_id')
+                //             ->label('Station')
+                //             ->placeholder('Type station name')
+                //             ->searchable()
+                //             ->options(fn() => \App\Models\Station::all()->pluck('name', 'id')),
+                //         DatePicker::make('startDate'),
+                //         DatePicker::make('endDate'),
+                //     ])->columns(3)
+            ]);
     }
 }

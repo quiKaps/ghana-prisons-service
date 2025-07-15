@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Section;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\HQ\Resources\TrialResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -172,6 +174,10 @@ class TrialResource extends Resource
             ->emptyStateDescription('Station has no prisoners on trial yet...')
             ->emptyStateIcon('heroicon-s-user')
             ->columns([
+            Tables\Columns\TextColumn::make('station.name')
+                ->label('Station Name')
+                ->searchable()
+                ->sortable(),
             TextColumn::make('serial_number')
                 ->weight(FontWeight::Bold)
                 ->label('S.N.'),
@@ -193,8 +199,15 @@ class TrialResource extends Resource
                 ->label('Court of Committal'),
             ])
             ->filters([
-            // Define any filters here if needed
-        ])
+                SelectFilter::make('station_id')
+                    ->label('Station')
+                    ->placeholder('Type Station Name')
+                    ->searchable()
+                    ->preload()
+                    ->options(fn() => \App\Models\Station::all()->pluck('name', 'id'))
+
+            ], layout: FiltersLayout::AboveContent)
+
             ->actions([
 
                 //profile starts

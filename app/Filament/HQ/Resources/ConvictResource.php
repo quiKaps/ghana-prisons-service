@@ -19,8 +19,10 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\HQ\Resources\ConvictResource\Pages;
@@ -432,6 +434,10 @@ class ConvictResource extends Resource
 
 
             ->columns([
+            Tables\Columns\TextColumn::make('station.name')
+                ->label('Station Name')
+                ->searchable()
+                ->sortable(),
             Tables\Columns\TextColumn::make('serial_number')
                 ->label('Serial Number')
                 ->searchable()
@@ -445,14 +451,13 @@ class ConvictResource extends Resource
                 ->sortable(),
             Tables\Columns\TextColumn::make('earliestSentenceByDate.offence')
                 ->label('Offence')
+                ->badge()
                 ->sortable()
                 ->searchable(),
-
             Tables\Columns\TextColumn::make('latestSentenceByDate.sentence')
                 ->label('Sentence')
                 ->sortable()
                 ->searchable(),
-
             Tables\Columns\TextColumn::make('earliestSentenceByDate.date_of_sentence')
                 ->label('Date of Sentence')
                 ->date()
@@ -463,8 +468,15 @@ class ConvictResource extends Resource
                 ->sortable(),
             ])
             ->filters([
-                //
-            ])
+            SelectFilter::make('station_id')
+                ->label('Station')
+                ->placeholder('Type Station Name')
+                ->searchable()
+                ->preload()
+                ->options(fn() => \App\Models\Station::all()->pluck('name', 'id')),
+
+
+        ], layout: FiltersLayout::AboveContent)
             ->actions([
             Tables\Actions\ViewAction::make()
                 ->label('Profile')

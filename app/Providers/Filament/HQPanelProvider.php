@@ -65,13 +65,13 @@ class HQPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/HQ/Resources'), for: 'App\\Filament\\HQ\\Resources')
             ->discoverPages(in: app_path('Filament/HQ/Pages'), for: 'App\\Filament\\HQ\\Pages')
             ->pages([
-                Pages\Dashboard::class,
-            ])
+            // Pages\Dashboard::class,
+        ])
             ->discoverWidgets(in: app_path('Filament/HQ/Widgets'), for: 'App\\Filament\\HQ\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
+            // Widgets\AccountWidget::class,
 
-            ])
+        ])
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->label(fn() => Auth::user()->name)

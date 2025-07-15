@@ -33,6 +33,8 @@ class Sentence extends Model
     protected $casts = [
         'EPD' => 'date',
         'LPD' => 'date',
+        'date_of_sentence' => 'date',
+        'date_of_amnesty' => 'date',
     ];
 
 

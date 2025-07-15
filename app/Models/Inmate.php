@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Carbon;
 use App\Models\Scopes\FacilitiesScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -252,13 +253,34 @@ class Inmate extends Model
         return $this->hasOne(Sentence::class)->latestOfMany('epd');
     }
 
-    public function scopeWithEpdThisMonth($query)
+
+    public function scopeWithEpdThisMonth(Builder $query): Builder
     {
         return $query->whereHas('latestSentenceByDate', function ($subQuery) {
-            $subQuery->whereBetween('epd', [
-                now()->startOfMonth(),
-                now()->endOfMonth()
-            ]);
+            $subQuery->whereNotNull('EPD')
+                ->whereBetween('EPD', [Carbon::today()->startOfMonth(), Carbon::today()->endOfMonth()]);
+        });
+    }
+
+    /**
+     * Scope to filter inmates whose latest sentence has a non-null EPD equal to today.
+     */
+    public function scopeWithEpdToday(Builder $query): Builder
+    {
+        return $query->whereHas('latestSentenceByDate', function ($subQuery) {
+            $subQuery->whereNotNull('EPD')
+                ->whereDate('EPD', Carbon::today());
+        });
+    }
+
+    /**
+     * Scope to filter inmates whose latest sentence has a non-null EPD equal to tomorrow.
+     */
+    public function scopeWithEpdTomorrow(Builder $query): Builder
+    {
+        return $query->whereHas('latestSentenceByDate', function ($subQuery) {
+            $subQuery->whereNotNull('EPD')
+                ->whereDate('EPD', Carbon::today()->addDay());
         });
     }
 
