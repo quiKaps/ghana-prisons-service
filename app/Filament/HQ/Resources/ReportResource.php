@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Station\Resources;
+namespace App\Filament\HQ\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
@@ -11,14 +11,12 @@ use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\Filter;
-use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\HQ\Resources\ReportResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Station\Resources\ReportResource\Pages;
-use App\Filament\Station\Resources\ReportResource\RelationManagers;
+use App\Filament\HQ\Resources\ReportResource\RelationManagers;
 
 class ReportResource extends Resource
 {
@@ -46,10 +44,14 @@ class ReportResource extends Resource
     {
         return $table
             ->columns([
-            Tables\Columns\TextColumn::make('serial_number')
-                ->label('Serial Number')
-                ->searchable()
-                ->sortable(),
+                Tables\Columns\TextColumn::make('station.name')
+                    ->label('Sation')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('serial_number')
+                    ->label('Serial Number')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('full_name')
                     ->label("Name of Prisoner")
                     ->searchable()
@@ -60,7 +62,7 @@ class ReportResource extends Resource
                 Tables\Columns\TextColumn::make('latestSentenceByDate.offence')
                     ->label('Offence')
                     ->sortable()
-                ->badge()
+                    ->badge()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('latestSentenceByDate.sentence')
@@ -78,33 +80,33 @@ class ReportResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-            Filter::make('created_at')->columnSpanFull()
-                ->form([
-                    DatePicker::make('created_from'),
-                    DatePicker::make('created_until'),
-                ])->columns(2)
-                ->query(function (Builder $query, array $data): Builder {
-                    return $query
-                        ->when(
-                            $data['created_from'],
-                            fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
-                        )
-                        ->when(
-                            $data['created_until'],
-                            fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
-                        );
-                })
+                Filter::make('created_at')->columnSpanFull()
+                    ->form([
+                        DatePicker::make('created_from'),
+                        DatePicker::make('created_until'),
+                    ])->columns(2)
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
             ], layout: FiltersLayout::AboveContent)
             ->actions([
-            Action::make('Profile')
-                ->color('gray')
-                ->icon('heroicon-o-user')
-                ->label('Profile')
-                ->button()
-                ->color('blue')
-                ->url(fn(Inmate $record) => InmateResource::getUrl('view', ['record' => $record])),
+                Action::make('Profile')
+                    ->color('gray')
+                    ->icon('heroicon-o-user')
+                    ->label('Profile')
+                    ->button()
+                    ->color('blue')
+                    ->url(fn(Inmate $record) => ConvictResource::getUrl('view', ['record' => $record])),
 
-        ]);
+            ]);
         // ->bulkActions([
         //     Tables\Actions\BulkActionGroup::make([
         //         Tables\Actions\DeleteBulkAction::make(),
@@ -123,13 +125,7 @@ class ReportResource extends Resource
     {
         return [
             'index' => Pages\ListReports::route('/'),
-        ];
-    }
 
-    //show resource navigation to only prison_admin
-    public static function shouldRegisterNavigation(): bool
-    {
-        $user = Auth::user();
-        return $user?->user_type === 'prison_admin';
+        ];
     }
 }

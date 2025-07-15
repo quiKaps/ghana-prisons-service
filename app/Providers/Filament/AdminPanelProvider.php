@@ -2,15 +2,17 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Dashboard;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
 use Filament\PanelProvider;
+use App\Filament\Pages\Dashboard;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
+use App\Http\Middleware\UserStatus;
 use Illuminate\Support\Facades\Auth;
 use Filament\Http\Middleware\Authenticate;
+use App\Http\Middleware\PanelAccessControl;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -79,14 +81,12 @@ class AdminPanelProvider extends PanelProvider
                 'profile' => MenuItem::make()
                     ->label(fn() => Auth::user()->name)
                     ->url(fn(): string => EditProfilePage::getUrl())
-                    ->icon('heroicon-m-user-circle')
-                //If you are using tenancy need to check with the visible method where ->company() is the relation between the user and tenancy model as you called
-                // ->visible(function (): bool {
-                //     return auth()->user()->company()->exists();
-                // }),
-            ])
+                ->icon('heroicon-m-user-circle')
+        ])
             ->authMiddleware([
                 Authenticate::class,
+            PanelAccessControl::class,
+            UserStatus::class
             ]);
     }
 }
