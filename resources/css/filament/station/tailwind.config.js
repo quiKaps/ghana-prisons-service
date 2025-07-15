@@ -32,7 +32,6 @@ export default {
           'khaki': '#F7F1F0',
           'tan': '#d2b48c',
           'camel': '#c19a6b',
-            
           },
         fontFamily: {
           sans: ['Graphik', 'sans-serif'],
