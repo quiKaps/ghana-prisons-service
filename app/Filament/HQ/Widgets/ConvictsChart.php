@@ -19,6 +19,8 @@ class ConvictsChart extends ChartWidget
 
     protected static ?int $sort = 3;
 
+    public ?string $filter = 'today';
+
 
     protected function getData(): array
     {
@@ -26,6 +28,10 @@ class ConvictsChart extends ChartWidget
         $startDate = $this->filters['startDate'];
 
         $endDate = $this->filters['endDate'];
+
+        $station = $this->filters['station_id'];
+
+        $activeFilter = $this->filter;
 
         $data = Trend::model(\App\Models\Inmate::class)
             ->between(
@@ -49,5 +55,15 @@ class ConvictsChart extends ChartWidget
     protected function getType(): string
     {
         return 'line';
+    }
+
+    protected function getFilters(): ?array
+    {
+        return [
+            'today' => 'Today',
+            'week' => 'Last week',
+            'month' => 'Last month',
+            'year' => 'This year',
+        ];
     }
 }

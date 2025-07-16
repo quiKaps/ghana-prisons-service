@@ -50,26 +50,62 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Total locked up',
                 number_format(
-                    \App\Models\Inmate::active()->orWhere('mode_of_discharge', 'escape')->count() +
-                        \App\Models\RemandTrial::where('is_discharged', false) // Include all active inmates
-                        ->orWhere('mode_of_discharge', 'escape')->count()
+                    // Improved filtering with proper date range and query grouping to avoid logic issues
+                    \App\Models\Inmate::when($startDate, fn($query) => $query->whereDate('created_at', '>=', $startDate))
+                        ->when($endDate, fn($query) => $query->whereDate('created_at', '<=', $endDate))
+                        ->when($station, fn($query) => $query->where('station_id', $station))
+                        ->where(function ($query) {
+                            $query->active()->orWhere('mode_of_discharge', 'escape');
+                        })
+                        ->count()
+                        +
+                        \App\Models\RemandTrial::when($startDate, fn($query) => $query->whereDate('created_at', '>=', $startDate))
+                        ->when($endDate, fn($query) => $query->whereDate('created_at', '<=', $endDate))
+                        ->when($station, fn($query) => $query->where('station_id', $station))
+                        ->where(function ($query) {
+                            $query->where('is_discharged', false)
+                                ->orWhere('mode_of_discharge', 'escape');
+                        })
+                        ->count()
                 )
             )
                 ->description("Total number of prisoners in custody")
                 ->icon('heroicon-o-lock-closed')
                 ->color('success')
-                ->chart($this->get30DayTrendData(\App\Models\Inmate::class, fn($q) => $q->where('is_discharged', false)))
-                ->chartColor('green'),
+                ->chart($this->get30DayTrendData(
+                    \App\Models\Inmate::class,
+                    fn($q) =>
+                    $q->when($this->filters['startDate'] ?? null, fn($query, $startDate) => $query->whereDate('created_at', '>=', $startDate))
+                        ->when($this->filters['endDate'] ?? null, fn($query, $endDate) => $query->whereDate('created_at', '<=', $endDate))
+                        ->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->where(function ($query) {
+                            $query->active()->orWhere('mode_of_discharge', 'escape');
+                        })
+                ))->chartColor('green'),
             //convicts
             Stat::make(
                 'Convicts',
-                number_format(\App\Models\Inmate::active()->count())
+                number_format(
+                    \App\Models\Inmate::when($this->filters['startDate'] ?? null, fn($query, $startDate) => $query->whereDate('created_at', '>=', $startDate))
+                        ->when($this->filters['endDate'] ?? null, fn($query, $endDate) => $query->whereDate('created_at', '<=', $endDate))
+                        ->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->where(function ($query) {
+                            $query->active()->orWhere('mode_of_discharge', 'escape');
+                        })
+                        ->count()
+                )
             )
                 ->description('Convicted prisoners currently in custody')
                 ->icon('heroicon-o-user-group')
                 ->color('info')
-                ->chart($this->get30DayTrendData(\App\Models\Inmate::class, fn($q) => $q->where('is_discharged', false)))
-                ->chartColor('blue')
+                ->chart($this->get30DayTrendData(
+                    \App\Models\Inmate::class,
+                    fn($q) =>
+                    $q->when($this->filters['startDate'] ?? null, fn($query, $startDate) => $query->whereDate('created_at', '>=', $startDate))
+                        ->when($this->filters['endDate'] ?? null, fn($query, $endDate) => $query->whereDate('created_at', '<=', $endDate))
+                        ->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->where('is_discharged', false)
+                ))->chartColor('blue')
                 ->extraAttributes([
                     'tooltip' => 'Includes only sentenced prisoners not discharged or transferred out.',
                 ]),
@@ -78,7 +114,14 @@ class StatsOverview extends BaseWidget
             //remand
             Stat::make(
                 'Active Remands',
-                number_format(\App\Models\RemandTrial::remand()->where('next_court_date', '>=', today())->count())
+                number_format(
+                    \App\Models\RemandTrial::remand()
+                        ->when($this->filters['startDate'] ?? null, fn($query, $startDate) => $query->whereDate('created_at', '>=', $startDate))
+                        ->when($this->filters['endDate'] ?? null, fn($query, $endDate) => $query->whereDate('created_at', '<=', $endDate))
+                        ->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->where('next_court_date', '>=', today())
+                        ->count()
+                )
             )
                 ->description("Prisoners currently held on remand")
                 ->icon('heroicon-o-scale')
@@ -86,13 +129,27 @@ class StatsOverview extends BaseWidget
                 ->chart($this->get30DayTrendData(
                     \App\Models\RemandTrial::class,
                     fn($q) =>
-                    $q->where('detention_type', 'remand')->where('is_discharged', false)
+                $q->when($this->filters['startDate'] ?? null, fn($query, $startDate) => $query->whereDate('created_at', '>=', $startDate))
+                    ->when($this->filters['endDate'] ?? null, fn($query, $endDate) => $query->whereDate('created_at', '<=', $endDate))
+                    ->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                    ->where('detention_type', 'remand')
+                    ->where('is_discharged', false)
                 ))
                 ->chartColor('warning'),
 
             Stat::make(
                 'Trial',
-                number_format(\App\Models\RemandTrial::trial()->count())
+                number_format(
+                    \App\Models\RemandTrial::trial()
+                        ->when($this->filters['startDate'] ?? null, fn($query, $startDate) => $query->whereDate('created_at', '>=', $startDate))
+                        ->when($this->filters['endDate'] ?? null, fn($query, $endDate) => $query->whereDate('created_at', '<=', $endDate))
+                        ->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->where(function ($query) {
+                            $query->where('is_discharged', false)
+                                ->orWhere('mode_of_discharge', 'escape');
+                        })
+                        ->count()
+                )
             )
                 ->description("Prisoners currently on trial")
                 ->icon('heroicon-o-briefcase')
@@ -100,7 +157,11 @@ class StatsOverview extends BaseWidget
                 ->chart($this->get30DayTrendData(
                     \App\Models\RemandTrial::class,
                     fn($q) =>
-                    $q->where('detention_type', 'trial')->where('is_discharged', false)
+                $q->when($this->filters['startDate'] ?? null, fn($query, $startDate) => $query->whereDate('created_at', '>=', $startDate))
+                    ->when($this->filters['endDate'] ?? null, fn($query, $endDate) => $query->whereDate('created_at', '<=', $endDate))
+                    ->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                    ->where('detention_type', 'trial')
+                    ->where('is_discharged', false)
                 ))
                 ->chartColor('info'),
 
@@ -109,6 +170,9 @@ class StatsOverview extends BaseWidget
                 'Expired Warrants',
                 number_format(
                     \App\Models\RemandTrial::remand()
+                        ->when($this->filters['startDate'] ?? null, fn($query, $startDate) => $query->whereDate('created_at', '>=', $startDate))
+                        ->when($this->filters['endDate'] ?? null, fn($query, $endDate) => $query->whereDate('created_at', '<=', $endDate))
+                        ->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
                         ->whereDate('next_court_date', '<', today())
                         ->count()
                 )
@@ -120,7 +184,8 @@ class StatsOverview extends BaseWidget
                 ->chart($this->get30DayTrendData(
                     \App\Models\RemandTrial::class,
                     fn($q) =>
-                    $q->where('detention_type', 'remand')
+                $q->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                    ->where('detention_type', 'remand')
                         ->where('is_discharged', false)
                         ->whereDate('next_court_date', '<', today())
                 ))
@@ -129,14 +194,20 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Escapees',
                 number_format(
-                    \App\Models\Inmate::where('is_discharged', true)
+                    \App\Models\Inmate::when($this->filters['startDate'] ?? null, fn($query, $startDate) => $query->whereDate('created_at', '>=', $startDate))
+                        ->when($this->filters['endDate'] ?? null, fn($query, $endDate) => $query->whereDate('created_at', '<=', $endDate))
+                        ->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->where('is_discharged', true)
                         ->whereHas(
                             'discharge',
-                            fn($q) =>
-                            $q->where('discharge_type', 'escape')
-                        )->count()
+                            fn($q) => $q->where('discharge_type', 'escape')
+                        )
+                        ->count()
                         +
-                        \App\Models\RemandTrial::where('is_discharged', true)
+                        \App\Models\RemandTrial::when($this->filters['startDate'] ?? null, fn($query, $startDate) => $query->whereDate('created_at', '>=', $startDate))
+                        ->when($this->filters['endDate'] ?? null, fn($query, $endDate) => $query->whereDate('created_at', '<=', $endDate))
+                        ->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->where('is_discharged', true)
                         ->where('mode_of_discharge', 'escape')
                         ->count()
                 )
@@ -147,11 +218,11 @@ class StatsOverview extends BaseWidget
                 ->chart($this->get30DayTrendData(
                     \App\Models\Inmate::class,
                     fn($q) =>
-                    $q->whereHas(
+                $q->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                    ->whereHas(
                         'discharge',
-                        fn($q) =>
-                        $q->where('discharge_type', 'escape')
-                    )
+                    fn($q) => $q->where('discharge_type', 'escape')
+                )
                 ))
                 ->chartColor('danger'),
 
@@ -159,13 +230,15 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Discharged Today',
                 number_format(
-                    \App\Models\Inmate::whereHas(
-                        'discharge',
-                        fn($q) =>
-                        $q->whereDate('discharge_date', today())
-                    )->count()
+                    \App\Models\Inmate::when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->whereHas(
+                            'discharge',
+                            fn($q) => $q->whereDate('discharge_date', today())
+                        )
+                        ->count()
                         +
-                        \App\Models\RemandTrial::where('is_discharged', true)
+                        \App\Models\RemandTrial::when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->where('is_discharged', true)
                         ->whereDate('date_of_discharge', today())
                         ->count()
                 )
@@ -176,11 +249,11 @@ class StatsOverview extends BaseWidget
                 ->chart($this->get30DayTrendData(
                     \App\Models\Inmate::class,
                     fn($q) =>
-                    $q->whereHas(
+                $q->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                    ->whereHas(
                         'discharge',
-                        fn($q) =>
-                        $q->whereDate('discharge_date', today())
-                    )
+                    fn($q) => $q->whereDate('discharge_date', today())
+                )
                 ))
                 ->chartColor('warning')
                 ->extraAttributes([
@@ -190,9 +263,13 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Admissions Today',
                 number_format(
-                    \App\Models\Inmate::whereDate('created_at', today())->count()
+                    \App\Models\Inmate::when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->whereDate('created_at', today())
+                        ->count()
                         +
-                        \App\Models\RemandTrial::whereDate('created_at', today())->count()
+                        \App\Models\RemandTrial::when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->whereDate('created_at', today())
+                        ->count()
                 )
             )
                 ->description("New prisoners admitted today")
@@ -201,7 +278,8 @@ class StatsOverview extends BaseWidget
                 ->chart($this->get30DayTrendData(
                     \App\Models\Inmate::class,
                     fn($q) =>
-                    $q->whereDate('created_at', today())
+                $q->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                    ->whereDate('created_at', today())
                 ))
                 ->chartColor('success')
                 ->extraAttributes([
@@ -212,10 +290,10 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Transferred Today',
                 number_format(
-                    \App\Models\Inmate::where('transferred_out', true)
+                    \App\Models\Inmate::when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->where('transferred_out', true)
                         ->where('date_transferred_out', today())
                         ->count()
-
                 )
             )
                 ->description("Prisoners transferred from the facility today")
@@ -224,9 +302,9 @@ class StatsOverview extends BaseWidget
                 ->chart($this->get30DayTrendData(
                     \App\Models\Inmate::class,
                     fn($q) =>
-                    $q->where('transferred_out', true)
-                        ->where('date_transferred_out', today())
-                        ->count()
+                $q->when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                    ->where('transferred_out', true)
+                    ->where('date_transferred_out', today())
                 ))
                 ->chartColor('green')
                 ->extraAttributes([

@@ -171,16 +171,16 @@ class Dashboard extends BaseDashboard
     {
         return $form
             ->schema([
-                // Section::make()
-                //     ->schema([
-                //         Select::make('station_id')
-                //             ->label('Station')
-                //             ->placeholder('Type station name')
-                //             ->searchable()
-                //             ->options(fn() => \App\Models\Station::all()->pluck('name', 'id')),
-                //         DatePicker::make('startDate'),
-                //         DatePicker::make('endDate'),
-                //     ])->columns(3)
+            Section::make()
+                ->schema([
+                    Select::make('station_id')
+                        ->label('Station')
+                        ->placeholder('Type station name')
+                        ->searchable()
+                        ->options(fn() => \App\Models\Station::all()->pluck('name', 'id')),
+                    DatePicker::make('startDate'),
+                    DatePicker::make('endDate'),
+                ])->columns(3)
             ]);
     }
 }

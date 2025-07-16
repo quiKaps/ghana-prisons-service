@@ -9,18 +9,23 @@ use App\Models\Report;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\DB;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TernaryFilter;
 use App\Filament\HQ\Resources\ReportResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\HQ\Resources\ReportResource\RelationManagers;
+use App\Models\InmateRemandUnion;
 
 class ReportResource extends Resource
 {
-    protected static ?string $model = Inmate::class;
+    protected static ?string $model = InmateRemandUnion::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-bar';
 
@@ -43,8 +48,9 @@ class ReportResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+
             ->columns([
-                Tables\Columns\TextColumn::make('station.name')
+            Tables\Columns\TextColumn::make('station.name')
                     ->label('Sation')
                     ->searchable()
                     ->sortable(),
@@ -56,30 +62,46 @@ class ReportResource extends Resource
                     ->label("Name of Prisoner")
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('age_on_admission')
-                    ->label('Age on Admission')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('latestSentenceByDate.offence')
-                    ->label('Offence')
-                    ->sortable()
-                    ->badge()
-                    ->searchable(),
+            Tables\Columns\TextColumn::make('gender')
+                ->label("Gender")
+                ->searchable()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('admission_date')
+                ->label("Date of Admission")
+                ->date()
+                ->searchable()
+                ->sortable(),
+            TextColumn::make('detention_type')
+                ->label('Detention Type')
+                ->sortable()
+                ->badge()
+                ->color(fn($state) => match (trim($state ?? '') ?: 'convict') {
+                    'remand' => 'info',
+                    'trial' => 'warning',
+                    'convict' => 'gray',
+                }),
+            Tables\Columns\TextColumn::make('age_on_admission')
+                ->label('Age on Admission')
+                ->sortable(),
+            Tables\Columns\TextColumn::make('court')
+                ->label('Court of Committal')
 
-                Tables\Columns\TextColumn::make('latestSentenceByDate.sentence')
-                    ->label('Sentence')
-                    ->sortable()
-                    ->searchable(),
-
-                Tables\Columns\TextColumn::make('earliestSentenceByDate.date_of_sentence')
-                    ->label('Date of Sentence')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('admission_date')
-                    ->label('Date of Admission')
-                    ->date()
-                    ->sortable(),
+                ->sortable(),
             ])
             ->filters([
+            SelectFilter::make('detention_type')
+                ->label('Source')
+                ->options([
+                    null => 'Inmate',
+                    'remand' => 'Remand',
+                    'trial' => 'Trial',
+                ]),
+
+            TernaryFilter::make('is_discharged')
+                ->label('Discharged')
+                ->trueLabel('Discharged')
+                ->falseLabel('Not Discharged')
+                ->nullable(),
                 Filter::make('created_at')->columnSpanFull()
                     ->form([
                         DatePicker::make('created_from'),
@@ -104,7 +126,15 @@ class ReportResource extends Resource
                     ->label('Profile')
                     ->button()
                     ->color('blue')
-                    ->url(fn(Inmate $record) => ConvictResource::getUrl('view', ['record' => $record])),
+                ->url(function (InmateRemandUnion $record) {
+                    if ($record->detention_type === 'convict') {
+                        // It's an inmate → ConvictResource
+                        return \App\Filament\HQ\Resources\ConvictResource::getUrl('view', ['record' => $record->unique_id]);
+                    }
+
+                    // It's a remand/trial → TrialResource
+                    return \App\Filament\HQ\Resources\TrialResource::getUrl('view', ['record' => $record->unique_id]);
+                })
 
             ]);
         // ->bulkActions([
