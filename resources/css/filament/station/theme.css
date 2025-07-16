@@ -64,7 +64,7 @@
 
   /* Sidebar active state */
   .fi-sidebar-item-button.fi-active {
-    @apply text-brown border-l-4 border-purple;
+    @apply text-brown border-l-4 border-cream;
   }
 
   .fi-sidebar-item-button.fi-active .fi-sidebar-item-label {
@@ -91,33 +91,33 @@
 
   /* Dashboard widget cards */
   .fi-widget {
-    @apply border-purple/30 bg-white shadow-sm transition-all duration-200;
+    @apply border-cream/30 bg-white shadow-sm transition-all duration-200;
   }
 
   .fi-widget:hover {
-    @apply shadow-md border-purple/50;
+    @apply shadow-md border-cream/50;
   }
 
   /* Widget headers */
   .fi-widget-header {
-    @apply text-purple font-semibold;
+    @apply text-cream font-semibold;
   }
 
   /* Widget icons */
   .fi-widget-icon {
-    @apply text-purple;
+    @apply text-cream;
   }
 
   /* Primary buttons */
   .fi-btn-primary {
-    @apply bg-purple text-white hover:bg-purple/90;
+    @apply bg-cream text-white hover:bg-cream/90;
   }
 
   /* Form focus rings */
   .fi-input:focus,
   .fi-select:focus,
   .fi-textarea:focus {
-    @apply ring-2 ring-purple;
+    @apply ring-2 ring-cream;
   }
 
   .fi-sidebar-item-active > a { 
