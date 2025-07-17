@@ -88,6 +88,7 @@ class StationSeeder extends Seeder
         User::factory()->create([
             'name' => 'Ohene',
             'email' => 'ohene@gmail.com',
+            'serial_number' => "1111",
             'station_id' => $maleStation->id,
             'user_type' => 'prison_admin',
             'email_verified_at' => now(),
@@ -98,6 +99,7 @@ class StationSeeder extends Seeder
         User::factory()->create([
             'name' => 'Ella',
             'email' => 'ella@gmail.com',
+            'serial_number' => "1122",
             'station_id' => $femaleStation->id,
             'user_type' => 'prison_admin',
             'email_verified_at' => now(),
@@ -108,6 +110,7 @@ class StationSeeder extends Seeder
         User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
+            'serial_number' => "1234",
             'station_id' => $adminStation->id,
             'user_type' => 'super_admin',
             'email_verified_at' => now(),
