@@ -8,6 +8,7 @@ class Discharge extends Model
 {
     //
     protected $fillable = [
+        'station_id',
         'inmate_id',
         'discharge_type', // e.g., parole, completion of sentence, medical discharge
         'discharge_date',

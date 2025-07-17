@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('discharges', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('station_id')
+                ->constrained()->onDelete('cascade');
             $table->foreignId('inmate_id')
                 ->constrained()->onDelete('cascade');
             $table->string('discharge_type'); // e.g., parole, completion of sentence, medical discharge

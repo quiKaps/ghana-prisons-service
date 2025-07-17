@@ -73,16 +73,28 @@ class ViewRemandTrial extends ViewRecord
                 ->modalHeading('Discharge')
                 ->modalSubmitActionLabel('Discharge Prisoner')
                 ->action(function (array $data, RemandTrial $record) {
+                try {
+                    \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
 
-                    try {
                         $record->update([
+
                             'is_discharged' => true,
                             'mode_of_discharge' => $data['mode_of_discharge'],
                             'discharged_by' => Auth::id(),
                             'date_of_discharge' => $data['date_of_discharge'],
                         ]);
 
-                        Notification::make()
+                        $record->discharge()->create([
+                            'station_id' => $record->station_id,
+                            'remand_trial_id' => $record->id,
+                            'prisoner_type' => $record->detention_type,
+                            'discharge_date' => $data['date_of_discharge'],
+                            'mode_of_discharge' => $data['mode_of_discharge'],
+                            'discharged_by' => Auth::id(),
+                        ]);
+                    });
+
+                    Notification::make()
                             ->success()
                             ->title('Prisoner Discharged')
                             ->body("{$record->full_name} has been discharged successfully.")

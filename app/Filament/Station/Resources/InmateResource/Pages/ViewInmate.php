@@ -198,7 +198,8 @@ class ViewInmate extends ViewRecord
                         try {
                             \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
                                 \App\Models\Discharge::create([
-                                    'inmate_id' => $record->id,
+                                'station_id' => $record->station_id,
+                                'inmate_id' => $record->id,
                                     'discharge_type' => $data['mode_of_discharge'],
                                     'discharge_date' => $data['date_of_discharge'],
                                     //'reason' => $data['reason'],

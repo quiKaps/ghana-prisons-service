@@ -44,6 +44,7 @@ class RemandTrialResource extends Resource
                                 ->acceptedFileTypes(['image/jpeg', 'image/png'])
                                 ->helperText('Only jpeg and png files are allowed for upload.')
                                 ->previewable()
+                                ->optimize('webp')
                                 ->downloadable()
                                 ->openable()
                                 ->columnSpan(1)

@@ -89,8 +89,16 @@ class ReportResource extends Resource
                 ->sortable(),
             ])
             ->filters([
+            SelectFilter::make('detention_type')
+                ->label('Source')
+                ->options([
+                    'convict' => 'Convict',
+                    'remand' => 'Remand',
+                    'trial' => 'Trial',
+                ]),
             Filter::make('admission_date')->columnSpanFull()
                 ->form([
+
                 DatePicker::make('admitted_from')->label('Admitted From'),
                 DatePicker::make('admitted_until')->label('Admitted From'),
                 ])->columns(2)

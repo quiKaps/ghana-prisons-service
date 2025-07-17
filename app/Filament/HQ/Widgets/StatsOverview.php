@@ -2,10 +2,12 @@
 
 namespace App\Filament\HQ\Widgets;
 
+use App\Models\Discharge;
 use App\Traits\Has30DayTrend;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use App\Models\RemandTrialDischarge;
 use Illuminate\Support\Facades\Auth;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class StatsOverview extends BaseWidget
@@ -230,16 +232,12 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Discharged Today',
                 number_format(
-                    \App\Models\Inmate::when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
-                        ->whereHas(
-                            'discharge',
-                            fn($q) => $q->whereDate('discharge_date', today())
-                        )
+                    Discharge::when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->whereDate('discharge_date', today())
                         ->count()
                         +
-                        \App\Models\RemandTrial::when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
-                        ->where('is_discharged', true)
-                        ->whereDate('date_of_discharge', today())
+                        RemandTrialDischarge::when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->whereDate('discharge_date', today())
                         ->count()
                 )
             )
@@ -268,6 +266,11 @@ class StatsOverview extends BaseWidget
                         ->count()
                         +
                         \App\Models\RemandTrial::when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
+                        ->whereDate('created_at', today())
+                        ->count()
+
+                        +
+                        \App\Models\ReAdmission::when($this->filters['station_id'] ?? null, fn($query, $station) => $query->where('station_id', $station))
                         ->whereDate('created_at', today())
                         ->count()
                 )

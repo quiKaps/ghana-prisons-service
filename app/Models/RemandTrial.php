@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[ScopedBy([FacilitiesScope::class])]
 
@@ -67,6 +68,16 @@ class RemandTrial extends Model
     public function station(): BelongsTo
     {
         return $this->belongsTo(Station::class);
+    }
+
+    public function reAdmissions(): HasMany
+    {
+        return $this->hasMany(ReAdmission::class);
+    }
+
+    public function discharge(): HasMany
+    {
+        return $this->hasMany(RemandTrialDischarge::class);
     }
 
     //Scopes

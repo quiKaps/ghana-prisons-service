@@ -72,6 +72,7 @@ class InmateResource extends Resource
                     ->schema([
                         FileUpload::make('prisoner_picture')
                             ->label('Prisoner Photo')
+                            ->optimize('webp')
                             ->placeholder("Upload Prisoner's Picture")
                                     ->visibility('public')
                             ->previewable()
@@ -146,12 +147,11 @@ class InmateResource extends Resource
                         ->required(fn(string $context) => $context === 'create'),
                     Forms\Components\DatePicker::make('EPD')
                         ->label('EPD (Earliest Possible Date of Discharge)')
-                        ->minDate(now())
+
                         ->placeholder('Select EPD'),
                     Forms\Components\DatePicker::make('LPD')
                         ->label('LPD (Latest Possible Date of Discharge)')
-                        ->placeholder('Select LPD')
-                        ->minDate(now()),
+                        ->placeholder('Select LPD'),
                     Forms\Components\TextInput::make('court_of_committal')
                         ->label('Court of Committal')
                         ->required()
@@ -641,6 +641,7 @@ class InmateResource extends Resource
                     try {
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
                             \App\Models\Discharge::create([
+                                'station_id' => $record->station_id,
                                 'inmate_id' => $record->id,
                                 'discharge_type' => $data['mode_of_discharge'],
                                 'discharge_date' => $data['date_of_discharge'],

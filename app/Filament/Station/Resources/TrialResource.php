@@ -94,26 +94,37 @@ class TrialResource extends Resource
                     ->modalHeading('Trial Discharge')
                     ->modalSubmitActionLabel('Discharge Prisoner')
                     ->action(function (array $data, RemandTrial $record) {
-                        try {
-                            $record->update([
-                                'is_discharged' => true,
-                                'mode_of_discharge' => $data['mode_of_discharge'],
-                                'discharged_by' => Auth::id(),
-                                'date_of_discharge' => $data['date_of_discharge'],
-                            ]);
+                try {
+                    \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
+                        $record->update([
+                            'is_discharged' => true,
+                            'mode_of_discharge' => $data['mode_of_discharge'],
+                            'discharged_by' => Auth::id(),
+                            'date_of_discharge' => $data['date_of_discharge'],
+                        ]);
 
+                        $record->discharge()->create([
+                            'station_id' => $record->station_id,
+                            'remand_trial_id' => $record->id,
+                            'prisoner_type' => $record->detention_type,
+                            'discharge_date' => $data['date_of_discharge'],
+                            'mode_of_discharge' => $data['mode_of_discharge'],
+                            'discharged_by' => Auth::id(),
+                        ]);
+                    });
                             Notification::make()
                                 ->success()
                                 ->title('Prisoner Discharged')
                                 ->body("{$record->full_name} has been discharged successfully.")
                                 ->send();
                         } catch (\Throwable $e) {
-                            Notification::make()
+
+                    Notification::make()
                         ->error()
-                                ->title('Error Discharging Prisoner')
-                                ->body("Discharge failed with error {$e}")
-                                ->send();
-                        }
+                        ->title('Error Discharging Prisoner')
+                        ->body("Discharge failed with error {$e}")
+                        ->send();
+                }
                     })
                     ->label('Discharge')
                     ->fillForm(fn(RemandTrial $record): array => [

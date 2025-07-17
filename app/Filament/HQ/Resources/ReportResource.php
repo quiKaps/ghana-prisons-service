@@ -92,16 +92,17 @@ class ReportResource extends Resource
             SelectFilter::make('detention_type')
                 ->label('Source')
                 ->options([
-                    null => 'Inmate',
+                'convict' => 'Convict',
                     'remand' => 'Remand',
                     'trial' => 'Trial',
                 ]),
 
-            TernaryFilter::make('is_discharged')
+            SelectFilter::make('is_discharged')
                 ->label('Discharged')
-                ->trueLabel('Discharged')
-                ->falseLabel('Not Discharged')
-                ->nullable(),
+                ->options([
+                    true => 'Discharged',
+                    false => 'Not Discharged',
+                ]),
                 Filter::make('created_at')->columnSpanFull()
                     ->form([
                         DatePicker::make('created_from'),

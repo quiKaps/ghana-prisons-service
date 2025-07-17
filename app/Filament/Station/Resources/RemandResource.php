@@ -104,14 +104,26 @@ class RemandResource extends Resource
                 ->action(function (array $data, RemandTrial $record) {
 
                 try {
-                    $record->update([
-                        'is_discharged' => true,
-                        'mode_of_discharge' => $data['mode_of_discharge'],
-                        'discharged_by' => Auth::id(),
-                        'date_of_discharge' => $data['date_of_discharge'],
-                    ]);
+                    \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
+                        $record->update([
+                            'is_discharged' => true,
+                            'mode_of_discharge' => $data['mode_of_discharge'],
+                            'discharged_by' => Auth::id(),
+                            'date_of_discharge' => $data['date_of_discharge'],
+                        ]);
 
-                        Notification::make()
+
+                        $record->discharge()->create([
+                            'station_id' => $record->station_id,
+                            'remand_trial_id' => $record->id,
+                            'prisoner_type' => $record->detention_type,
+                            'discharge_date' => $data['date_of_discharge'],
+                            'mode_of_discharge' => $data['mode_of_discharge'],
+                            'discharged_by' => Auth::id(),
+                        ]);
+                    });
+
+                    Notification::make()
                             ->success()
                             ->title('Prisoner Discharged')
                             ->body("{$record->full_name} has been discharged successfully.")
@@ -177,7 +189,6 @@ class RemandResource extends Resource
                 ]),
 
             //discharge ends here
-
             Action::make('readmit')
                 ->color('info')
                 ->visible(fn(RemandTrial $record) => $record->is_discharged)
@@ -187,16 +198,24 @@ class RemandResource extends Resource
                 ->modalHeading('Re-Admit')
                 ->modalSubmitActionLabel('Re-Admit Remand')
                 ->action(function (array $data, RemandTrial $record) {
-
-                    try {
+                try {
+                    \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
                         $record->update([
                             'is_discharged' => false,
                             'mode_of_discharge' => null,
                             'discharged_by' => null,
                             'next_court_date' => $data['next_court_date'],
+                            're_admission_date' => now()
                         ]);
 
-                        Notification::make()
+                        $record->reAdmissions()->create([
+                            'station_id' => $record->station_id,
+                            'remand_trial_id' => $record->id,
+                            're_admission_date' => now(),
+                        ]);
+                    });
+
+                    Notification::make()
                             ->success()
                             ->title('Prisoner Readmitted')
                             ->body("{$record->full_name} has been readmitted successfully.")

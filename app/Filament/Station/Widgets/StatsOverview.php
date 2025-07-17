@@ -3,9 +3,12 @@
 namespace App\Filament\Station\Widgets;
 
 use App\Models\Inmate;
+use App\Models\Discharge;
+use App\Models\ReAdmission;
 use App\Models\RemandTrial;
 use App\Traits\Has30DayTrend;
 use Illuminate\Support\Carbon;
+use App\Models\RemandTrialDischarge;
 use Illuminate\Support\Facades\Auth;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -146,14 +149,10 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Discharged Today',
                 number_format(
-                    \App\Models\Inmate::whereHas(
-                        'discharge',
-                        fn($q) =>
-                        $q->whereDate('discharge_date', today())
-                    )->count()
+                    Discharge::whereDate('discharge_date', today())
+                        ->count()
                         +
-                        \App\Models\RemandTrial::where('is_discharged', true)
-                        ->whereDate('date_of_discharge', today())
+                        RemandTrialDischarge::whereDate('discharge_date', today())
                         ->count()
                 )
             )
@@ -177,9 +176,11 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Admissions Today',
                 number_format(
-                    \App\Models\Inmate::whereDate('created_at', today())->count()
+                    Inmate::whereDate('created_at', today())->count()
                         +
-                        \App\Models\RemandTrial::whereDate('created_at', today())->count()
+                        RemandTrial::whereDate('created_at', today())->count()
+                        +
+                        ReAdmission::whereDate('created_at', today())->count()
                 )
             )
                 ->description("New prisoners admitted today")
