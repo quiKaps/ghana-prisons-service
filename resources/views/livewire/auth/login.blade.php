@@ -105,13 +105,13 @@ new #[Layout('components.layouts.auth')] class extends Component {
         <flux:checkbox wire:model="remember" :label="__('Remember me')" />
 
         <div class="flex items-center justify-end">
-            <flux:button variant="primary" type="submit" class="w-full">{{ __('Log in') }}</flux:button>
+            <flux:button variant="primary" type="submit" class="w-full bg-brown">{{ __('Log in') }}</flux:button>
         </div>
     </form>
 
 
         <div class="space-x-1 pt-8 text-center text-sm text-zinc-600 rtl:space-x-reverse dark:text-zinc-400">
-            <p>Powered by <a class="text-amber-50" href="https://zelosworks.com" target="_blank">Zelosworks</a></p>
+            <p>Powered by <a class="text-amber-900" href="https://zelosworks.com" target="_blank">Zelosworks</a></p>
         </div>
 
 </div>
