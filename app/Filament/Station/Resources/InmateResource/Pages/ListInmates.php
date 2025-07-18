@@ -37,8 +37,8 @@ class ListInmates extends ListRecords
 
 
             'Active' => Tab::make('Active')
-                ->modifyQueryUsing(fn(Builder $query) => $query->active()->latestSetenceByDate()->where('epd', '>', today()))
-                ->badge(fn() => Inmate::active()->latestSetenceByDate()->where('epd', '>', today())->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->active())
+                ->badge(fn() => Inmate::active()->count()),
 
             'foreigners' => Tab::make('Foreigners')
                 ->modifyQueryUsing(fn(Builder $query) => $query->active()
