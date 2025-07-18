@@ -2,14 +2,15 @@
 
 namespace App\Filament\Station\Resources\InmateResource\Pages;
 
-use App\Filament\Station\Pages\Dashboard;
 use Filament\Actions;
 use App\Models\Sentence;
 use Filament\Actions\Action;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\Station\Pages\Dashboard;
 use App\Filament\Station\Resources\InmateResource;
 
 class EditInmate extends EditRecord
@@ -127,6 +128,14 @@ class EditInmate extends EditRecord
             'court_of_committal' => $data['court_of_committal'],
             'warrant_document' => $data['warrant_document'],
         ]);
+
+        //set user as dischagrged if epd is today
+        if (isset($data['EPD']) && Carbon::parse($data['EPD']) == today()) {
+
+            $this->record->update([
+                'is_discharged' => true
+            ]);
+        }
 
         $data['station_id'] = $user->station_id; // Current user station id
 

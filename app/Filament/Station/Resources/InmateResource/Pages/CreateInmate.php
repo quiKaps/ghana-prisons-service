@@ -4,14 +4,15 @@ namespace App\Filament\Station\Resources\InmateResource\Pages;
 
 use Filament\Actions;
 use App\Models\Inmate;
+use App\Models\Sentence;
+use App\Helpers\FormHelper;
 use App\Models\RemandTrial;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Station\Resources\InmateResource;
-use App\Helpers\FormHelper;
-use App\Models\Sentence;
 
 class CreateInmate extends CreateRecord
 {
@@ -95,6 +96,14 @@ class CreateInmate extends CreateRecord
             'date_of_sentence' => $data['date_sentenced'],
             'warrant_document' => $data['warrant_document'],
         ]);
+
+        //set user as dischagrged if epd is today
+        if (isset($data['EPD']) && Carbon::parse($data['EPD']) == today()) {
+
+            $this->record->update([
+                'is_discharged' => true
+            ]);
+        }
     }
 
     protected function getRedirectUrl(): string

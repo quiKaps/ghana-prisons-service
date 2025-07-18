@@ -8,11 +8,13 @@ use App\Models\Inmate;
 use Filament\Forms\Form;
 use App\Models\Transfers;
 use Filament\Tables\Table;
+use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
 use App\Actions\SecureEditAction;
 use App\Actions\SecureDeleteAction;
 use Filament\Tables\Actions\Action;
 use Illuminate\Support\Facades\Auth;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Station\Resources\TransfersResource\Pages;
@@ -54,24 +56,37 @@ class TransfersResource extends Resource
                     ->label("Name of Prisoner")
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('station_transfered_from-id')
-                    ->label('Age on Admission')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('latestSentenceByDate.offence')
-                    ->label('Offence')
-                    ->sortable()
-                    ->searchable(),
+            Tables\Columns\TextColumn::make('date_transferred_out')
+                ->label("Date of Transfer")
+                ->formatStateUsing(fn($state) => Carbon::parse($state)->format('Y-m-d'))
+                ->date()
+                ->searchable()
+                ->sortable(),
+            TextColumn::make('transferred_in')
+                ->label('Transferred In')
+                ->state(fn(Inmate $record) => $record->transferred_in) // this is the "column state"
+                ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
+                ->visible(fn(?Inmate $record) => $record?->transferred_in ?? false), // recheck the value manually
 
-                Tables\Columns\TextColumn::make('latestSentenceByDate.sentence')
+            // Tables\Columns\TextColumn::make('station_transferred_from_id')
+            //     ->label('Station Transfered From')
+            //     ->formatStateUsing(fn($state, Inmate $record) => $record->transferred_in)
+            //     ->visible(fn($state, Inmate $record) => $record == true)
+            //     ->sortable(),
+            // Tables\Columns\TextColumn::make('station_transferred_to_id')
+            //     ->label('Station Transfered To')
+            //     ->formatStateUsing(fn($state, Inmate $record) => $record->transferred_out)
+            //     ->visible(fn($state) => $state == true)
+            //     ->sortable(),
+            Tables\Columns\TextColumn::make('latestSentenceByDate.sentence')
                     ->label('Sentence')
                     ->sortable()
-                    ->searchable(),
-
-                Tables\Columns\TextColumn::make('latestSentenceByDate.date_of_sentence')
-                    ->label('Date of Sentence')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('admission_date')
+                ->searchable(),
+            // Tables\Columns\TextColumn::make('latestSentenceByDate.date_of_sentence')
+            //         ->label('Date of Sentence')
+            //         ->date()
+            //         ->sortable(),
+            Tables\Columns\TextColumn::make('admission_date')
                     ->label('Date of Admission')
                     ->date()
                     ->sortable(),

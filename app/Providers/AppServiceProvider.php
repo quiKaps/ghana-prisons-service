@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Sentence;
+use App\Observers\SentenceObserver;
 use Illuminate\Support\ServiceProvider;
 use Filament\Support\Facades\FilamentView;
 
@@ -20,6 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Sentence::observe(SentenceObserver::class);
     }
 }
