@@ -19,7 +19,7 @@ class DischargeService
 
             $inmate->updateQuietly(['is_discharged' => true]);
 
-            \App\Models\Discharge::create([
+            $inmate->discharge()->create([
                 'station_id' => $inmate->station_id,
                 'inmate_id' => $inmate->id,
                 'discharge_type' => 'one-third remission',
