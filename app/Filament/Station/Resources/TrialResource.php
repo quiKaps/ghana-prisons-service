@@ -53,11 +53,6 @@ class TrialResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            // ->query(RemandTrial::query()
-            //     ->where('detention_type', 'trial')
-            //     //->where('next_court_date', '>=', now())
-            //     ->where('is_discharged', false)
-            //     ->orderBy('created_at', 'DESC'))
             ->emptyStateHeading('No prisoner On Trial Found')
             ->emptyStateDescription('Station has no prisoners on trial yet...')
             ->emptyStateIcon('heroicon-s-user')

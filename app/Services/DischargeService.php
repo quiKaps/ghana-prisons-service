@@ -15,10 +15,17 @@ class DischargeService
     {
         $latestEPD = $inmate->sentences()->latest('epd')->value('epd');
 
-        dd('here');
-
         if ($latestEPD && Carbon::parse($latestEPD)->isToday()) {
+
             $inmate->updateQuietly(['is_discharged' => true]);
+
+            // \App\Models\Discharge::create([
+            //     'station_id' => $inmate->station_id,
+            //     'inmate_id' => $inmate->id,
+            //     'discharge_type' => 'one-third remission',
+            //     'discharge_date' => today(),
+            //     //'reason' => $data['reason'],
+            // ]);
         }
     }
 }

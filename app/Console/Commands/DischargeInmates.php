@@ -55,6 +55,14 @@ class DischargeInmates extends Command
             if ($latestEpd && Carbon::parse($latestEpd)->isSameDay($today)) {
                 $inmate->is_discharged = true;
                 $inmate->save();
+
+                $inmate->discharge()->create([
+                    'station_id' => $inmate->station_id,
+                    'inmate_id' => $inmate->id,
+                    'discharge_type' => 'one-third remission',
+                    'discharge_date' => today(),
+                ]);
+
                 $dischargedCount++;
             }
         }
