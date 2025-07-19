@@ -29,11 +29,11 @@
   /* Main body and topbar background */
   .fi-body,
   .fi-topbar {
-    @apply bg-khaki;
+    @apply bg-corn;
   }
 
   .fi-topbar nav {
-    @apply bg-khaki ring-0 shadow-none;
+    @apply bg-cream ring-0 shadow-none;
   }
 
   /* Sidebar group labels */

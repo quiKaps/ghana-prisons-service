@@ -8,7 +8,9 @@ use App\Models\Trial;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\RemandTrial;
+use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
+use PhpParser\Node\Stmt\TryCatch;
 use App\Services\DischargeService;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Group;
@@ -27,7 +29,6 @@ use App\Filament\Station\Resources\TrialResource\Pages\EditTrial;
 use App\Filament\Station\Resources\TrialResource\Pages\ListTrials;
 use App\Filament\Station\Resources\TrialResource\RelationManagers;
 use App\Filament\Station\Resources\TrialResource\Pages\CreateTrial;
-use PhpParser\Node\Stmt\TryCatch;
 
 class TrialResource extends Resource
 {
@@ -76,7 +77,10 @@ class TrialResource extends Resource
                 TextColumn::make('next_court_date')
                     ->label('Next Court Date')
                     ->badge()
-                    ->color('success')
+                ->color(
+                    fn($state) =>
+                    Carbon::parse($state)->isFuture() ? 'success' : 'danger'
+                )
                     ->date(),
                 TextColumn::make('court')
                     ->label('Court of Committal'),
