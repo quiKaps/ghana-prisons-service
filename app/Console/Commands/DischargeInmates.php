@@ -52,8 +52,19 @@ class DischargeInmates extends Command
 
         foreach ($inmates as $inmate) {
             $latestEpd = $inmate->sentences()->max('epd');
+
+            //Discharge inmate if his latest epd is today
             if ($latestEpd && Carbon::parse($latestEpd)->isSameDay($today)) {
-                $inmate->is_discharged = true;
+
+                //Check if this inmate has been already been discharged today
+                $existingDischarge = $inmate->discharge()
+                    ->whereDate('discharge_date', today())
+                    ->exists();
+
+                //Discharge inmate if he hast been dischaged already
+                if (!$existingDischarge) {
+
+                    $inmate->is_discharged = true;
                 $inmate->save();
 
                 $inmate->discharge()->create([
@@ -63,7 +74,8 @@ class DischargeInmates extends Command
                     'discharge_date' => today(),
                 ]);
 
-                $dischargedCount++;
+                    $dischargedCount++;
+                }
             }
         }
 
