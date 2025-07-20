@@ -587,7 +587,7 @@ class ViewInmate extends ViewRecord
 
         if ($latestSentence != null) {
             $data['offence'] = $sentences?->offence;
-            $data['sentence'] = $latestSentence?->sentence;
+            $data['sentence'] = $latestSentence?->total_sentence ?? $latestSentence?->sentence;
             $data['date_sentenced'] = $sentences?->date_of_sentence;
             $data['EPD'] = $latestSentence?->EPD;
             $data['LPD'] = $latestSentence?->LPD;

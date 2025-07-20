@@ -31,11 +31,6 @@ class ListConvictDischarges extends ListRecords
 
 
         return [
-            'today_admissions' => Tab::make('All Admissions Today')
-                ->modifyQueryUsing(
-                    fn(Builder $query) => $query->active()->whereDate('created_at', now()->toDateString())
-                )
-                ->badge(Inmate::active()->whereDate('created_at', now()->toDateString())->count()),
             'today' => Tab::make('All Dicharges Today')
                 ->modifyQueryUsing(
                     fn(Builder $query) => $query->allToday()
