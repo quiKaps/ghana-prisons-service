@@ -90,7 +90,7 @@ class ReportResource extends Resource
             ])
             ->filters([
             SelectFilter::make('detention_type')
-                ->label('Source')
+                ->label('Detention Type')
                 ->options([
                 'convict' => 'Convict',
                     'remand' => 'Remand',
@@ -98,9 +98,9 @@ class ReportResource extends Resource
                 ]),
 
             SelectFilter::make('is_discharged')
-                ->label('Discharged')
+                ->label('Discharge Status')
                 ->options([
-                    true => 'Discharged',
+                true => 'In Custody',
                     false => 'Not Discharged',
                 ]),
                 Filter::make('created_at')->columnSpanFull()

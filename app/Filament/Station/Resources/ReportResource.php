@@ -90,7 +90,7 @@ class ReportResource extends Resource
             ])
             ->filters([
             SelectFilter::make('detention_type')
-                ->label('Source')
+                ->label('Detention Type')
                 ->options([
                     'convict' => 'Convict',
                     'remand' => 'Remand',
