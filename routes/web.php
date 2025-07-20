@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -17,7 +18,18 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-// Add this route for viewing warrant documents
+// Add this route for viewing horizon dashbaord
+
+Route::get('/horizon', function () {
+
+    if (Auth::check() && Auth::user()?->type !== 'super_admin') {
+        return redirect('/horizon');
+    } else {
+        return redirect('/dashboard');
+    }
+})->middleware(['auth'])
+    ->name('horizon');
+
 Route::get('/storage/{document}', function () {})
     ->name('warrant.document.view');
 

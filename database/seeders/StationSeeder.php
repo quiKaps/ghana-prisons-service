@@ -108,11 +108,20 @@ class StationSeeder extends Seeder
         ]);
 
         User::factory()->create([
-            'name' => 'Admin',
+            'name' => 'Super Admin',
+            'email' => 'super@gmail.com',
+            'serial_number' => "0000",
+            'user_type' => 'super_admin',
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+            'remember_token' => Str::random(10),
+        ]);
+
+        User::factory()->create([
+            'name' => 'HQ Admin',
             'email' => 'admin@gmail.com',
             'serial_number' => "1234",
-            'station_id' => $adminStation->id,
-            'user_type' => 'super_admin',
+            'user_type' => 'hq_admin',
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'remember_token' => Str::random(10),
