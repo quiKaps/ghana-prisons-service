@@ -254,11 +254,14 @@ class Inmate extends Model
     }
 
 
-    public function scopeWithEpdThisMonth(Builder $query): Builder
+    public function scopeWithEpdNextMonth(Builder $query): Builder
     {
         return $query->whereHas('latestSentenceByDate', function ($subQuery) {
             $subQuery->whereNotNull('EPD')
-                ->whereBetween('EPD', [Carbon::today()->startOfMonth(), Carbon::today()->endOfMonth()]);
+                ->whereBetween('EPD', [
+                    Carbon::now()->addMonth()->startOfMonth(),
+                    Carbon::now()->addMonth()->endOfMonth()
+                ]);
         });
     }
 

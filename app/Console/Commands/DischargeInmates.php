@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Inmate;
+use App\Models\Discharge;
 use Illuminate\Support\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
@@ -67,7 +68,7 @@ class DischargeInmates extends Command
                     $inmate->is_discharged = true;
                 $inmate->save();
 
-                $inmate->discharge()->create([
+                    Discharge::create([
                     'station_id' => $inmate->station_id,
                     'inmate_id' => $inmate->id,
                     'discharge_type' => 'one-third remission',

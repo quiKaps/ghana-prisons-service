@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Discharge;
 use App\Models\Inmate;
 use App\Models\RemandTrial;
 use Illuminate\Support\Carbon;
@@ -25,7 +26,7 @@ class DischargeService
             if (!$existingDischarge) {
                 $inmate->updateQuietly(['is_discharged' => true]);
 
-                $inmate->discharge()->create([
+                Discharge::create([
                     'station_id' => $inmate->station_id,
                     'inmate_id' => $inmate->id,
                     'discharge_type' => 'one-third remission',

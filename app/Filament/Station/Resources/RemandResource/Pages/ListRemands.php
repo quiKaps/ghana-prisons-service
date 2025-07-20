@@ -43,7 +43,7 @@ class ListRemands extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND))
                 ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)->count()),
 
-            'upcoming' => Tab::make("Upcoming Court Date")
+            'upcoming' => Tab::make("Today's Court Hearing")
                 ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND)
                     ->where('next_court_date', today()))
                 ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)

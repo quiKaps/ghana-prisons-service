@@ -803,11 +803,9 @@ class InmateResource extends Resource
                             ->placeholder('Enter Court of Committal')
                             ->required(),
                                 DatePicker::make('EPD')
-                                    ->label('EPD (Earliest Possible Date of Discharge)')
-                                    ->required(),
+                            ->label('EPD (Earliest Possible Date of Discharge)'),
                                 DatePicker::make('LPD')
-                                    ->label('LPD (Latest Possible Date of Discharge)')
-                                    ->required(),
+                            ->label('LPD (Latest Possible Date of Discharge)'),
                         FileUpload::make('warrant_document')
                                     ->label('Upload Document')
                             ->placeholder('Upload Warrant Document')
@@ -827,7 +825,7 @@ class InmateResource extends Resource
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
                             \App\Models\Sentence::create([
                                 'inmate_id' => $record->id,
-                                'sentence' => $data['total_sentence'],
+                                'sentence' => $data['sentence'],
                                 'offence' => $data['offence'],
                                 'total_sentence' => $data['total_sentence'], //this is redundant
                                 'court_of_committal' => $data['court_of_committal'],
@@ -952,8 +950,8 @@ class InmateResource extends Resource
                             ->send();
                     }
                     }),
-                // amnesty action end
 
+                // amnesty action end
                 SecureEditAction::make('edit', 'filament.station.resources.inmates.edit')
                     ->modalWidth('md')
                     ->modalHeading('Protected Data Access')

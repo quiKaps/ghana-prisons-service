@@ -41,10 +41,10 @@ class ListConvictDischarges extends ListRecords
                 fn(Builder $query) => $query->withEpdTomorrow()
                 )
                 ->badge(Inmate::withEpdTomorrow()->count()),
-            'thisMonth' => Tab::make('This Month')
-                ->modifyQueryUsing(fn(Builder $query) => $query->withEpdThisMonth())
-                ->badge(Inmate::withEpdThisMonth()->count()),
-            'allPrevious' => Tab::make("All Previous Discharges")
+            'thisMonth' => Tab::make('Next Month')
+                ->modifyQueryUsing(fn(Builder $query) => $query->withEpdNextMonth())
+                ->badge(Inmate::withEpdNextMonth()->count()),
+            'allPrevious' => Tab::make("All Discharges")
                 ->modifyQueryUsing(
                     fn(Builder $query) =>
                 $query->where('is_discharged', true)

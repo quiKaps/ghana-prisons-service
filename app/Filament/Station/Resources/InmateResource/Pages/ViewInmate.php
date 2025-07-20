@@ -359,11 +359,9 @@ class ViewInmate extends ViewRecord
                                     ->placeholder('Enter Court of Committal')
                                     ->required(),
                                 DatePicker::make('EPD')
-                                    ->label('EPD (Earliest Possible Date of Discharge)')
-                                    ->required(),
+                            ->label('EPD (Earliest Possible Date of Discharge)'),
                                 DatePicker::make('LPD')
-                                    ->label('LPD (Latest Possible Date of Discharge)')
-                            ->required(),
+                            ->label('LPD (Latest Possible Date of Discharge)'),
                             FileUpload::make('warrant_document')
                                 ->label('Upload Document')
                                 ->placeholder('Upload Warrant Document')
@@ -383,7 +381,7 @@ class ViewInmate extends ViewRecord
                             \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
                                 \App\Models\Sentence::create([
                                     'inmate_id' => $record->id,
-                                    'sentence' => $data['total_sentence'],
+                                'sentence' => $data['sentence'],
                                     'offence' => $data['offence'],
                                     'total_sentence' => $data['total_sentence'], //this is redundant
                                     'court_of_committal' => $data['court_of_committal'],
