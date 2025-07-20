@@ -89,6 +89,7 @@ class CreateInmate extends CreateRecord
         Sentence::create([
             'inmate_id' => $this->record->id,
             'sentence' => $data['sentence'],
+            'total_sentence' => $data['sentence'],
             'offence' => $data['offence'],
             'EPD' => $data['EPD'],
             'LPD' => $data['LPD'],
