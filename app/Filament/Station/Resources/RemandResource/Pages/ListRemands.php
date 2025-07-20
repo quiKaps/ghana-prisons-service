@@ -43,16 +43,30 @@ class ListRemands extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND))
                 ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)->count()),
 
+            'today_admission' => Tab::make("Today's Admissions")
+                ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND)
+                    ->whereDate('created_at', today()))
+                ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)
+                    ->whereDate('created_at', today())
+                    ->count()),
+
             'upcoming' => Tab::make("Today's Court Hearing")
                 ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND)
-                    ->where('next_court_date', today()))
+                ->whereDate('next_court_date', today()))
                 ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)
-                    ->where('next_court_date', today())
+                    ->whereDate('next_court_date', today())
+                    ->count()),
+
+            'today_discharge' => Tab::make("Today's Discharges")
+                ->modifyQueryUsing(fn(Builder $query) => $query->discharged(RemandTrial::TYPE_REMAND)
+                    ->whereDate('date_of_discharge', today()))
+                ->badge(\App\Models\RemandTrial::discharged(RemandTrial::TYPE_REMAND)
+                    ->whereDate('date_of_discharge', today())
                     ->count()),
 
             'foreigner' => Tab::make('Foreigners')
-                ->modifyQueryUsing(fn(Builder $query) => $query->foreigners(RemandTrial::TYPE_REMAND)->where('next_court_date', '>', today()))
-                ->badge(\App\Models\RemandTrial::foreigners(RemandTrial::TYPE_REMAND)->where('next_court_date', '>', today())->count()),
+                ->modifyQueryUsing(fn(Builder $query) => $query->foreigners(RemandTrial::TYPE_REMAND)->whereDate('next_court_date', '>', today()))
+                ->badge(\App\Models\RemandTrial::foreigners(RemandTrial::TYPE_REMAND)->whereDate('next_court_date', '>', today())->count()),
 
             'expireWarrants' => Tab::make('Expired Warrants')
                 ->modifyQueryUsing(fn(Builder $query) => $query->expiredWarrants(RemandTrial::TYPE_REMAND))

@@ -101,7 +101,6 @@ class Inmate extends Model
     }
 
 
-
     public function station(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(\App\Models\Station::class);
@@ -209,6 +208,15 @@ class Inmate extends Model
         return $query->where('transferred_out', false)
             ->where('is_discharged', false)
             ->where('goaler', true);
+    }
+
+    public function scopeAllToday(Builder $query): Builder
+    {
+
+        return $query->where('is_discharged', true)
+            ->whereHas('discharge', function ($q) {
+                $q->whereDate('discharge_date', Carbon::today());
+            });
     }
 
     public function scopeDischargedToday(Builder $query): Builder

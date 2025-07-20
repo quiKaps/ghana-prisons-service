@@ -57,7 +57,7 @@ class ConvictDischargeResource extends Resource
     {
         return $table
             ->emptyStateHeading('No Prisoners Available for Discharge')
-            ->emptyStateDescription('There are currently no prisoners available for discharge today.')
+            ->emptyStateDescription('There are currently no prisoners available for discharge here.')
             ->emptyStateIcon('heroicon-s-user')
             ->columns([
                 TextColumn::make('serial_number')
@@ -77,7 +77,7 @@ class ConvictDischargeResource extends Resource
                     'bail_bond' => 'blue',
                     'reduction_of_sentence' => 'purple',
                     'death' => 'danger',
-                    'one_third_remission' => 'pink',
+                'one-third remission' => 'warning',
                     default => 'primary',
                 })
                 ->formatStateUsing(fn($state) => match ($state) {
@@ -89,7 +89,7 @@ class ConvictDischargeResource extends Resource
                     'reduction_of_sentence' => 'Reduction of Sentence',
                     'escape' => 'Escape',
                     'death' => 'Death',
-                    'one_third_remission' => '1/3 Remission',
+                'one-third remission' => '1/3 Remission',
                     default => 'Unknown',
                 })
                 ->label("Mode of Discharge"),

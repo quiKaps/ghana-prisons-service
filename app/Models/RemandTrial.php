@@ -51,7 +51,7 @@ class RemandTrial extends Model
     protected $casts = [
         'admission_date' => 'date',
         're_admission_date' => 'date',
-        'next_court_date' => 'date', // or 'datetime' if you update the column
+        'next_court_date' => 'date',
         'date_of_discharge' => 'date',
         'is_discharged' => 'boolean',
     ];

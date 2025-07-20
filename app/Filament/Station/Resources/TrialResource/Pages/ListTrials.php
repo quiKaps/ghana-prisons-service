@@ -44,25 +44,42 @@ class ListTrials extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->trial())
                 ->badge(\App\Models\RemandTrial::trial()->count()),
 
-            'upcoming' => Tab::make("Upcoming Court Date")
+            'today_admission' => Tab::make("Today's Admissions")
+                ->icon('heroicon-m-clock')
+                ->badgeColor('success')
+                ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND)
+                    ->whereDate('created_at', today()))
+                ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)
+                    ->whereDate('created_at', today())
+                    ->count()),
+
+            'upcoming' => Tab::make("Today's Court Hearing")
                 ->icon('heroicon-m-clock')
                 ->badgeColor('danger')
                 ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND)
-                    ->where('next_court_date', today()))
+                ->whereDate('next_court_date', today()))
                 ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)
-                    ->where('next_court_date', today())
+                    ->whereDate('next_court_date', today())
+                    ->count()),
+
+            'today_discharge' => Tab::make("Today's Discharges")
+                ->icon('heroicon-m-clock')
+                ->modifyQueryUsing(fn(Builder $query) => $query->discharged(RemandTrial::TYPE_REMAND)
+                    ->whereDate('date_of_discharge', today()))
+                ->badge(\App\Models\RemandTrial::discharged(RemandTrial::TYPE_REMAND)
+                    ->whereDate('date_of_discharge', today())
                     ->count()),
 
             'foreigner' => Tab::make('Foreigners')
                 ->modifyQueryUsing(fn(Builder $query) => $query->foreigners(RemandTrial::TYPE_TRIAL)->where('next_court_date', '>', today()))
-                ->badge(\App\Models\RemandTrial::foreigners(RemandTrial::TYPE_TRIAL)->where('next_court_date', '>', today())->count()),
+                ->badge(\App\Models\RemandTrial::foreigners(RemandTrial::TYPE_TRIAL)->whereDate('next_court_date', '>', today())->count()),
 
             'escape' => Tab::make('Escapees')
                 ->modifyQueryUsing(fn(Builder $query) => $query->escapees(RemandTrial::TYPE_TRIAL))
                 ->badge(\App\Models\RemandTrial::escapees(RemandTrial::TYPE_TRIAL)->count()),
 
             'discharged' => Tab::make('Discharged')
-                ->modifyQueryUsing(fn(Builder $query) => $query->discharged(RemandTrial::TYPE_TRIAL))
+                ->modifyQueryUsing(fn(Builder $query) => $query->discharged(RemandTrial::TYPE_TRIAL)->orderByDesc('date_of_discharge'))
                 ->badge(\App\Models\RemandTrial::discharged(RemandTrial::TYPE_TRIAL)->count()),
         ];
     }
