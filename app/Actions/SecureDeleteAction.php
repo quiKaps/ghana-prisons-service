@@ -22,7 +22,7 @@ class SecureDeleteAction extends Action
             ->color('danger')
             ->requiresConfirmation()
             ->modalHeading('Toggle User Status')
-            ->modalDescription("Are you sure you'd like to delete this post? This cannot be undone.")
+            ->modalDescription("Are you sure you'd like to delete this record? This cannot be undone.")
             ->modalSubmitActionLabel('Yes')
             ->form([
                 \Filament\Forms\Components\TextInput::make('password')
