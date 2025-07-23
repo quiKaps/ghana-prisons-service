@@ -90,7 +90,7 @@ class ConvictDischargeResource extends Resource
                     'escape' => 'Escape',
                     'death' => 'Death',
                 'one-third remission' => '1/3 Remission',
-                    default => 'Unknown',
+                default => $state,
                 })
                 ->label("Mode of Discharge"),
                 TextColumn::make('admission_date')
