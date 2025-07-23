@@ -47,26 +47,26 @@ class ListTrials extends ListRecords
             'today_admission' => Tab::make("Today's Admissions")
                 ->icon('heroicon-m-clock')
                 ->badgeColor('success')
-                ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND)
+                ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_TRIAL)
                     ->whereDate('created_at', today()))
-                ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)
+                ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_TRIAL)
                     ->whereDate('created_at', today())
                     ->count()),
 
             'upcoming' => Tab::make("Today's Court Hearing")
                 ->icon('heroicon-m-clock')
                 ->badgeColor('danger')
-                ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND)
+                ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_TRIAL)
                 ->whereDate('next_court_date', today()))
-                ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)
+                ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_TRIAL)
                     ->whereDate('next_court_date', today())
                     ->count()),
 
             'today_discharge' => Tab::make("Today's Discharges")
                 ->icon('heroicon-m-clock')
-                ->modifyQueryUsing(fn(Builder $query) => $query->discharged(RemandTrial::TYPE_REMAND)
+                ->modifyQueryUsing(fn(Builder $query) => $query->discharged(RemandTrial::TYPE_TRIAL)
                     ->whereDate('date_of_discharge', today()))
-                ->badge(\App\Models\RemandTrial::discharged(RemandTrial::TYPE_REMAND)
+                ->badge(\App\Models\RemandTrial::discharged(RemandTrial::TYPE_TRIAL)
                     ->whereDate('date_of_discharge', today())
                     ->count()),
 
