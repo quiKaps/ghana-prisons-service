@@ -58,10 +58,8 @@ class ListRemands extends ListRecords
                     ->count()),
 
             'today_discharge' => Tab::make("Today's Discharges")
-                ->modifyQueryUsing(fn(Builder $query) => $query->discharged(RemandTrial::TYPE_REMAND)
-                    ->whereDate('date_of_discharge', today()))
-                ->badge(\App\Models\RemandTrial::discharged(RemandTrial::TYPE_REMAND)
-                    ->whereDate('date_of_discharge', today())
+                ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('discharge', fn($q) => $q->where('prisoner_type', RemandTrial::TYPE_REMAND)->whereDate('discharge_date', today())))
+                ->badge(\App\Models\RemandTrialDischarge::where('prisoner_type', RemandTrial::TYPE_REMAND)->whereDate('discharge_date', today())
                     ->count()),
 
             'foreigner' => Tab::make('Foreigners')

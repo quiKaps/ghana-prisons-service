@@ -64,8 +64,8 @@ class ListTrials extends ListRecords
 
             'today_discharge' => Tab::make("Today's Discharges")
                 ->icon('heroicon-m-clock')
-                ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('discharge', fn($q) => $q->whereDate('date_of_discharge', today())))
-                ->badge(\App\Models\RemandTrialDischarge::whereDate('date_of_discharge', today())
+                ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('discharge', fn($q) => $q->where('prisoner_type', RemandTrial::TYPE_TRIAL)->whereDate('discharge_date', today())))
+                ->badge(\App\Models\RemandTrialDischarge::where('prisoner_type', RemandTrial::TYPE_TRIAL)->whereDate('discharge_date', today())
                     ->count()),
 
             'foreigner' => Tab::make('Foreigners')
