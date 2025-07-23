@@ -10,6 +10,7 @@ use App\Models\Inmate;
 use App\Models\Station;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
+use App\Models\Discharge;
 use Filament\Tables\Table;
 use App\Models\RemandTrial;
 use Filament\Resources\Resource;
@@ -735,7 +736,7 @@ class InmateResource extends Resource
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
                             \App\Models\Sentence::create([
                                 'inmate_id' => $record->id,
-                                'sentence' => $data['reduced_sentence'],
+                                'sentence' => $data['sentence'],
                                 'offence' => $data['offence'],
                                 'date_of_sentence' => $data['date_of_sentence'],
                                 'reduced_sentence' => $data['reduced_sentence'], //this is redundant
@@ -745,6 +746,25 @@ class InmateResource extends Resource
                                 'warrant_document' => $data['warrant_document'],
                             ]);
                         });
+
+                        //check if EPD is today or past after sentence was reduced
+
+                        if ($data['EPD'] <= today()) {
+
+                            $record->update([
+                                'mode_of_discharge' => 'Reduced Sentence',
+                                'date_of_discharge' => today(),
+                                'is_discharged' => true,
+                            ]);
+
+                            Discharge::create([
+                                'station_id' => $record->station_id,
+                                'inmate_id' => $record->id,
+                                'discharge_type' => 'one-third remission',
+                                'discharge_date' => today(),
+                                //'reason' => $data['reason'],
+                            ]);
+                        }
 
                         Notification::make()
                             ->success()
@@ -989,7 +1009,6 @@ class InmateResource extends Resource
             })
             ->orderByDesc('created_at');
     }
-
 
     public static function getPages(): array
     {
