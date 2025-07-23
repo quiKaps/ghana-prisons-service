@@ -317,7 +317,7 @@ class ViewInmate extends ViewRecord
                             Discharge::create([
                                 'station_id' => $record->station_id,
                                 'inmate_id' => $record->id,
-                                'discharge_type' => 'one-third remission',
+                                'discharge_type' => 'reduced sentence',
                                 'discharge_date' => today(),
                                 //'reason' => $data['reason'],
                             ]);
