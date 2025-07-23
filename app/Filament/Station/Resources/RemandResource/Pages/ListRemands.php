@@ -44,9 +44,9 @@ class ListRemands extends ListRecords
                 ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)->count()),
 
             'today_admission' => Tab::make("Today's Admissions")
-                ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_REMAND)
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('detention_type', RemandTrial::TYPE_REMAND)
                     ->whereDate('created_at', today()))
-                ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_REMAND)
+                ->badge(\App\Models\RemandTrial::where('detention_type', RemandTrial::TYPE_REMAND)
                     ->whereDate('created_at', today())
                     ->count()),
 

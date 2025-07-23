@@ -213,7 +213,7 @@ class Inmate extends Model
     public function scopeAllToday(Builder $query): Builder
     {
 
-        return $query->where('is_discharged', true)
+        return $query
             ->whereHas('discharge', function ($q) {
                 $q->whereDate('discharge_date', Carbon::today());
             });

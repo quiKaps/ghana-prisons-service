@@ -133,6 +133,11 @@ class RemandTrial extends Model
             ->where('mode_of_discharge', '!=', 'escape');
     }
 
+    public function createdToday(Builder $query)
+    {
+        return $query->whereDate('created_at', today());
+    }
+
     protected static function booted(): void
     {
         static::addGlobalScope('latest', function ($query) {

@@ -37,9 +37,9 @@ class ListInmates extends ListRecords
 
             'today_admissions' => Tab::make('All Admissions Today')
                 ->modifyQueryUsing(
-                    fn(Builder $query) => $query->active()->whereDate('created_at', now()->toDateString())
+                fn(Builder $query) => $query->whereDate('created_at', now()->toDateString())
                 )
-                ->badge(Inmate::active()->whereDate('created_at', now()->toDateString())->count()),
+                ->badge(Inmate::whereDate('created_at', now()->toDateString())->count()),
 
             'Active' => Tab::make('Active')
                 ->modifyQueryUsing(fn(Builder $query) => $query->active())

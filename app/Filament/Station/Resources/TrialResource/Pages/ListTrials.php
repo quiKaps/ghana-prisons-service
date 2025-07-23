@@ -47,9 +47,9 @@ class ListTrials extends ListRecords
             'today_admission' => Tab::make("Today's Admissions")
                 ->icon('heroicon-m-clock')
                 ->badgeColor('success')
-                ->modifyQueryUsing(fn(Builder $query) => $query->active(RemandTrial::TYPE_TRIAL)
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('detention_type', RemandTrial::TYPE_TRIAL)
                     ->whereDate('created_at', today()))
-                ->badge(\App\Models\RemandTrial::active(RemandTrial::TYPE_TRIAL)
+                ->badge(\App\Models\RemandTrial::where('detention_type', RemandTrial::TYPE_TRIAL)
                     ->whereDate('created_at', today())
                     ->count()),
 

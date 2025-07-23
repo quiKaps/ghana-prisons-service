@@ -19,17 +19,6 @@ class ListConvictDischarges extends ListRecords
 
     public function getTabs(): array
     {
-        // $today = now()->toDateString();
-        // $tomorrow = now()->addDay()->toDateString();
-
-
-        // $counts = Inmate::whereIn('EPD', [$today, $tomorrow])
-        //     ->selectRaw('EPD, COUNT(*) as count')
-        //     ->groupBy('EPD')
-        //     ->pluck('count', 'EPD');
-
-
-
         return [
             'today' => Tab::make('All Dicharges Today')
                 ->modifyQueryUsing(
