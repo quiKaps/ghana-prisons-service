@@ -261,7 +261,7 @@ class ViewInmate extends ViewRecord
                                     ->placeholder('Enter Reduced Sentence')
                                     ->required(),
                                 TextInput::make('date_of_sentence')
-                                    ->label('Date_of_Sentence')
+                            ->label('Date of Sentence')
                                     ->placeholder('Enter Date Sentence')
                                     ->readOnly(),
                                 TextInput::make('court_of_committal')
@@ -296,7 +296,7 @@ class ViewInmate extends ViewRecord
                                 'sentence' => $data['sentence'],
                                     'offence' => $data['offence'],
                                     'date_of_sentence' => $data['date_of_sentence'],
-                                    'reduced_sentence' => $data['reduced_sentence'], //this is redundant
+                                    'total_sentence' => $data['reduced_sentence'], //this is redundant
                                     'court_of_committal' => $data['court_of_committal'],
                                     'EPD' =>  $data['EPD'],
                                     'LPD' => $data['LPD'],
@@ -317,7 +317,7 @@ class ViewInmate extends ViewRecord
                             Discharge::create([
                                 'station_id' => $record->station_id,
                                 'inmate_id' => $record->id,
-                                'discharge_type' => 'reduced sentence',
+                                'discharge_type' => 'reduction_of_sentence',
                                 'discharge_date' => today(),
                                 //'reason' => $data['reason'],
                             ]);
