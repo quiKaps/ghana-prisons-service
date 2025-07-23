@@ -293,7 +293,7 @@ class ViewInmate extends ViewRecord
                             \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
                                 \App\Models\Sentence::create([
                                     'inmate_id' => $record->id,
-                                    'sentence' => $data['reduced_sentence'],
+                                'sentence' => $data['sentence'],
                                     'offence' => $data['offence'],
                                     'date_of_sentence' => $data['date_of_sentence'],
                                     'reduced_sentence' => $data['reduced_sentence'], //this is redundant
@@ -304,7 +304,26 @@ class ViewInmate extends ViewRecord
                                 ]);
                             });
 
-                            Notification::make()
+                        //check if EPD is today or past after sentence was reduced
+
+                        if ($data['EPD'] <= today()) {
+
+                            $record->update([
+                                'mode_of_discharge' => 'Reduced Sentence',
+                                'date_of_discharge' => today(),
+                                'is_discharged' => true,
+                            ]);
+
+                            Discharge::create([
+                                'station_id' => $record->station_id,
+                                'inmate_id' => $record->id,
+                                'discharge_type' => 'one-third remission',
+                                'discharge_date' => today(),
+                                //'reason' => $data['reason'],
+                            ]);
+                        }
+
+                        Notification::make()
                                 ->success()
                                 ->title('Reduced Sentence Success')
                                 ->body("The reduced sentence for {$record->full_name} has been completed.")
