@@ -449,8 +449,6 @@ class InmateResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-
-
             ->columns([
             Tables\Columns\TextColumn::make('serial_number')
                 ->label('Serial Number')
@@ -983,17 +981,11 @@ class InmateResource extends Resource
     protected function getTableQuery(): Builder
     {
         return Inmate::query()
-            ->with('latestSentenceByDate')
+            ->with('latestSentenceByDate') // Eager load for display
             ->where('is_discharged', false)
-            ->whereHas('sentences', function ($query) {
-                $query->whereIn('id', function ($subquery) {
-                    $subquery->selectRaw('MAX(id)')
-                        ->from('sentences')
-                        ->whereColumn('inmate_id', 'inmates.id');
-            })->where(function ($q) {
-                $q->whereNull('EPD')
+            ->whereHas('latestSentenceByDate', function (Builder $query) {
+                $query->whereNull('EPD')
                     ->orWhere('EPD', '>', now()->toDateString());
-            });
             })
             ->orderByDesc('created_at');
     }

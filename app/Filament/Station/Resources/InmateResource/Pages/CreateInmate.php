@@ -5,6 +5,7 @@ namespace App\Filament\Station\Resources\InmateResource\Pages;
 use Filament\Actions;
 use App\Models\Inmate;
 use App\Models\Sentence;
+use App\Models\Discharge;
 use App\Helpers\FormHelper;
 use App\Models\RemandTrial;
 use Illuminate\Support\Carbon;
@@ -103,6 +104,14 @@ class CreateInmate extends CreateRecord
 
             $this->record->update([
                 'is_discharged' => true
+            ]);
+
+            Discharge::create([
+                'station_id' =>  $this->record->station_id,
+                'inmate_id' =>  $this->record->id,
+                'discharge_type' => 'one-third remission',
+                'discharge_date' => today(),
+                //'reason' => $data['reason'],
             ]);
         }
     }

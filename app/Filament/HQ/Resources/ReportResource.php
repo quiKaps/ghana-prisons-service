@@ -98,7 +98,7 @@ class ReportResource extends Resource
                 ]),
 
             SelectFilter::make('is_discharged')
-                ->label('Discharge Status')
+                ->label('Status')
                 ->options([
                 true => 'In Custody',
                     false => 'Not Discharged',

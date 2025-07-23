@@ -66,7 +66,7 @@ class DischargeInmates extends Command
                 if (!$existingDischarge) {
 
                     $inmate->is_discharged = true;
-                $inmate->save();
+                    $inmate->save();
 
                     Discharge::create([
                     'station_id' => $inmate->station_id,
