@@ -279,8 +279,7 @@ class Inmate extends Model
     public function scopeWithEpdToday(Builder $query): Builder
     {
         return $query->whereHas('latestSentenceByDate', function ($subQuery) {
-            $subQuery->whereNotNull('EPD')
-                ->whereDate('EPD', Carbon::today());
+            $subQuery->whereDate('EPD', Carbon::today());
         });
     }
 
@@ -290,8 +289,7 @@ class Inmate extends Model
     public function scopeWithEpdTomorrow(Builder $query): Builder
     {
         return $query->whereHas('latestSentenceByDate', function ($subQuery) {
-            $subQuery->whereNotNull('EPD')
-                ->whereDate('EPD', Carbon::today()->addDay());
+            $subQuery->whereDate('EPD', Carbon::today()->addDay());
         });
     }
 

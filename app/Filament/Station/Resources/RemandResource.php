@@ -7,6 +7,7 @@ use Filament\Tables;
 use App\Models\Remand;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\ReAdmission;
 use App\Models\RemandTrial;
 use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
@@ -208,7 +209,7 @@ class RemandResource extends Resource
                             're_admission_date' => now()
                         ]);
 
-                        $record->reAdmissions()->create([
+                        ReAdmission::create([
                             'station_id' => $record->station_id,
                             'remand_trial_id' => $record->id,
                             're_admission_date' => now(),
