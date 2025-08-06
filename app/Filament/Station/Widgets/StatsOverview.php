@@ -9,6 +9,7 @@ use App\Models\RemandTrial;
 use App\Traits\Has30DayTrend;
 use Illuminate\Support\Carbon;
 use App\Models\RemandTrialDischarge;
+use App\Models\Transfer;
 use Illuminate\Support\Facades\Auth;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -178,9 +179,12 @@ class StatsOverview extends BaseWidget
                 number_format(
                     Inmate::whereDate('created_at', today())->count()
                         +
-                        RemandTrial::whereDate('created_at', today())->count()
+                        RemandTrial::whereDate('created_at', today())
+                        ->orWhere('re_admission_date', today())->count()
                         +
                         ReAdmission::whereDate('created_at', today())->count()
+                        +
+                        Transfer::whereDate('created_at', today())->count()
                 )
             )
                 ->description("New prisoners admitted today")

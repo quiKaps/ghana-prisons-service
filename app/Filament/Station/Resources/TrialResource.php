@@ -192,6 +192,7 @@ class TrialResource extends Resource
                     try {
                         $record->update([
                             'is_discharged' => false,
+                        're_admission_date' => today()
                         ]);
                         Notification::make()
                             ->success()
