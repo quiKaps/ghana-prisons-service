@@ -20,12 +20,12 @@ class StatsOverview extends BaseWidget
 
     protected function getHeading(): ?string
     {
-        return Auth::user()?->station->name . " Insights";
+        return "HQ Insights";
     }
 
     protected function getDescription(): ?string
     {
-        return 'Key metrics on admissions, discharges, and custody trends across your facility.';
+        return 'Key metrics on admissions, discharges, and custody trends across your all stations.';
     }
 
     protected function getStats(): array
