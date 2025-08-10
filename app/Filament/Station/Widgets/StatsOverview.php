@@ -154,6 +154,8 @@ class StatsOverview extends BaseWidget
                         +
                         RemandTrialDischarge::whereDate('discharge_date', today())
                         ->count()
+                        +
+                        Transfer::whereDate('created_at', today())->count()
                 )
             )
                 ->description("Prisoners discharged from custody today")
