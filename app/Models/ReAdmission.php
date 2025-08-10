@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\FacilitiesScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 
+#[ScopedBy([FacilitiesScope::class])]
 class ReAdmission extends Model
 {
     protected $fillable = [
