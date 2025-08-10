@@ -182,8 +182,8 @@ class StatsOverview extends BaseWidget
                         ->orWhere('re_admission_date', today())->count()
                         +
                         ReAdmission::whereDate('created_at', today())->count()
-                        +
-                        Transfer::whereDate('created_at', today())->count()
+                    // +
+                    // Transfer::whereDate('created_at', today())->count()
                 )
             )
                 ->description("New prisoners admitted today")
