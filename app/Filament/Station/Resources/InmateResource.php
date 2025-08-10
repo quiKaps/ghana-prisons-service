@@ -948,6 +948,7 @@ class InmateResource extends Resource
                                 'sentence' => $data['commutted_sentence'],
                                 'offence' => $data['offence'],
                                 'commutted_sentence' => $data['commutted_sentence'],
+                                'total_sentence' => $data['commutted_sentence'],
                                 'commutted_by' => $data['commutted_by'],
                                 'EPD' => array_key_exists('EPD', $data) && $data['EPD'] !== '' ? $data['EPD'] : null,
                                 'LPD' => array_key_exists('LPD', $data) && $data['LPD'] !== '' ? $data['LPD'] : null,
