@@ -20,7 +20,6 @@ class StatsOverview extends BaseWidget
 
     protected static ?int $sort = 1;
 
-
     protected function getHeading(): ?string
     {
         return Auth::user()?->station->name . " Insights";
@@ -33,7 +32,6 @@ class StatsOverview extends BaseWidget
 
     protected function getStats(): array
     {
-
 
         return [
 
@@ -51,6 +49,7 @@ class StatsOverview extends BaseWidget
                 ->color('success')
                 ->chart($this->get30DayTrendData(\App\Models\Inmate::class, fn($q) => $q->where('is_discharged', false)))
                 ->chartColor('green'),
+
             //convicts
             Stat::make(
                 'Convicts',
