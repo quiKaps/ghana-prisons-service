@@ -39,7 +39,6 @@ class CellResource extends Resource
                             ->numeric()
                             ->placeholder('Enter Cell Number')
                             ->minValue(1)
-                            ->unique(Cell::class, 'cell_number', ignoreRecord: true)
                             ->maxLength(255),
                         Forms\Components\TextInput::make('block')
                             ->label('Identifier (Block/Floor etc.)')

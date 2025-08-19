@@ -414,8 +414,7 @@ class InmateResource extends Resource
                         ->columnSpan(1)
                         ->placeholder('Select Previous Station')
                         ->options(
-                            fn() => Station::withoutGlobalScopes()
-                            ->where('id', '!=', (Auth::user()?->station_id ?? null))
+                        fn() => Station::withoutGlobalScopes()
                             ->where('category', (Auth::user()?->station?->category))
                                 ->pluck('name', 'id')
                                 ->toArray()
