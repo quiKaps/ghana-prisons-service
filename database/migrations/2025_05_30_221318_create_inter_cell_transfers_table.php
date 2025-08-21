@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('transfer_date');
             $table->string('reason')->nullable();
             $table->string('officer_in_charge')->nullable();
-            $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

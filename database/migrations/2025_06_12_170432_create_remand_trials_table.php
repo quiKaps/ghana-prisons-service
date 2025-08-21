@@ -23,7 +23,7 @@ return new class extends Migration
             $table->date('admission_date');
             $table->integer('age_on_admission')->nullable();
             $table->string('court');
-            $table->enum('detention_type', ['remand', 'trial']);
+            $table->string('detention_type')->nullable();
             $table->date('next_court_date');
             $table->string('warrant')->nullable();
             $table->string('country_of_origin');

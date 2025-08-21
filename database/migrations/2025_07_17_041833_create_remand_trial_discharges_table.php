@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('station_id')
                 ->constrained()->onDelete('cascade');
             $table->foreignId('remand_trial_id')->constrained()->cascadeOnDelete();
-            $table->enum('prisoner_type', ['remand', 'trial']);
+            $table->string('prisoner_type');
             $table->date('discharge_date');
             $table->string('mode_of_discharge')->nullable();
             $table->string('discharged_by');

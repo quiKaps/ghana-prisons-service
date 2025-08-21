@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('prisoner_picture')->nullable();
             $table->string('serial_number')->nullable()->unique();
             $table->string('full_name');
-            $table->enum('gender', ['male', 'female']);
-            $table->enum('married_status', ['single', 'married', 'divorced', 'widowed', 'separated'])->nullable();
+            $table->string('gender');
+            $table->string('married_status')->nullable();
             $table->integer('age_on_admission')->unsigned();
             // $table->date('date_of_birth')->nullable();
             // $table->longText('offence');

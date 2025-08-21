@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('discharged_inmates', function (Blueprint $table) {
             $table->id();
             $table->string('serial_number')->unique();
-            $table->enum('inmate_type', ['convict', 'remand', 'trial']);
+            $table->string('inmate_type');
             $table->string('full_name'); // For remand/trial
             $table->string('country_of_origin');
             $table->string('offense')->nullable(); // Shared but named consistently
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('sentence')->nullable();         // convict only
             $table->date('date_sentenced')->nullable();     // convict only
             $table->date('next_court_date')->nullable();    // remand/trial only
-            $table->enum('detention_type', ['remand', 'trial'])->nullable(); // remand/trial only
+            $table->string('detention_type')->nullable();    // remand/trial only
             $table->foreignId('station_id')->nullable()->constrained()->onDelete('set null');
             $table->string('warrant')->nullable();
             $table->string('warrant_document')->nullable();

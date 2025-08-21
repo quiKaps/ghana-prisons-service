@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('to_station_id')->constrained('stations')->onDelete('cascade');
             $table->string('reason')->nullable();
             $table->string('officer_in_charge')->nullable();
-            $table->enum('status', ['pending', 'accepted', 'completed', 'cancelled'])->default('pending');
+            $table->string('status')->default('pending');
             $table->string('transfer_order_number')->unique()->nullable();
             $table->string('transfer_document')->nullable(); // Path to the transfer document
             $table->string('remarks')->nullable();
