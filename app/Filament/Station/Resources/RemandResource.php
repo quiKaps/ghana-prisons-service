@@ -25,6 +25,7 @@ use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Station\Resources\RemandResource\Pages;
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Filament\Station\Resources\RemandResource\Pages\EditRemand;
 use App\Filament\Station\Resources\RemandResource\RelationManagers;
 use App\Filament\Station\Resources\RemandResource\Pages\ListRemands;
@@ -269,6 +270,36 @@ class RemandResource extends Resource
                     ->url(fn(RemandTrial $record) => route('filament.station.resources.remand-trials.view', [
                         'record' => $record->getKey(),
                     ])),
+            ])
+            ->headerActions([
+
+                FilamentExportHeaderAction::make('export')
+                    ->color('green')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->label('Export Trials')
+                    ->fileName(Auth::user()->station->name . ' - ' . now()->format('Y-m-d') . ' - Trials')
+                    ->directDownload()
+                    ->withColumns([
+
+                        TextColumn::make('station.name')->label('Station'),
+                        TextColumn::make('cell.cell_number')
+                            ->label('Cell Number - Block')
+                            ->getStateUsing(function ($record) {
+                                if ($record->cell) {
+                                    return "{$record->cell->cell_number} - {$record->cell->block}";
+                                }
+                                return '';
+                            }),
+                        TextColumn::make('gender')->label('Gender'),
+                        TextColumn::make('age_on_admission')->label('Age on Admission'),
+                        TextColumn::make('detention_type')->label('Detention Type'),
+                        TextColumn::make('warrant')->label('Warrant'),
+                        TextColumn::make('country_of_origin')->label('Country of Origin'),
+                        TextColumn::make('police_station')->label('Police Station'),
+                        TextColumn::make('police_officer')->label('Police Officer'),
+                        TextColumn::make('police_contact')->label('Police Contact'),
+                    ])
+
             ]);
     }
 
