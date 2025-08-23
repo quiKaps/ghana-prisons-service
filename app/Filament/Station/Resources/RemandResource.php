@@ -21,11 +21,14 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use pxlrbt\FilamentExcel\Columns\Column;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use App\Filament\Station\Resources\RemandResource\Pages;
-use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use App\Filament\Station\Resources\RemandResource\Pages\EditRemand;
 use App\Filament\Station\Resources\RemandResource\RelationManagers;
 use App\Filament\Station\Resources\RemandResource\Pages\ListRemands;
@@ -59,6 +62,9 @@ class RemandResource extends Resource
             //     ->where('next_court_date', '>=', now())
             //     ->where('is_discharged', false)
             //     ->orderBy('created_at', 'DESC'))
+            ->recordUrl(fn(RemandTrial $record) => route('filament.station.resources.remand-trials.view', [
+                'record' => $record->getKey(),
+            ]))
             ->columns([
                 TextColumn::make('serial_number')
                     ->weight(FontWeight::Bold)
@@ -272,34 +278,72 @@ class RemandResource extends Resource
                     ])),
             ])
             ->headerActions([
-
-                FilamentExportHeaderAction::make('export')
-                    ->color('green')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->label('Export Trials')
-                    ->fileName(Auth::user()->station->name . ' - ' . now()->format('Y-m-d') . ' - Trials')
-                    ->directDownload()
+            ExportAction::make()->exports([
+                ExcelExport::make()
+                    //->queue()->withChunkSize(100)
+                    ->withFilename(Auth::user()->station->name . ' - ' . now()->format('Y-m-d') . ' - export')
                     ->withColumns([
-
-                        TextColumn::make('station.name')->label('Station'),
-                        TextColumn::make('cell.cell_number')
-                            ->label('Cell Number - Block')
+                        Column::make('station.name')->heading('Station'),
+                        Column::make('serial_number')->heading('Serial Number'),
+                        Column::make('full_name')->heading("Name of Prisoner"),
+                        Column::make('offense')->heading('Offense'),
+                        Column::make('age_on_admission')->heading('Age'),
+                        Column::make('court')->heading('Court of Committal'),
+                        Column::make('admission_date')->formatStateUsing(fn($state) => date_format($state, 'Y-m-d'))->heading('Date of Admission'),
+                        Column::make('next_court_date')->formatStateUsing(fn($state) => date_format($state, 'Y-m-d'))->heading('Next Court Date'),
+                        Column::make('country_of_origin')->heading('Country of Origin'),
+                        Column::make('cell.cell_number')
+                            ->heading('Cell Number - Block')
                             ->getStateUsing(function ($record) {
                                 if ($record->cell) {
-                                    return "{$record->cell->cell_number} - {$record->cell->block}";
+                                    return "{$record->cell->block} - {$record->cell->cell_number}";
                                 }
                                 return '';
                             }),
-                        TextColumn::make('gender')->label('Gender'),
-                        TextColumn::make('age_on_admission')->label('Age on Admission'),
-                        TextColumn::make('detention_type')->label('Detention Type'),
-                        TextColumn::make('warrant')->label('Warrant'),
-                        TextColumn::make('country_of_origin')->label('Country of Origin'),
-                        TextColumn::make('police_station')->label('Police Station'),
-                        TextColumn::make('police_officer')->label('Police Officer'),
-                        TextColumn::make('police_contact')->label('Police Contact'),
+                        Column::make('detention_type')->heading('Detention Type'),
+                        Column::make('warrant')->heading('Warrant'),
+                        Column::make('police_officer')->heading('Police Officer'),
+                        Column::make('police_station')->heading('Police Station'),
+                        Column::make('police_contact')->heading('Police Contact'),
                     ])
-
+            ])
+                ->label('Export Remands')
+                ->color('success')
+                    ->icon('heroicon-o-arrow-down-tray')
+            ])
+            ->bulkActions([
+                ExportBulkAction::make()->exports([
+                    ExcelExport::make()
+                        //->queue()->withChunkSize(100)
+                        ->withFilename(Auth::user()->station->name . ' - ' . now()->format('Y-m-d') . ' - export')
+                        ->withColumns([
+                    Column::make('station.name')->heading('Station'),
+                    Column::make('serial_number')->heading('Serial Number'),
+                    Column::make('full_name')->heading("Name of Prisoner"),
+                    Column::make('offense')->heading('Offense'),
+                    Column::make('age_on_admission')->heading('Age'),
+                    Column::make('court')->heading('Court of Committal'),
+                    Column::make('admission_date')->formatStateUsing(fn($state) => date_format($state, 'Y-m-d'))->heading('Date of Admission'),
+                    Column::make('next_court_date')->formatStateUsing(fn($state) => date_format($state, 'Y-m-d'))->heading('Next Court Date'),
+                    Column::make('country_of_origin')->heading('Country of Origin'),
+                    Column::make('cell.cell_number')
+                        ->heading('Cell Number - Block')
+                        ->getStateUsing(function ($record) {
+                            if ($record->cell) {
+                                return "{$record->cell->block} - {$record->cell->cell_number}";
+                            }
+                            return '';
+                        }),
+                    Column::make('detention_type')->heading('Detention Type'),
+                    Column::make('warrant')->heading('Warrant'),
+                    Column::make('police_officer')->heading('Police Officer'),
+                    Column::make('police_station')->heading('Police Station'),
+                    Column::make('police_contact')->heading('Police Contact'),
+                ])
+            ])
+                ->label('Export Selected Remands')
+                ->color('success')
+                ->icon('heroicon-o-arrow-down-tray')
             ]);
     }
 
