@@ -128,39 +128,39 @@ class StationSeeder extends Seeder
         ]);
 
         // 3️⃣ For each station, create cells, inmates, and remand/trials
-        $stations->each(function ($station) {
-            $cells = $station->cells()->saveMany(Cell::factory(30)->make());
+        // $stations->each(function ($station) {
+        //     $cells = $station->cells()->saveMany(Cell::factory(30)->make());
 
-            // // Seed inmates (only if male or female matches)
-            // Inmate::factory(100)->make()->each(function ($inmate) use ($station, $cells) {
-            //     $cell = $cells->random();
-            //     $admissionDate = fake()->dateTimeBetween('-2 years', 'now');
+        //     // // Seed inmates (only if male or female matches)
+        //     // Inmate::factory(100)->make()->each(function ($inmate) use ($station, $cells) {
+        //     //     $cell = $cells->random();
+        //     //     $admissionDate = fake()->dateTimeBetween('-2 years', 'now');
 
-            //     $inmate->station()->associate($station);
-            //     $inmate->cell()->associate($cell);
-            //     $inmate->gender = $station->category;
-            //     $inmate->created_at = $admissionDate;
-            //     $inmate->updated_at = $admissionDate;
-            //     $inmate->save();
+        //     //     $inmate->station()->associate($station);
+        //     //     $inmate->cell()->associate($cell);
+        //     //     $inmate->gender = $station->category;
+        //     //     $inmate->created_at = $admissionDate;
+        //     //     $inmate->updated_at = $admissionDate;
+        //     //     $inmate->save();
 
-            //     $sentence = Sentence::factory()->make([
-            //         'date_of_sentence' => fake()->dateTimeBetween($admissionDate, 'now')->format('Y-m-d'),
-            //     ]);
-            //     $inmate->sentences()->save($sentence);
-            // });
+        //     //     $sentence = Sentence::factory()->make([
+        //     //         'date_of_sentence' => fake()->dateTimeBetween($admissionDate, 'now')->format('Y-m-d'),
+        //     //     ]);
+        //     //     $inmate->sentences()->save($sentence);
+        //     // });
 
-            // // Seed remand/trials
-            // RemandTrial::factory(50)->make()->each(function ($remand) use ($station, $cells) {
-            //     $cell = $cells->random();
-            //     $admissionDate = fake()->dateTimeBetween('-2 years', 'now');
+        //     // // Seed remand/trials
+        //     // RemandTrial::factory(50)->make()->each(function ($remand) use ($station, $cells) {
+        //     //     $cell = $cells->random();
+        //     //     $admissionDate = fake()->dateTimeBetween('-2 years', 'now');
 
-            //     $remand->station()->associate($station);
-            //     $remand->cell()->associate($cell);
-            //     $remand->gender = $station->category;
-            //     $remand->created_at = $admissionDate;
-            //     $remand->updated_at = $admissionDate;
-            //     $remand->save();
-            // });
-        });
+        //     //     $remand->station()->associate($station);
+        //     //     $remand->cell()->associate($cell);
+        //     //     $remand->gender = $station->category;
+        //     //     $remand->created_at = $admissionDate;
+        //     //     $remand->updated_at = $admissionDate;
+        //     //     $remand->save();
+        //     // });
+        // });
     }
 }

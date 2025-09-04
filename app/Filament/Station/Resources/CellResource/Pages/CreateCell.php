@@ -14,7 +14,10 @@ class CreateCell extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
 
     {
+        // Automatically assign the station_id based on the logged-in user's station
         $data['station_id'] = Auth::user()->station_id;
+
+        // Return the modified data array
         return $data;
     }
 }

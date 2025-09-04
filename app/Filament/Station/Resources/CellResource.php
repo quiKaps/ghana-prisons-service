@@ -44,8 +44,7 @@ class CellResource extends Resource
                             ->label('Identifier (Block/Floor etc.)')
                             ->required()
                             ->placeholder('Enter Block/Floor etc. eg. Block A, Floor 1')
-                            ->maxLength(255)
-                            ->required(),
+                            ->maxLength(255),
                             ])
                     ]
                 )
