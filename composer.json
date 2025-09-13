@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^3.1",
         "dotswan/filament-laravel-pulse": "^1.1",
         "filament/filament": "^3.3",
         "flowframe/laravel-trend": "^0.4.0",
@@ -20,6 +21,8 @@
         "livewire/volt": "^1.7.0",
         "predis/predis": "^3.0",
         "pxlrbt/filament-excel": "^2.5",
+        "shuvroroy/filament-spatie-laravel-backup": "^2.2",
+        "spatie/laravel-backup": "^9.3",
         "stephenjude/filament-debugger": "*"
     },
     "require-dev": {

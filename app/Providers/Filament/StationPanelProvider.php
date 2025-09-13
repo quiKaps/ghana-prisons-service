@@ -36,6 +36,7 @@ use App\Filament\Station\Resources\UserResource\Pages\CreateUser;
 use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use App\Filament\Station\Resources\InmateResource\Pages\CreateInmate;
 use App\Filament\Station\Resources\InmateResource\Pages\ConvictedForiegners;
+use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 use App\Filament\Station\Resources\RemandTrialResource\Pages\CreateRemandTrial;
 
 class StationPanelProvider extends PanelProvider
@@ -115,6 +116,7 @@ class StationPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
         ])
             ->plugins([
+            FilamentSpatieLaravelBackupPlugin::make(),
                 FilamentEditProfilePlugin::make()
                     ->slug('my-profile')
                     ->setTitle('My Profile')

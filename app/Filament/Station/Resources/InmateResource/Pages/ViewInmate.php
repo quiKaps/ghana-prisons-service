@@ -10,6 +10,7 @@ use App\Models\Sentence;
 use App\Models\Transfer;
 use App\Models\Discharge;
 use Filament\Actions\Action;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Actions\SecureEditAction;
 use Filament\Actions\ActionGroup;
 use Illuminate\Support\Facades\DB;
@@ -45,7 +46,43 @@ class ViewInmate extends ViewRecord
             Action::make('print')
                 ->label('Print Profile')
                 ->color('warning')
-                ->icon('heroicon-o-printer'),
+                ->icon('heroicon-o-printer')
+                ->action(function (array $data, Inmate $record): \Symfony\Component\HttpFoundation\Response {
+                    try {
+
+                        $pdf = Pdf::loadView('pdf.inmate_profile', compact('record'));
+
+                        // For download instead of stream (more reliable in Filament actions)
+                        // Set PDF to A4 and center content
+                        $pdf->setPaper('a4', 'portrait');
+
+                        // Optionally, you can pass a variable to the view to help center content via CSS
+                        $profileData['centerContent'] = true;
+
+                        return response()->streamDownload(
+                            fn() => print($pdf->output()),
+                            "prisoner_profile_{$record->full_name}.pdf",
+                            ['Content-Type' => 'application/pdf']
+                        );
+
+                        // open in browser
+                        // return $pdf->stream("inmate_profile_{$record->id}.pdf");
+
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Print Failed')
+                            ->body('An error occurred while generating the PDF: ' . $e->getMessage())
+                            ->send();
+
+                        // Return null or throw exception to prevent further processing
+                        throw $e;
+                    }
+                })
+                ->requiresConfirmation()
+                ->modalHeading('Print Inmate Profile')
+                ->modalDescription('This will generate and download the inmate profile as a PDF.')
+                ->modalSubmitActionLabel('Print'),
             //print action ends
             ActionGroup::make([
 
