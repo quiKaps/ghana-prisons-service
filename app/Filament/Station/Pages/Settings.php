@@ -24,9 +24,9 @@ class Settings extends Page
 
                         Artisan::call('backup:run');
 
-                        // Get the latest backup file path
-                        //$disk = config('backup.backup.destination.disks')[0] ?? 'local';
-                        $backupPath = '/home/ohene/sites/gps/storage/app/private/GPSPortal/';
+                    // Get the latest backup file path
+                    //$disk = config('backup.backup.destination.disks')[0] ?? 'local';
+                    $backupPath = storage_path('app/private/GPSPortal/');
                         $files = collect(glob($backupPath . '*.zip'))->sortByDesc(fn($file) => filemtime($file));
                         $latestBackup = $files->first();
 
