@@ -652,6 +652,16 @@ class ViewInmate extends ViewRecord
 
             //Session::put('latestSentenceId', $latestSentence?->id); // temporarily store it again for afterCreate
 
+            // If languages_spoken is a JSON string, convert to array
+            if (is_string($data['languages_spoken']) && $data['languages_spoken'] !== '') {
+                $decoded = json_decode($data['languages_spoken'], true);
+                $data['languages_spoken'] = is_array($decoded) ? $decoded : [];
+            } elseif (is_array($data['languages_spoken'])) {
+                // Already an array
+                $data['languages_spoken'] = $data['languages_spoken'];
+            } else {
+                $data['languages_spoken'] = [];
+            }
         }
 
 

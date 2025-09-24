@@ -38,7 +38,7 @@ class CreateInmate extends CreateRecord
         //add gender from station type
         $data['gender'] = $user->station?->category === 'female' ? 'female' : 'male';
 
-        $data['languages_spoken'] = json_encode($data['languages_spoken'] ?? []);
+        // $data['languages_spoken'] = json_encode($data['languages_spoken'] ?? []);
         // Ensure disability is boolean
         $data['disability'] = (bool) $data['disability'];
 

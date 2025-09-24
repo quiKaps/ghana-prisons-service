@@ -17,10 +17,14 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
+use pxlrbt\FilamentExcel\Columns\Column;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Support\Htmlable;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use App\Filament\Station\Resources\ConvictDischargeResource\Pages;
 use App\Filament\Station\Resources\ConvictDischargeResource\RelationManagers;
 
@@ -128,11 +132,157 @@ class ConvictDischargeResource extends Resource
                 ]))
                 ->color('primary'),
         ])
+            ->headerActions([])
             ->bulkActions([
+            ExportBulkAction::make()->exports([
+                ExcelExport::make()
+                    //->queue()->withChunkSize(100)
+                    ->withFilename(Auth::user()->station->name . ' -Convict Discharges-' . now()->format('Y-m-d') . ' - export')
+                    ->withColumns([
+                        Column::make('station.name')->heading('Station'),
+                        Column::make('serial_number')->heading('Serial Number'),
+                        Column::make('full_name')->heading("Name of Prisoner"),
+                        Column::make('age_on_admission')->heading('Age'),
+                        Column::make('latestSentenceByDate.offence')
+                            ->heading('offence')
+                            ->getStateUsing(function ($record) {
+                                if ($record->latestSentenceByDate) {
+                                    return $record->latestSentenceByDate->offence;
+                                }
+                                return '';
+                            }),
+                        Column::make('latestSentenceByDate.total_sentence')
+                            ->heading('Sentence')
+                            ->getStateUsing(function ($record) {
+                                if ($record->latestSentenceByDate) {
+                                    return $record->latestSentenceByDate->total_sentence;
+                                }
+                                return '';
+                            }),
+                        Column::make('admission_date')->formatStateUsing(fn($state) => date_format($state, 'Y-m-d'))->heading('Date of Admission'),
+                        Column::make('latestSentenceByDate.date_of_sentence')
+                            ->heading('Date of Sentence')
+                            ->getStateUsing(function ($record) {
+                                if ($record->latestSentenceByDate) {
+                                    return date_format($record->latestSentenceByDate->date_of_sentence, 'Y-m-d');
+                                }
+                                return '';
+                            }),
+                        Column::make('latestSentenceByDate.EPD')
+                            ->heading('EPD')
+                            ->getStateUsing(function ($record) {
+                                if ($record->latestSentenceByDate) {
+                                    return date_format($record->latestSentenceByDate->EPD, 'Y-m-d');
+                                }
+                                return '';
+                            }),
+                        Column::make('latestSentenceByDate.LPD')
+                            ->heading('LPD')
+                            ->getStateUsing(function ($record) {
+                                if ($record->latestSentenceByDate) {
+                                    return date_format($record->latestSentenceByDate->LPD, 'Y-m-d');
+                                }
+                                return '';
+                            }),
+                        Column::make('latestSentenceByDate.court_of_committal')
+                            ->heading('Court of Committal')
+                            ->getStateUsing(function ($record) {
+                                if ($record->latestSentenceByDate) {
+                                    return $record->latestSentenceByDate->court_of_committal;
+                                }
+                                return '';
+                            }),
+                        Column::make('cell.cell_number')
+                            ->heading('Cell Number - Block')
+                            ->getStateUsing(function ($record) {
+                                if ($record->cell) {
+                                    return "{$record->cell->block} - {$record->cell->cell_number}";
+                                }
+                                return '';
+                            }),
+                        Column::make('latestSentenceByDate.warrant')
+                            ->heading('Warrant')
+                            ->getStateUsing(function ($record) {
+                                if ($record->latestSentenceByDate) {
+                                    return $record->latestSentenceByDate->warrant;
+                                }
+                                return '';
+                            }),
+                        Column::make('transferred_in')->heading('Transferred In')->getStateUsing(function ($record) {
+                            if ($record->transferred_in == 1) {
+                                return 'Yes';
+                            }
+                            return 'No';
+                        }),
+                        Column::make('disability')->heading('Disability')->getStateUsing(function ($record) {
+                            if ($record->disability == 1) {
+                                return 'Yes';
+                            }
+                            return 'No';
+                        }),
+                        Column::make('tribe')->heading('Tribe'),
 
-            //
 
-        ]);
+                        Column::make('languages_spoken')
+                            ->heading('Languages Spoken')
+                            ->getStateUsing(function ($record) {
+                                if (!empty($record->languages_spoken)) {
+                                    $languages = is_array($record->languages_spoken)
+                                        ? $record->languages_spoken
+                                        : json_decode($record->languages_spoken, true);
+
+                                    if (is_array($languages)) {
+                                        return implode(', ', $languages);
+                                    }
+                                }
+                                return '';
+                            }),
+                        Column::make('hometown')->heading('Hometown'),
+
+
+                        Column::make('married_status')->heading('Marital Status'),
+
+                        Column::make('nationality')->heading('Country of Origin'),
+
+
+                        Column::make('education_level')->heading('Education Background'),
+
+                        Column::make('religion')->heading('Religious Background'),
+
+                    Column::make('occupation')->heading('Occupation'),
+
+                        Column::make('next_of_kin_name')->heading('Next of Kin Name'),
+                        Column::make('next_of_kin_relationship')->heading('Next of Kin Relationship'),
+                        Column::make('next_of_kin_contact')->heading('Contact of Next of Kin'),
+                        Column::make('distinctive_marks')
+                            ->heading('Distinctive Marks')
+                            ->getStateUsing(function ($record) {
+                                if (is_array($record->distinctive_marks)) {
+                                    return implode(', ', $record->distinctive_marks);
+                                }
+                                return '';
+                            }),
+                        Column::make('goaler')->heading('Goaler')->getStateUsing(function ($record) {
+                            if ($record->goaler == 1) {
+                                return 'Yes';
+                            }
+                            return 'No';
+                        }),
+                        Column::make('previously_convicted')->heading('Previous Conviction')->getStateUsing(function ($record) {
+                            if ($record->previous_conviction == 1) {
+                                return 'Yes';
+                            }
+                            return 'No';
+                        }),
+                        Column::make('police_name')->heading('Police Officer'),
+                        Column::make('police_station')->heading('Police Station'),
+                        Column::make('police_contact')->heading('Police Contact'),
+                    ])
+            ])
+                ->label('Export Selected Convicts')
+                ->color('success')
+                ->icon('heroicon-o-arrow-down-tray')
+            ]);
     }
 
     public static function getRelations(): array

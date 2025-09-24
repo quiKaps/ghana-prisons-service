@@ -9,6 +9,17 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+Artisan::command('cells:empty', function () {
+    $this->comment('All Empty Cells: ' . \App\Models\Cell::whereDoesntHave('inmates')->count());
+})->purpose('Display all empty cells');
+
+Artisan::command('cells:delete', function () {
+    $this->comment('Deleting all empty cells...');
+    $cells_count = \App\Models\Cell::whereDoesntHave('inmates')->count();
+    \App\Models\Cell::whereDoesntHave('inmates')->delete();
+    $this->comment($cells_count . ' empty cell(s) have been deleted.');
+})->purpose('Delete all empty cells');
+
 Schedule::command('inmates:discharge')
     ->everyThirtyMinutes()
     ->withoutOverlapping()
