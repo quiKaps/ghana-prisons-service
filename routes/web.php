@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PrintController;
 use Livewire\Volt\Volt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -9,7 +10,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/dashboard', function () {
-    $user = auth()->user();
+    $user = Auth::user();
     if ($user && $user->type !== 'hq_admin') {
         return redirect('/station');
     } else {
@@ -30,14 +31,21 @@ Route::get('/horizon', function () {
 })->middleware(['auth'])
     ->name('horizon');
 
-Route::get('/storage/{document}', function () {})
-    ->name('warrant.document.view');
 
 
 Route::get('/station/inmates/{id}/edit')
     ->middleware(['auth', 'verified', 'password.confirm']);
 
+
+
 Route::middleware(['auth'])->group(function () {
+
+
+    Route::get('/storage/{document}', function () {})
+        ->name('warrant.document.view');
+
+
+    Route::get('/print/{inmate}', PrintController::class)->name('print');
 
     Route::redirect('settings', 'settings/profile');
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');

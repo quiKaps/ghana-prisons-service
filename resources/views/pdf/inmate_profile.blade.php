@@ -31,7 +31,7 @@
                     </td>
                 </tr>
                 <tr>
-                    {{-- <td width="33%">
+<td width="33%">
                         <strong>
                             <p>Prisoner Photo</p>
                         </strong>
@@ -39,7 +39,7 @@
                             <img src="{{ asset('gps-logo.png') }}" alt="{{ $record->full_name }}'s Photo" width="100"
                                 height="100">
                         </div>
-                    </td> --}}
+</td>
                     <td width="33%">
                         <strong>
                             <p>Serial Number</p>

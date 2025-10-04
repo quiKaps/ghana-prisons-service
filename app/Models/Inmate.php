@@ -294,6 +294,13 @@ class Inmate extends Model
     }
 
 
+    //create a realtionship that returns the name of the station transfered to from the stattion modelstation_transferred_to_id
+    public function stationTransferredTo(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Station::class, 'station_transferred_to_id');
+    }
+
+
     protected static function booted(): void
     {
         static::addGlobalScope('latest', function ($query) {

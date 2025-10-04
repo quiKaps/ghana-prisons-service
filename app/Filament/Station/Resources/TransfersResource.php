@@ -59,23 +59,22 @@ class TransfersResource extends Resource
                     ->label("Name of Prisoner")
                     ->searchable()
                     ->sortable(),
-            Tables\Columns\TextColumn::make('date_transferred_out')
-                ->label("Date of Transfer")
-                ->formatStateUsing(fn($state) => Carbon::parse($state)->format('Y-m-d'))
-                ->date()
-                ->searchable()
-                ->sortable(),
-            TextColumn::make('transferred_in')
-                ->label('Transferred In')
-                ->state(fn(Inmate $record) => $record->transferred_in) // this is the "column state"
-                ->formatStateUsing(fn($state) => $state ? 'Yes' : 'No')
-                ->visible(fn(?Inmate $record) => $record?->transferred_in ?? false), // recheck the value manually
 
-            // Tables\Columns\TextColumn::make('station_transferred_from_id')
-            //     ->label('Station Transfered From')
-            //     ->formatStateUsing(fn($state, Inmate $record) => $record->transferred_in)
-            //     ->visible(fn($state, Inmate $record) => $record == true)
-            //     ->sortable(),
+            TextColumn::make('transferred_in')
+                ->label('Date Transferred')
+                ->badge()
+                ->color('info')
+                ->formatStateUsing(function (Inmate $record) {
+                    if ($record->transferred_in) {
+                        return 'Transferred In on ' . Carbon::parse($record->date_transferred_in)->format('Y-m-d');
+                    }
+                    if ($record->transferred_out) {
+                        return 'Transferred Out on ' . Carbon::parse($record->date_transferred_out)->format('Y-m-d');
+                    }
+                    return 'No';
+                }),
+            //->visible(fn(?Inmate $record) => $record?->transferred_in ?? false), // recheck the value manually
+
             // Tables\Columns\TextColumn::make('station_transferred_to_id')
             //     ->label('Station Transfered To')
             //     ->formatStateUsing(fn($state, Inmate $record) => $record->transferred_out)

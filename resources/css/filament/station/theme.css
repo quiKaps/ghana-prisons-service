@@ -112,7 +112,16 @@
   .fi-btn-primary {
     @apply bg-cream text-white hover:bg-cream/90;
   }
+ .fi-modal-header {
+   @apply bg-brown text-white;
 
+ }
+
+ .fi-modal-content,
+ .fi-modal-footer {
+   @apply bg-pink;
+ }
+              
   /* Form focus rings */
   .fi-input:focus,
   .fi-select:focus,

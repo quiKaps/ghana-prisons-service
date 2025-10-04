@@ -47,37 +47,8 @@ class ViewInmate extends ViewRecord
                 ->label('Print Profile')
                 ->color('warning')
                 ->icon('heroicon-o-printer')
-                ->action(function (array $data, Inmate $record): \Symfony\Component\HttpFoundation\Response {
-                    try {
-
-                        $pdf = Pdf::loadView('pdf.inmate_profile', compact('record'));
-
-                        // For download instead of stream (more reliable in Filament actions)
-                        // Set PDF to A4 and center content
-                        $pdf->setPaper('a4', 'portrait');
-
-                        // Optionally, you can pass a variable to the view to help center content via CSS
-                        $profileData['centerContent'] = true;
-
-                        return response()->streamDownload(
-                            fn() => print($pdf->output()),
-                            "prisoner_profile_{$record->full_name}.pdf",
-                            ['Content-Type' => 'application/pdf']
-                        );
-
-                        // open in browser
-                        // return $pdf->stream("inmate_profile_{$record->id}.pdf");
-
-                    } catch (\Throwable $e) {
-                        Notification::make()
-                            ->danger()
-                            ->title('Print Failed')
-                            ->body('An error occurred while generating the PDF: ' . $e->getMessage())
-                            ->send();
-
-                        // Return null or throw exception to prevent further processing
-                        throw $e;
-                    }
+                ->action(function (array $data, Inmate $record) {
+                    return redirect("/print/{$record->id}");
                 })
                 ->requiresConfirmation()
                 ->modalHeading('Print Inmate Profile')
@@ -622,7 +593,7 @@ class ViewInmate extends ViewRecord
                     }),
             ])
                 ->button()
-                ->visible(fn() => $this->record->is_discharged === false && Auth::user()?->user_type === 'prison_admin')
+                ->visible(fn() => ($this->record->is_discharged === false && Auth::user()?->user_type === 'prison_admin') && ($this->record->transferred_out === false))
                 ->label('More Actions'),
 
         ];
@@ -631,6 +602,13 @@ class ViewInmate extends ViewRecord
     public function getHeading(): string
     {
         return "{$this->record->full_name}'s Profile";
+    }
+
+    public function getSubHeading(): string
+    {
+        return $this->record->transferred_out
+            ? "{$this->record->stationTransferredTo->name}"
+            : "{$this->record->station->name}";
     }
 
 

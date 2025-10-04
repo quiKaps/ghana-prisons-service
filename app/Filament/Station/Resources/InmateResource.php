@@ -469,6 +469,27 @@ class InmateResource extends Resource
             Tables\Columns\TextColumn::make('earliestSentenceByDate.offence')
                 ->label('Offence')
                 ->sortable()
+                ->badge()
+                ->color(fn(string $state): string => match ($state) {
+                    'assault' => 'info',
+                    'causing_harm' => 'warning',
+                    default => 'danger',
+                })
+                ->formatStateUsing(fn($state) => match ($state) {
+                    'assault' => 'Assault',
+                    'causing_harm' => 'Causing Harm',
+                    'defilement' => 'Defilement',
+                    'defrauding' => 'Defrauding by False Pretence',
+                    'manslaughter' => 'Manslaughter',
+                    'murder' => 'Murder',
+                    'narcotics' => 'Narcotics',
+                    'robbery' => 'Robbery',
+                    'stealing' => 'Stealing',
+                    'unlawful_damage' => 'Unlawful Damage',
+                    'unlawful_entry' => 'Unlawful Entry',
+                    default => 'Others'
+                })
+
                 ->searchable(),
 
             Tables\Columns\TextColumn::make('latestSentenceByDate.total_sentence')
