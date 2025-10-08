@@ -4,364 +4,468 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unstyled Profile Page</title>
+<title>Prisoner Profile - Print</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    @media print {
+        body {
+            margin: 0;
+            padding: 20px;
+        }
+
+        .no-print {
+            display: none;
+        }
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: white;
+        color: #000;
+        line-height: 1.6;
+        padding: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .header {
+        border-bottom: 4px solid #000;
+        padding-bottom: 20px;
+        margin-bottom: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-title {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .station-name {
+        font-size: 14px;
+        font-weight: 400;
+        color: #333;
+        margin-top: 5px;
+    }
+
+    .section {
+        margin-bottom: 35px;
+        break-inside: avoid;
+    }
+
+    .section-header {
+        background: #000;
+        color: #fff;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 20px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px 20px;
+    }
+
+    .grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .field {
+        break-inside: avoid;
+    }
+
+    .field-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #000;
+        margin-bottom: 6px;
+    }
+
+    .field-value {
+        font-size: 14px;
+        color: #333;
+        padding: 8px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .photo-section {
+        grid-column: 1;
+        grid-row: 1 / 3;
+    }
+
+    .photo-container {
+        width: 150px;
+        height: 150px;
+        border: 3px solid #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f5f5;
+        margin-top: 10px;
+    }
+
+    .photo-container img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+    }
+
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        margin-top: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    table thead {
+        background: #000;
+        color: #fff;
+    }
+
+    table th {
+        padding: 12px 10px;
+        text-align: left;
+        font-weight: 700;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    table td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    table tbody tr:hover {
+        background: #f9f9f9;
+    }
+
+    .conviction-item {
+        padding: 15px;
+        border: 1px solid #ddd;
+        margin-bottom: 15px;
+        background: #fafafa;
+    }
+
+    .conviction-item .grid {
+        gap: 15px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        background: #000;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-left: 10px;
+    }
+
+    .no-data {
+        font-style: italic;
+        color: #999;
+        padding: 20px;
+        text-align: center;
+        border: 1px dashed #ccc;
+    }
+
+    @media print {
+        body {
+            padding: 20px;
+        }
+
+        .section {
+            page-break-inside: avoid;
+        }
+    }
+</style>
 </head>
 
 <body>
-    <div>
-        <!-- Header -->
-        <table width="100%" cellspacing="0" cellpadding="20">
-            <tr>
-                <td colspan="2"><strong>{{ $record->full_name }}'s Records</strong> - {{ Auth::user()->station->name }}
-                </td>
-                <td align="right">
-
-                </td>
-            </tr>
-        </table>
-
-        <!-- Main Content -->
+<!-- Header -->
+<div class="header">
         <div>
-            <!-- Personal Record Section -->
-            <br>
-            <table width="100%" cellspacing="0" cellpadding="10">
-                <tr>
-                    <td colspan="3">
-                        <h2>Personal Record</h2>
-                    </td>
-                </tr>
-                <tr>
-<td width="33%">
-                        <strong>
-                            <p>Prisoner Photo</p>
-                        </strong>
-                        <div>
-                            <img src="{{ asset('gps-logo.png') }}" alt="{{ $record->full_name }}'s Photo" width="100"
-                                height="100">
-                        </div>
-</td>
-                    <td width="33%">
-                        <strong>
-                            <p>Serial Number</p>
-                        </strong>
-                        <p>{{ $record->serial_number }}</p>
-                    </td>
-                    <td width="33%">
-                        <strong>
-                            <p>Name of Prisoner</p>
-                        </strong>
-                        <p>{{ $record->full_name }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>
-                            <p>Age on Admission</p>
-                        </strong>
-                        <p>{{ $record->age_on_admission }}years</p>
-                    </td>
-                    <td>
-                        <strong>
-                            <p>Offence</p>
-                        </strong>
-                        <p>{{ $record->latestSentenceByDate->offence }}</p>
-                    </td>
-                    <td>
-                        <strong>
-                            <p>Sentence</p>
-                        </strong>
-                        <p>{{ $record->latestSentenceByDate->total_sentence }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>
-                            <p>Date of Admission</p>
-                        </strong>
-                        <p>{{ $record->admission_date }}</p>
-                    </td>
-                    <td>
-                        <strong>
-                            <p>Date of Sentence</p>
-                        </strong>
-                        <p>{{ $record->latestSentenceByDate->date_of_sentence }}</p>
-                    </td>
-                    <td>
-                        <strong>
-                            <p>EPD</p>
-                        </strong>
-                        <p>{{ $record->latestSentenceByDate->EPD }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>
-                            <p>LPD</p>
-                        </strong>
-                        <p>{{ $record->latestSentenceByDate->LPD }}</p>
-                    </td>
-                    <td>
-                        <strong>
-                            <p>Court of Committal</p>
-                        </strong>
-                        <p>{{ $record->latestSentenceByDate->court_of_committal }}</p>
-                    </td>
-                    <td>
-                        <strong>
-                            <p>Block & Cell</p>
-                        </strong>
-                        <p> {{ $record->cell?->block }} CELL {{ $record->cell->cell_number }} </p>
-                    </td>
-                </tr>
-            </table>
+<div class="header-title">{{ $record->full_name }}'s Records</div>
+<div class="station-name">{{ Auth::user()->station->name }}</div>
+</div>
+</div>
+<!-- Personal Record Section -->
+<div class="section">
+    <div class="section-header">Personal Record</div>
+    <div class="grid">
+        <div class="field photo-section">
+            <div class="field-label">Prisoner Photo</div>
+            <div class="photo-container">
+                @php
+                $imagePath = public_path("storage/{$record->prisoner_picture}");
+                $imageData = file_exists($imagePath) ? base64_encode(file_get_contents($imagePath)) : null;
+                $imageExtension = $imageData ? pathinfo($imagePath, PATHINFO_EXTENSION) : 'webp';
+                $mimeType = match($imageExtension) {
+                'png' => 'image/png',
+                'jpg', 'jpeg' => 'image/jpeg',
+                'gif' => 'image/gif',
+                'webp' => 'image/webp',
+                default => 'image/jpeg'
+                };
+                @endphp
 
-            <br>
-
-            <!-- Transfer-In Information -->
-            <table width="100%" cellspacing="0" cellpadding="10">
-                <tr>
-                    <td colspan="3">
-                        <h2>Transfer-In Information</h2>
-                    </td>
-                </tr>
-                <tr>
-                    <td width="33%">
-                        <strong>
-                            <p>Transferred Inmate</p>
-                        </strong>
-                        <p>
-                            {{ $record->transferred_in ? 'Yes' : 'No' }}
-                        </p>
-                    </td>
-                    @if ($record->transferred_in)
-                    <td width="33%">
-                        <strong>
-                            <p>Station Transferred From</p>
-                        </strong>
-                        <p>{{ !empty($record->station_transferred_from_id) ? \App\Models\Station::where('id',
-                            $record->station_transferred_from_id)->pluck('name')->first() : '' }}</p>
-                    </td>
-                    <td width="33%">
-                        <strong>
-                            <p>Transferred Date</p>
-                        </strong>
-                        <p>{{ $record->date_transferred_in }}</p>
-                    </td>
-                    @endif
-                </tr>
-            </table>
-
-            <!-- Social Background Section -->
-            <br>
-            <table width="100%" cellspacing="0" cellpadding="10">
-                <tr>
-                    <td colspan="3">
-                        <h2>Social Background</h2>
-                    </td>
-                </tr>
-                <tr>
-                    <td width="33%">
-                        <strong>
-                            <p>Tribe</p>
-                        </strong>
-                        <p>{{ $record->tribe }}</p>
-                    </td>
-                    <td width="33%">
-                        <strong>
-                            <p>Language Spoken</p>
-                        </strong>
-                        <p>
-                            {{ is_array($record->languages_spoken) ? implode(', ', $record->languages_spoken) :
-                            ($record->languages_spoken ?? 'No Languages') }}
-                        </p>
-                    </td>
-                    <td width="33%">
-                        <strong>Hometown</strong>
-                        <p>{{ $record->hometown }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>
-                            <p>Country of Origin</p>
-                        </strong>
-                        <p>{{ $record->nationality }}</p>
-                    </td>
-                    <td>
-                        <strong>
-                            <p>Marital Status</p>
-                        </strong>
-                        <p>{{ $record->married_status }}</p>
-                    </td>
-                    <td>
-                        <strong>
-                            <p>Education Background</p>
-                        </strong>
-                        <p>{{ $record->education_level }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>
-                            <p>Religious Background</p>
-                        </strong>
-                        <p>{{ $record->religion }}</p>
-                    </td>
-                    <td>
-                        <strong>
-                            <p>Occupation</p>
-                        </strong>
-                        <p>{{ $record->occupation }}</p>
-                    </td>
-                    <td>
-                        <strong>
-                            <p>Name of Next of Kin</p>
-                        </strong>
-                        <p>{{ $record->next_of_kin_name }}</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>
-                            <p>Next of Kin Relationship</p>
-                        </strong>
-                        <p>Son</p>
-                    </td>
-                    <td>
-                        <strong>
-                            <p>Contact of Next of Kin</p>
-                        </strong>
-                        <p>{{ $record->next_of_kin_contact }}</p>
-                    </td>
-                </tr>
-            </table>
-
-            <!-- Distinctive Body Marks Section -->
-            <br>
-            <table width="100%" cellspacing="0" cellpadding="10">
-                <tr>
-                    <td colspan="3">
-                        <h2>Distinctive Body Marks</h2>
-                    </td>
-                </tr>
-                <tr>
-                    <td width="33%">
-                        <strong>
-                            <p>Distinctive Marks</p>
-                        </strong>
-                        <p>
-                            {{ is_array($record->distinctive_marks) ? implode(', ', $record->distinctive_marks) :
-                            ($record->distinctive_marks ?? '') }}
-                        </p>
-                    </td>
-                    <td width="33%">
-                        <strong>
-                            <p>Part of the Body</p>
-                        </strong>
-                        <p>{{ $record->part_of_the_body }}</p>
-                    </td>
-                </tr>
-            </table>
-
-            <!-- Previous Conviction Section -->
-            <br>
-            <table width="100%" cellspacing="0" cellpadding="10">
-                <tr>
-                    <td colspan="3">
-                        <h2>Previous Conviction</h2>
-                    </td>
-                </tr>
-                @if (!empty($record->previous_convictions) && is_array($record->previous_convictions))
-                @foreach ($record->previous_convictions as $previous_conviction)
-                <tr>
-                    <td width="33%">
-                        <strong>Previous Sentence</strong>
-                        <p>{{ $previous_conviction['previous_sentence'] ?? '' }}</p>
-                    </td>
-                    <td width="33%">
-                        <strong>Previous Offence</strong>
-                        <p>
-                            {{ $previous_conviction['previous_offence'] ?? '' }}
-                        </p>
-
-                    </td>
-                    <td width="33%">
-                        <strong>Station</strong>
-                        <p>
-                            {{ !empty($previous_conviction['previous_station_id']) ? \App\Models\Station::where('id',
-                            $previous_conviction['previous_station_id'])->pluck('name')->first() : '' }}
-                        </p>
-                    </td>
-                </tr>
-                @endforeach
+                @if($imageData)
+                <img src="data:{{ $mimeType }};base64,{{ $imageData }}" alt="{{ $record->full_name }}'s Photo">
                 @else
-                <tr>
-                    <td colspan="3">
-                        <p>No previous conviction recorded.</p>
-                    </td>
-                </tr>
-                @endif
+                <div class="placeholder">No photo available</div> @endif
+            </div>
+</div>
+<div class="field">
+    <div class="field-label">Serial Number</div>
+    <div class="field-value">{{ $record->serial_number }}</div>
+</div>
+<div class="field">
+    <div class="field-label">Name of Prisoner</div>
+    <div class="field-value">{{ $record->full_name }}</div>
+</div>
+<div class="field">
+    <div class="field-label">Age on Admission</div>
+    <div class="field-value">{{ $record->age_on_admission }} years</div>
+</div>
+<div class="field">
+    <div class="field-label">Offence</div>
+    <div class="field-value">{{ $record->latestSentenceByDate->offence }}</div>
+</div>
+<div class="field">
+    <div class="field-label">Sentence</div>
+    <div class="field-value">{{ $record->latestSentenceByDate->total_sentence }}</div>
+</div>
+<div class="field">
+    <div class="field-label">Date of Admission</div>
+    <div class="field-value">{{ $record->admission_date }}</div>
+</div>
+<div class="field">
+    <div class="field-label">Date of Sentence</div>
+    <div class="field-value">{{ $record->latestSentenceByDate->date_of_sentence }}</div>
+</div>
+<div class="field">
+    <div class="field-label">EPD (Earliest Possible Date)</div>
+    <div class="field-value">{{ $record->latestSentenceByDate->EPD }}</div>
+</div>
+<div class="field">
+    <div class="field-label">LPD (Latest Possible Date)</div>
+    <div class="field-value">{{ $record->latestSentenceByDate->LPD }}</div>
+</div>
+<div class="field">
+    <div class="field-label">Court of Committal</div>
+    <div class="field-value">{{ $record->latestSentenceByDate->court_of_committal }}</div>
+</div>
+<div class="field">
+    <div class="field-label">Block & Cell</div>
+    <div class="field-value">{{ $record->cell?->block }} CELL {{ $record->cell->cell_number }}</div>
+</div>
+</div>
+</div>
 
-            </table>
+<!-- Transfer-In Information -->
+<div class="section">
+    <div class="section-header">Transfer-In Information</div>
+    <div class="grid">
+        <div class="field">
+            <div class="field-label">Transferred Inmate</div>
+            <div class="field-value">
+                {{ $record->transferred_in ? 'Yes' : 'No' }}
+@if($record->transferred_in)
+<span class="badge">Transferred</span>
+@endif
+</div>
+</div>
+                    @if ($record->transferred_in)
+<div class="field">
+    <div class="field-label">Station Transferred From</div>
+    <div class="field-value">{{ !empty($record->station_transferred_from_id) ?
+        \App\Models\Station::where('id', $record->station_transferred_from_id)->pluck('name')->first() : ''
+        }}</div>
+</div>
+<div class="field">
+    <div class="field-label">Transferred Date</div>
+    <div class="field-value">{{ $record->date_transferred_in }}</div>
+</div>
+@endif
+</div>
+</div>
 
-            <!-- Police Information Section -->
-            <br>
-            <table width="100%" cellspacing="0" cellpadding="10">
-                <tr>
-                    <td colspan="3">
-                        <h2>Police Information</h2>
-                    </td>
-                </tr>
-                <tr>
-                    <td width="33%">
-                        <strong>
-                            <p>Police Name</p>
-                        </strong>
-                        <p>{{ $record->police_name }}</p>
-                    </td>
-                    <td width="33%">
-                        <strong>
-                            <p>Police Station</p>
-                        </strong>
-                        <p>{{ $record->police_station }}</p>
-                    </td>
-                    <td width="33%">
-                        <strong>
-                            <p>Police Contact</p>
-                        </strong>
-                        <p>{{ $record->police_contact }}</p>
-                    </td>
-                </tr>
-            </table>
+<!-- Social Background Section -->
+<div class="section">
+    <div class="section-header">Social Background</div>
+    <div class="grid">
+        <div class="field">
+            <div class="field-label">Tribe</div>
+            <div class="field-value">{{ $record->tribe }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Language Spoken</div>
+            <div class="field-value">{{ is_array($record->languages_spoken) ? implode(', ',
+                $record->languages_spoken) : ($record->languages_spoken ?? 'No Languages') }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Hometown</div>
+            <div class="field-value">{{ $record->hometown }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Country of Origin</div>
+            <div class="field-value">{{ $record->nationality }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Marital Status</div>
+            <div class="field-value">{{ $record->married_status }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Education Background</div>
+            <div class="field-value">{{ $record->education_level }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Religious Background</div>
+            <div class="field-value">{{ $record->religion }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Occupation</div>
+            <div class="field-value">{{ $record->occupation }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Name of Next of Kin</div>
+            <div class="field-value">{{ $record->next_of_kin_name }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Next of Kin Relationship</div>
+            <div class="field-value">{{ $record->next_of_kin_relationship ?? 'Son' }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Contact of Next of Kin</div>
+            <div class="field-value">{{ $record->next_of_kin_contact }}</div>
+        </div>
+    </div>
+</div>
 
-            <!-- Sentences Section -->
-            <br>
-            <table width="100%" cellspacing="0" cellpadding="10">
+<!-- Distinctive Body Marks Section -->
+<div class="section">
+    <div class="section-header">Distinctive Body Marks</div>
+    <div class="grid grid-2">
+        <div class="field">
+            <div class="field-label">Distinctive Marks</div>
+            <div class="field-value">{{ is_array($record->distinctive_marks) ? implode(', ',
+                $record->distinctive_marks) : ($record->distinctive_marks ?? '') }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Part of the Body</div>
+            <div class="field-value">{{ $record->part_of_the_body }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Previous Conviction Section -->
+<div class="section">
+    <div class="section-header">Previous Conviction</div>
+    @if (!empty($record->previous_convictions) && is_array($record->previous_convictions))
+    @foreach ($record->previous_convictions as $previous_conviction)
+<div class="conviction-item">
+    <div class="grid">
+        <div class="field">
+            <div class="field-label">Previous Sentence</div>
+            <div class="field-value">{{ $previous_conviction['previous_sentence'] ?? '' }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Previous Offence</div>
+            <div class="field-value">{{ $previous_conviction['previous_offence'] ?? '' }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Station</div>
+            <div class="field-value">{{ !empty($previous_conviction['previous_station_id']) ?
+                \App\Models\Station::where('id',
+                $previous_conviction['previous_station_id'])->pluck('name')->first() : '' }}</div>
+        </div>
+    </div>
+</div>
+@endforeach
+@else
+<div class="no-data">No previous conviction recorded.</div>
+@endif
+</div>
+
+<!-- Police Information Section -->
+<div class="section">
+    <div class="section-header">Police Information</div>
+    <div class="grid">
+        <div class="field">
+            <div class="field-label">Police Name</div>
+            <div class="field-value">{{ $record->police_name }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Police Station</div>
+            <div class="field-value">{{ $record->police_station }}</div>
+        </div>
+        <div class="field">
+            <div class="field-label">Police Contact</div>
+            <div class="field-value">{{ $record->police_contact }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Sentences Section -->
+<div class="section">
+    <div class="section-header">Sentences</div>
+    <div class="table-container">
+        <table>
                 <thead>
                     <tr>
-                        <th><strong>Sentence</strong></th>
-                        <th><strong>Offence</strong></th>
-                        <th><strong>EPD</strong></th>
-                        <th><strong>LPD</strong></th>
-                        <th><strong>Court of Committal</strong></th>
-                        <th><strong>Committed By</strong></th>
-                        <th><strong>Committed Sentence</strong></th>
+<th>Sentence</th>
+<th>Offence</th>
+<th>EPD</th>
+<th>LPD</th>
+<th>Court of Committal</th>
+<th>Committed By</th>
+<th>Committed Sentence</th>
                     </tr>
                 </thead>
                 <tbody>
+@if($record->sentences && count($record->sentences) > 0)
+@foreach($record->sentences as $sentence)
                     <tr>
-                        <td>20yrs INL</td>
-                        <td>Stealing</td>
-                        <td>Sep 27, 2025</td>
-                        <td>Sep 25, 2025</td>
-                        <td>Accra High Court</td>
-                        <td>-</td>
-                        <td>-</td>
+<td>{{ $sentence->total_sentence ?? '-' }}</td>
+<td>{{ $sentence->offence ?? '-' }}</td>
+<td>{{ $sentence->EPD ?? '-' }}</td>
+<td>{{ $sentence->LPD ?? '-' }}</td>
+<td>{{ $sentence->court_of_committal ?? '-' }}</td>
+<td>{{ $sentence->committed_by ?? '-' }}</td>
+<td>{{ $sentence->committed_sentence ?? '-' }}</td>
                     </tr>
+@endforeach
+@else
+<tr>
+    <td colspan="7" style="text-align: center; font-style: italic; color: #999;">No sentences
+        recorded</td>
+</tr>
+@endif
                 </tbody>
             </table>
         </div>
     </div>
+
 </body>
 
 </html>

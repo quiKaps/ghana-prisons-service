@@ -24,6 +24,7 @@ class Sentence extends Model
         'commutted_sentence',
         'date_of_sentence',
         // 'goaler_document',
+        'sentence_description',
         'date_of_amnesty',
         'amnesty_document',
         'warrant_document',

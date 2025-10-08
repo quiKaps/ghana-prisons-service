@@ -28,8 +28,9 @@ class SentencesRelationManager extends RelationManager
             ->recordTitleAttribute('inmate_id')
             ->columns([
                 Tables\Columns\TextColumn::make('sentence'),
-                Tables\Columns\TextColumn::make('offence')->badge(),
-                Tables\Columns\TextColumn::make('EPD')->date()->label('EPD'),
+            Tables\Columns\TextColumn::make('offence')->badge(),
+            Tables\Columns\TextColumn::make('sentence_description')->color('info')->label('Sentence Description')->badge(),
+            Tables\Columns\TextColumn::make('EPD')->date()->label('EPD'),
             Tables\Columns\TextColumn::make('LPD')->date()->label('LPD'),
                 Tables\Columns\TextColumn::make('court_of_committal')->label('Court of Committal'),
                 Tables\Columns\TextColumn::make('commutted_by')->label('Commutted By'),
