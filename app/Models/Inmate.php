@@ -6,6 +6,8 @@ use Illuminate\Support\Carbon;
 use App\Models\Scopes\FacilitiesScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -14,6 +16,7 @@ class Inmate extends Model
 {
     /** @use HasFactory<\Database\Factories\InmateFactory> */
     use HasFactory;
+    use LogsActivity;
 
     protected $fillable = [
         'admission_date',
@@ -82,6 +85,13 @@ class Inmate extends Model
         'date_transferred_in' => 'date',
         'date_transferred_out' => 'date',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnlyDirty();
+        // Chain fluent methods for configuration options
+    }
 
 
     /**

@@ -404,29 +404,30 @@ class ViewInmate extends ViewRecord
                     ->modalHeading('Additional Sentence')
                     ->modalSubmitActionLabel('Add Sentence')
                     ->action(function (array $data, Inmate $record): void {
-                        try {
-                            \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
-                                \App\Models\Sentence::create([
-                                    'inmate_id' => $record->id,
+                    try {
+                        \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
+                            \App\Models\Sentence::create([
+                                'inmate_id' => $record->id,
                                 'sentence' => $data['sentence'],
-                                    'offence' => $data['offence'],
-                                    'total_sentence' => $data['total_sentence'], //this is redundant
-                                    'court_of_committal' => $data['court_of_committal'],
-                                    'date_of_sentence' => $record->sentences->first()->date_of_sentence,
-                                    'EPD' =>  $data['EPD'],
-                                    'LPD' => $data['LPD'],
-                                    'warrant_document' => $data['warrant_document'],
-                                ]);
-                            });
+                                'offence' => $data['offence'],
+                                'total_sentence' => $data['total_sentence'], //this is redundant
+                                'court_of_committal' => $data['court_of_committal'],
+                                'date_of_sentence' => $record->sentences->first()->date_of_sentence,
+                                'EPD' =>  $data['EPD'],
+                                'LPD' => $data['LPD'],
+                                'warrant_document' => $data['warrant_document'],
+                                'sentence_description' => 'Additional Sentence',
+                            ]);
+                        });
 
-                            Notification::make()
-                                ->success()
-                                ->title('Additional Sentence Success')
-                                ->body("The additional sentence for {$record->full_name} has been completed.")
-                                ->send();
-                        } catch (\Throwable $e) {
-                            Notification::make()
-                                ->danger()
+                        Notification::make()
+                            ->success()
+                            ->title('Additional Sentence Success')
+                            ->body("The additional sentence for {$record->full_name} has been completed.")
+                            ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->danger()
                             ->title('Additional Sentence Failed')
                             ->body('An error occurred: ' . $e->getMessage()) // edit the error message
                             ->send();
@@ -446,7 +447,6 @@ class ViewInmate extends ViewRecord
                         'full_name' => $record->full_name,
                         'sentence' => $record->latestSentenceByDate->sentence,
                         'offence' => $record->latestSentenceByDate->offence,
-
                     ])->form([
                         Group::make()
                             ->columns(2)

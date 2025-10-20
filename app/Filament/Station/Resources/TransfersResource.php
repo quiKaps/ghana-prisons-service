@@ -73,8 +73,7 @@ class TransfersResource extends Resource
                     }
                     return 'No';
                 }),
-            //->visible(fn(?Inmate $record) => $record?->transferred_in ?? false), // recheck the value manually
-
+            
             // Tables\Columns\TextColumn::make('station_transferred_to_id')
             //     ->label('Station Transfered To')
             //     ->formatStateUsing(fn($state, Inmate $record) => $record->transferred_out)

@@ -2,10 +2,13 @@
 
 namespace App\Filament\Station\Pages;
 
+use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
 use Illuminate\Support\Facades\Artisan;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\Concerns\InteractsWithRecord;
+use Filament\Forms\Components\TextInput;
 
 class Settings extends Page
 {
@@ -13,9 +16,35 @@ class Settings extends Page
 
     protected static string $view = 'filament.station.pages.settings';
 
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('title'),
+                TextInput::make('slug'),
+
+            ]);
+    }
+
     protected function getHeaderActions(): array
     {
         return [
+
+            Action::make('Restore Backrup')
+                ->action(function () {
+                    Artisan::call('backup:restore', [
+                        '--source' => 'local',
+                        '--disable-notifications' => true,
+                    ]);
+
+                    Notification::make()
+                        ->success()
+                        ->title('Backup Restored')
+                        ->body('The backup was restored successfully.')
+                        ->send();
+                })
+                ->requiresConfirmation()
+                ->color('danger'),
 
             Action::make('Create Backup')
                 ->action(function () {

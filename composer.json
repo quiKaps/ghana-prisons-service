@@ -20,12 +20,15 @@
         "livewire/flux": "^2.1.1",
         "livewire/volt": "^1.7.0",
         "masbug/flysystem-google-drive-ext": "^2.4",
+        "muhammadsadeeq/laravel-activitylog-ui": "^1.2",
         "predis/predis": "^3.0",
         "pxlrbt/filament-excel": "^2.5",
         "shuvroroy/filament-spatie-laravel-backup": "^2.2",
         "spatie/browsershot": "^5.0",
+        "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-backup": "^9.3",
-        "stephenjude/filament-debugger": "*"
+        "stephenjude/filament-debugger": "*",
+        "wnx/laravel-backup-restore": "^1.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
