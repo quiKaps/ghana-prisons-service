@@ -309,6 +309,7 @@ class ViewInmate extends ViewRecord
                                     'EPD' =>  $data['EPD'],
                                     'LPD' => $data['LPD'],
                                     'warrant_document' => $data['warrant_document'],
+                                    'sentence_description' => 'Sentence Reduction',
                                 ]);
                             });
 
@@ -517,6 +518,7 @@ class ViewInmate extends ViewRecord
                                     'LPD' => array_key_exists('LPD', $data) && $data['LPD'] !== '' ? $data['LPD'] : null,
                                     'date_of_amnesty' => $data['date_of_amnesty'],
                                     'amnesty_document' => $data['amnesty_document'],
+                                    'sentence_description' => 'Amnesty',
                                 ]);
                             });
 
