@@ -310,6 +310,29 @@
 </div>
 </div>
 
+<!-- Disability Information -->
+<div class="section">
+    <div class="section-header">Disability Information</div>
+    <div class="grid">
+        <div class="field">
+            <div class="field-label">Disability Status</div>
+            <div class="field-value">
+                {{ $record->disability ? 'Yes' : 'No' }}
+@if($record->disability)
+<span class="badge">Disabled</span>
+@endif
+</div>
+</div>
+@if ($record->disability)
+<div class="field">
+    <div class="field-label">disability_type</div>
+    <div class="field-value">{{ implode(', ', $record->disability_type) }}</div>
+</div>
+
+@endif
+</div>
+</div>
+
 <!-- Social Background Section -->
 <div class="section">
     <div class="section-header">Social Background</div>
