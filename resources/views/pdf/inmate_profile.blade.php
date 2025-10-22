@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -216,24 +215,15 @@
         <div class="field photo-section">
             <div class="field-label">Prisoner Photo</div>
             <div class="photo-container">
-                @php
-                $imagePath = public_path("storage/{$record->prisoner_picture}");
-                $imageData = file_exists($imagePath) ? base64_encode(file_get_contents($imagePath)) : null;
-                $imageExtension = $imageData ? pathinfo($imagePath, PATHINFO_EXTENSION) : 'webp';
-                $mimeType = match($imageExtension) {
-                'png' => 'image/png',
-                'jpg', 'jpeg' => 'image/jpeg',
-                'gif' => 'image/gif',
-                'webp' => 'image/webp',
-                default => 'image/jpeg'
-                };
-                @endphp
-
-                @if($imageData)
-                <img src="data:{{ $mimeType }};base64,{{ $imageData }}" alt="{{ $record->full_name }}'s Photo">
-                @else
-                <div class="placeholder">No photo available</div> @endif
-            </div>
+    @if($record->prisoner_picture && Storage::disk('public')->exists($record->prisoner_picture))
+        <img src="{{ asset('storage/' . $record->prisoner_picture) }}" 
+             alt="{{ $record->full_name }}'s Photo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div class="placeholder" style="display:none;">No photo available</div>
+    @else
+        <div class="placeholder">No photo available</div> 
+    @endif
+</div>
 </div>
 <div class="field">
     <div class="field-label">Serial Number</div>
