@@ -119,7 +119,7 @@
 
  .fi-modal-content,
  .fi-modal-footer {
-   @apply bg-pink;
+   @apply bg-cream;
  }
               
   /* Form focus rings */

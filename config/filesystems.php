@@ -70,6 +70,12 @@ return [
             //'sharedFolderId' => env('GOOGLE_DRIVE_SHARED_FOLDER_ID'),
         ],
 
+        'dropbox' => [
+            'driver' => 'dropbox',
+            'authorization_token' => env('DROPBOX_AUTH_TOKEN'),
+            'root' => '/GPSPortal',
+        ],
+
     ],
 
     /*

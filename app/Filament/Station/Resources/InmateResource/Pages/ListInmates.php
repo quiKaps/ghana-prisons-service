@@ -28,6 +28,35 @@ class ListInmates extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label('Admit A Convict'),
+                 Actions\Action::make('edit')
+                    ->label('Import Convicts')
+                    ->icon('heroicon-o-arrow-up')
+                    ->color('info')
+                    ->modalWidth('md')
+                    ->modalHeading('Protected Data Access')
+                    ->modalDescription('This is a secure area of the application. Please confirm your password within the modal before continuing.')
+                    ->form([
+                        \Filament\Forms\Components\TextInput::make('password')
+                            ->label('Confirm Password')
+                            ->placeholder('Enter your password')
+                            ->password()
+                            ->required(),
+                    ])
+                    ->action(function (array $data, $record) {
+                        if (! \Illuminate\Support\Facades\Hash::check($data['password'], Auth::user()->password)) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Incorrect Password')
+                                ->body('You must confirm your password to edit this record.')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+                        return redirect()->route(
+                            'filament.station.resources.inmates.index',
+                           
+                        );
+                    }),
+              
         ];
     }
 

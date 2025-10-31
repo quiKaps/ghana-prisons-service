@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Settings;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Station extends Model
 {
@@ -77,4 +79,13 @@ class Station extends Model
         return $this->hasMany(RemandTrial::class)
             ->where('detention_type', 'trial');
     }
+
+     /**
+     * Get the settings associated with the station.
+     */
+    public function settings(): HasOne
+    {
+        return $this->hasOne(Settings::class);
+    }
+
 }
