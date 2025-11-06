@@ -3,6 +3,7 @@
 use App\Models\Settings;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
@@ -31,4 +32,8 @@ Schedule::command('inmates:discharge')
 
 // Run Commands for Daily Backup
 Schedule::command('backup:clean')->daily()->at('01:00');
-Schedule::command('backup:run')->daily()->at(Settings::first()->backup_time, env('BACKUP_TIME'));
+
+if(Schema::hasTable('settings'))
+{
+    Schedule::command('backup:run')->daily()->at(Settings::first()->backup_time, env('BACKUP_TIME'));
+}

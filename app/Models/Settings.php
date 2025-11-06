@@ -13,7 +13,7 @@ class Settings extends Model
     /** @use HasFactory<\Database\Factories\SettingsFactory> */
     use HasFactory;
 
-    protected $fillable = ['station_id', 'backup_time', 'dropbox_backup', 's3_backup', 'google_drive_backup', 'google_drive_client_id', 'google_drive_client_secret', 'google_drive_refresh_token', 'google_drive_folder'];
+    protected $fillable = ['station_id', 'dropbox_authorization_token', 'backup_time', 'dropbox_folder', 'dropbox_backup', 's3_backup', 'google_drive_backup', 'google_drive_client_id', 'google_drive_client_secret', 'google_drive_refresh_token', 'google_drive_folder'];
 
     protected $casts = [
         'dropbox_backup' => 'boolean',
