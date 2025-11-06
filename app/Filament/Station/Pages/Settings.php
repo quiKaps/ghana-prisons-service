@@ -149,7 +149,7 @@ class Settings extends Page implements HasForms
     {
         return [
 
-            Action::make('Restore Backrup')
+            Action::make('Restore Backup')
                 ->action(function () {
                     Artisan::call('backup:restore', [
                         '--source' => 'local',
