@@ -292,14 +292,7 @@ class RemandResource extends Resource
                         Column::make('admission_date')->formatStateUsing(fn($state) => date_format($state, 'Y-m-d'))->heading('Date of Admission'),
                         Column::make('next_court_date')->formatStateUsing(fn($state) => date_format($state, 'Y-m-d'))->heading('Next Court Date'),
                         Column::make('country_of_origin')->heading('Country of Origin'),
-                        Column::make('cell.cell_number')
-                            ->heading('Cell Number - Block')
-                            ->getStateUsing(function ($record) {
-                                if ($record->cell) {
-                                    return "{$record->cell->block} - {$record->cell->cell_number}";
-                                }
-                                return '';
-                            }),
+                        Column::make('cell')->heading('Cell Number - Block'),
                         Column::make('detention_type')->heading('Detention Type'),
                         Column::make('warrant')->heading('Warrant'),
                         Column::make('police_officer')->heading('Police Officer'),
@@ -326,14 +319,7 @@ class RemandResource extends Resource
                     Column::make('admission_date')->formatStateUsing(fn($state) => date_format($state, 'Y-m-d'))->heading('Date of Admission'),
                     Column::make('next_court_date')->formatStateUsing(fn($state) => date_format($state, 'Y-m-d'))->heading('Next Court Date'),
                     Column::make('country_of_origin')->heading('Country of Origin'),
-                    Column::make('cell.cell_number')
-                        ->heading('Cell Number - Block')
-                        ->getStateUsing(function ($record) {
-                            if ($record->cell) {
-                                return "{$record->cell->block} - {$record->cell->cell_number}";
-                            }
-                            return '';
-                        }),
+                    Column::make('cell_id')->heading('Cell Number - Block'),
                     Column::make('detention_type')->heading('Detention Type'),
                     Column::make('warrant')->heading('Warrant'),
                     Column::make('police_officer')->heading('Police Officer'),

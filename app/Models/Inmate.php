@@ -118,13 +118,7 @@ class Inmate extends Model
 
 
 
-    /**
-     * Get the cell associated with the inmate.
-     */
-    public function cell(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Cell::class);
-    }
+  
 
     /**
      * Get all the sentences associated with the inmate.
@@ -147,13 +141,7 @@ class Inmate extends Model
 
 
 
-    // /**
-    //  * Get the inter cell transfers associated with the inmate.
-    //  */
-    // public function interCellTransfers(): \Illuminate\Database\Eloquent\Relations\HasMany
-    // {
-    //     return $this->hasMany(InterCellTransfer::class);
-    // }
+
 
     /**
      * Get the inter station transfers associated with the inmate.

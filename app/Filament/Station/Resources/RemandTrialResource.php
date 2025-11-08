@@ -111,16 +111,10 @@ class RemandTrialResource extends Resource
                         ->placeholder('Select Country of Origin')
                         ->required()
                         ->label('Country of Origin'),
-                    Forms\Components\Select::make('cell_id')
+                    Forms\Components\TextInput::make('cell_id')
                         ->label('Block & Cell')
-                        ->required()
-                        ->relationship(
-                            'cell',
-                            'id',
-                            fn($query) => $query->orderBy('block')->orderBy('cell_number')
-                        )
-                        ->getOptionLabelFromRecordUsing(fn($record) => "CELL {$record->cell_number} - {$record->block}")
-                        ->searchable(['cell_number', 'block']),
+                        ->placeholder('e.g. A-101')
+                        ->required(),
                     FileUpload::make('warrant')
                         ->label("Upload Warrant")
                         ->acceptedFileTypes(['application/pdf'])

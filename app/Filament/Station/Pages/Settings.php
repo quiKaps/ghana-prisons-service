@@ -99,8 +99,7 @@ class Settings extends Page implements HasForms
       ]),
             ])
 
-            ])
-        ;
+            ]);
 
     }
 
@@ -140,9 +139,7 @@ class Settings extends Page implements HasForms
                 ->body('There was an error saving your settings.'. $exception->getMessage())
                 ->send();
             return;
-        }
-
-        
+        }        
     }
 
     protected function getHeaderActions(): array
@@ -167,9 +164,7 @@ class Settings extends Page implements HasForms
 
             Action::make('Create Backup')
                 ->action(function () {
-
                     try {
-
                           $exitCode = Artisan::call('backup:run');
 
                     // Get the latest backup file path

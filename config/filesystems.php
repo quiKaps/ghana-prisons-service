@@ -73,7 +73,7 @@ return [
         'dropbox' => [
             'driver' => 'dropbox',
             'authorization_token' => env('DROPBOX_AUTH_TOKEN'),
-            'root' => '/GPSPortal',
+            'root' => env('DROPBOX_FOLDER'),
         ],
 
     ],

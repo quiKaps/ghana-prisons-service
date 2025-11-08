@@ -57,13 +57,7 @@ class RemandTrial extends Model
     ];
 
 
-    /**
-     * Get the cell associated with the inmate.
-     */
-    public function cell(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Cell::class);
-    }
+
 
     public function station(): BelongsTo
     {

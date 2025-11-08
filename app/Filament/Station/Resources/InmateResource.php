@@ -164,16 +164,11 @@ class InmateResource extends Resource
                         ->default($remand?->court)
                         ->placeholder('Enter Court of Committal')
                         ->maxLength(255),
-                    Forms\Components\Select::make('cell_id')
+                    Forms\Components\TextInput::make('cell_id')
                         ->label('Block & Cell')
-                        ->required()
-                        ->relationship(
-                            'cell',
-                            'id',
-                            fn($query) => $query->orderBy('block')->orderBy('cell_number')
-                        )
-                        ->getOptionLabelFromRecordUsing(fn($record) => "CELL {$record->cell_number} - {$record->block}")
-                        ->searchable(['cell_number', 'block']),
+                        ->placeholder('Enter Block & Cell')
+                        ->required(),
+                        
                     Forms\Components\FileUpload::make('warrant_document')
                         ->label('Warrant Document')
                         ->columnSpan(2)
@@ -1070,14 +1065,8 @@ class InmateResource extends Resource
                                     }
                                     return '';
                                 }),
-                            Column::make('cell.cell_number')
-                                ->heading('Cell Number - Block')
-                                ->getStateUsing(function ($record) {
-                                    if ($record->cell) {
-                                        return "{$record->cell->block} - {$record->cell->cell_number}";
-                                    }
-                                    return '';
-                                }),
+                            Column::make('cell_id')
+                                ->heading('Cell Number - Block'),
                             Column::make('latestSentenceByDate.warrant')
                                 ->heading('Warrant')
                                 ->getStateUsing(function ($record) {
@@ -1220,14 +1209,8 @@ class InmateResource extends Resource
                                 }
                                 return '';
                             }),
-                        Column::make('cell.cell_number')
-                            ->heading('Cell Number - Block')
-                            ->getStateUsing(function ($record) {
-                                if ($record->cell) {
-                                    return "{$record->cell->block} - {$record->cell->cell_number}";
-                                }
-                                return '';
-                            }),
+                        Column::make('cell_id')
+                            ->heading('Cell Number - Block'),
                         Column::make('latestSentenceByDate.warrant')
                             ->heading('Warrant')
                             ->getStateUsing(function ($record) {

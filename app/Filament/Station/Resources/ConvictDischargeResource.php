@@ -192,14 +192,9 @@ class ConvictDischargeResource extends Resource
                                 }
                                 return '';
                             }),
-                        Column::make('cell.cell_number')
+                        Column::make('cell_id')
                             ->heading('Cell Number - Block')
-                            ->getStateUsing(function ($record) {
-                                if ($record->cell) {
-                                    return "{$record->cell->block} - {$record->cell->cell_number}";
-                                }
-                                return '';
-                            }),
+                            ,
                         Column::make('latestSentenceByDate.warrant')
                             ->heading('Warrant')
                             ->getStateUsing(function ($record) {
