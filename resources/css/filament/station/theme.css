@@ -121,6 +121,20 @@
  .fi-modal-footer {
    @apply bg-cream;
  }
+
+ .fi-modal-description {
+   @apply text-white;
+   @apply mb-4;
+ }
+
+.fi-modal-heading{
+  @apply text-white;
+}
+
+.fi-modal-window{
+  @apply rounded-b-sm;
+}
+
               
   /* Form focus rings */
   .fi-input:focus,
