@@ -267,7 +267,7 @@
 </div>
 <div class="field">
     <div class="field-label">Block & Cell</div>
-    <div class="field-value">{{ $record->cell?->block }} CELL {{ $record->cell->cell_number }}</div>
+    <div class="field-value">{{ $record->cell_id }}</div>
 </div>
 </div>
 </div>

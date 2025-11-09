@@ -12,17 +12,8 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Display all empty cells
-Artisan::command('cells:empty', function () {
-    $this->comment('All Empty Cells: ' . \App\Models\Cell::whereDoesntHave('inmates')->count());
-})->purpose('Display all empty cells');
 
 // Delete all empty cells
-Artisan::command('cells:delete', function () {
-    $this->comment('Deleting all empty cells...');
-    $cells_count = \App\Models\Cell::whereDoesntHave('inmates')->count();
-    \App\Models\Cell::whereDoesntHave('inmates')->delete();
-    $this->comment($cells_count . ' empty cell(s) have been deleted.');
-})->purpose('Delete all empty cells');
 
 // Run inmates:discharge command every 30 minutes
 Schedule::command('inmates:discharge')
@@ -35,5 +26,6 @@ Schedule::command('backup:clean')->daily()->at('01:00');
 
 if(Schema::hasTable('settings'))
 {
-    Schedule::command('backup:run')->daily()->at(Settings::first()->backup_time, env('BACKUP_TIME'));
+    $backupTime = Settings::value('backup_time') ?? env('BACKUP_TIME', '01:00');
+    Schedule::command('backup:run')->daily()->at($backupTime);
 }

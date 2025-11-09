@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('inter_cell_transfers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('inmate_id')->constrained('inmates')->onDelete('cascade');
-            $table->foreignId('from_cell_id')->constrained('cells')->onDelete('cascade');
-            $table->foreignId('to_cell_id')->constrained('cells')->onDelete('cascade');
+            //$table->foreignId('from_cell_id')->constrained('cells')->onDelete('cascade');
+            //$table->foreignId('to_cell_id')->constrained('cells')->onDelete('cascade');
             $table->date('transfer_date');
             $table->string('reason')->nullable();
             $table->string('officer_in_charge')->nullable();

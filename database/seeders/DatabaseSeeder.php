@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1️⃣ Create 3 stations first
-       // $stations =  $this->call(StationSeeder::class);
+        $stations =  $this->call(StationSeeder::class);
 
         // 2️⃣ Create 3 users, each tied to a specific station
 

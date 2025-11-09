@@ -20,17 +20,14 @@ return new class extends Migration
             $table->string('gender');
             $table->string('married_status')->nullable();
             $table->integer('age_on_admission')->unsigned();
-            // $table->date('date_of_birth')->nullable();
-            // $table->longText('offence');
-            // $table->string('sentence');
             $table->date('admission_date');
-            // $table->date('date_sentenced');
+        
             $table->boolean('previously_convicted')->default(false);
             $table->string('previous_sentence')->nullable();
             $table->string('previous_offence')->nullable();
             $table->string('previous_station_id')->nullable();
             $table->foreignId('station_id')->nullable()->constrained('stations');
-            $table->foreignId('cell_id')->nullable()->constrained('cells');
+            $table->string('cell_id');
             $table->string('court_of_committal')->nullable();
             // $table->date('EPD')->nullable();
             // $table->date('LPD')->nullable();

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('remand_trials', function (Blueprint $table) {
             $table->id();
             $table->foreignId('station_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('cell_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('cell_id');
             $table->string('serial_number')->unique();
             $table->string('picture')->nullable();
             $table->string('full_name');
