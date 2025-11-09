@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\PrintController;
 use Livewire\Volt\Volt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PrintController;
+use App\Http\Controllers\PrintRemandTrialController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -46,6 +47,8 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::get('/print/{inmate}', PrintController::class)->name('print');
+
+    Route::get('/print-remandtrial/{inmate}', PrintRemandTrialController::class)->name('print.remandtrial');
 
     Route::redirect('settings', 'settings/profile');
     Volt::route('settings/profile', 'settings.profile')->name('settings.profile');

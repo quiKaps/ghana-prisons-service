@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Inmate;
+use App\Models\RemandTrial;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Spatie\Browsershot\Browsershot;
 use Illuminate\Support\Facades\Storage;
 use Filament\Notifications\Notification;
 
-class PrintController extends Controller
+class PrintRemandTrialController extends Controller
 {
-    /**
+  /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, Inmate $inmate)
+    public function __invoke(Request $request, RemandTrial $inmate)
     {
         $record = $inmate;
 
+
         try {
 
-            $template = view('pdf.inmate_profile', compact('record'))->render();
+            $template = view('pdf.remandtrial_profile', compact('record'))->render();
 
             // Generate PDF to a temporary location first
             $tempPath = storage_path('app/temp/inmate_profile.pdf');

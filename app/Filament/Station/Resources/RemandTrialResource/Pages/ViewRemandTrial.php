@@ -45,7 +45,14 @@ class ViewRemandTrial extends ViewRecord
             //print action starts
             Actions\Action::make('Print')
                 ->color('warning')
-                ->icon('heroicon-s-printer'),
+                ->icon('heroicon-s-printer')
+                 ->action(function (array $data, RemandTrial $record) {
+                    return redirect("/print-remandtrial/{$record->id}");
+                })
+                ->requiresConfirmation()
+                ->modalHeading('Print Inmate Profile')
+                ->modalDescription('This will generate and download the inmate profile as a PDF.')
+                ->modalSubmitActionLabel('Print'),
             //print action ends
 
             //readmission action starts

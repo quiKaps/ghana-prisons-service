@@ -205,7 +205,7 @@
 <div class="header">
         <div>
 <div class="header-title">{{ $record->full_name }}'s Records</div>
-<div class="station-name">{{ Auth::user()->station->name }}</div>
+<div class="station-name">{{ Auth::user()->station->name }} | {{ $record->detention_type }}</div>
 </div>
 </div>
 <!-- Personal Record Section -->
