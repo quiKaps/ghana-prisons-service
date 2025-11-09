@@ -81,4 +81,10 @@ class EditRemandTrial extends EditRecord
     {
         return "Edit {$this->record->full_name}'s Profile";
     }
+
+    protected function getRedirectUrl(): string
+{
+    return $this->getResource()::getUrl('view', ['record' => $this->record]);
+}
+
 }

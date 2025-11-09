@@ -211,7 +211,7 @@
             </div>
             <div class="field">
                 <div class="field-label">Date of Admission</div>
-                <div class="field-value">{{ $record->admission_date }}</div>
+                <div class="field-value">{{ $record->admission_date ? \Carbon\Carbon::parse($record->admission_date)->format('j F Y') : 'N/A' }}</div>
             </div>
             <div class="field">
                 <div class="field-label">Court</div>
@@ -223,7 +223,7 @@
             </div>
             <div class="field">
                 <div class="field-label">Next Court Date</div>
-                <div class="field-value">{{ $record->next_court_date }}</div>
+                <div class="field-value">{{ $record->next_court_date ? \Carbon\Carbon::parse($record->next_court_date)->format('j F Y') : 'N/A' }}</div>
             </div>
             <div class="field">
                 <div class="field-label">Block & Cell</div>
@@ -291,7 +291,7 @@
             </div>
             <div class="field">
                 <div class="field-label">Re-admission Date</div>
-                <div class="field-value">{{ $record->re_admission_date }}</div>
+                <div class="field-value">{{ $record->re_admission_date ?? \Carbon\Carbon::parse($record->re_admission_date)->format('j F Y') }}</div>
             </div>
         </div>
     </div>
@@ -315,7 +315,7 @@
             </div>
             <div class="field">
                 <div class="field-label">Date of Discharge</div>
-                <div class="field-value">{{ $record->date_of_discharge ?? 'N/A' }}</div>
+                <div class="field-value">{{ $record->date_of_discharge ? \Carbon\Carbon::parse($record->date_of_discharge)->format('j F Y') : 'N/A' }}</div>
             </div>
             <div class="field">
                 <div class="field-label">Discharged By</div>
@@ -336,16 +336,6 @@
                     @if(!$record->is_discharged)
                         <span class="badge">Active</span>
                     @endif
-                </div>
-            </div>
-            <div class="field">
-                <div class="field-label">Days in Remand</div>
-                <div class="field-value">
-                    {{ \Carbon\Carbon::parse($record->admission_date)->diffInDays(
-                        $record->is_discharged && $record->date_of_discharge 
-                            ? \Carbon\Carbon::parse($record->date_of_discharge)
-                            : now()
-                    ) }} days
                 </div>
             </div>
         </div>

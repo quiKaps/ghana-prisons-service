@@ -247,19 +247,19 @@
 </div>
 <div class="field">
     <div class="field-label">Date of Admission</div>
-    <div class="field-value">{{ $record->admission_date }}</div>
+    <div class="field-value">{{ $record->admission_date ? \Carbon\Carbon::parse($record->admission_date)->format('d F Y') : '' }}</div>
 </div>
 <div class="field">
     <div class="field-label">Date of Sentence</div>
-    <div class="field-value">{{ $record->latestSentenceByDate->date_of_sentence }}</div>
+    <div class="field-value">{{ $record->latestSentenceByDate->date_of_sentence ? \Carbon\Carbon::parse($record->latestSentenceByDate->date_of_sentence)->format('d F Y') : '' }}</div>
 </div>
 <div class="field">
     <div class="field-label">EPD (Earliest Possible Date)</div>
-    <div class="field-value">{{ $record->latestSentenceByDate->EPD }}</div>
+    <div class="field-value">{{ $record->latestSentenceByDate->EPD ? \Carbon\Carbon::parse($record->latestSentenceByDate->EPD)->format('d F Y') : '' }}</div>
 </div>
 <div class="field">
     <div class="field-label">LPD (Latest Possible Date)</div>
-    <div class="field-value">{{ $record->latestSentenceByDate->LPD }}</div>
+    <div class="field-value">{{ $record->latestSentenceByDate->LPD ? \Carbon\Carbon::parse($record->latestSentenceByDate->LPD)->format('d F Y') : '' }}</div>
 </div>
 <div class="field">
     <div class="field-label">Court of Committal</div>
@@ -461,8 +461,8 @@
                     <tr>
 <td>{{ $sentence->total_sentence ?? '-' }}</td>
 <td>{{ $sentence->offence ?? '-' }}</td>
-<td>{{ $sentence->EPD ?? '-' }}</td>
-<td>{{ $sentence->LPD ?? '-' }}</td>
+<td>{{ $sentence->EPD ? \Carbon\Carbon::parse($sentence->EPD)->format('d F Y') : '-' }}</td>
+<td>{{ $sentence->LPD ? \Carbon\Carbon::parse($sentence->LPD)->format('d F Y') : '-' }}</td>
 <td>{{ $sentence->court_of_committal ?? '-' }}</td>
 <td>{{ $sentence->committed_by ?? '-' }}</td>
 <td>{{ $sentence->committed_sentence ?? '-' }}</td>
