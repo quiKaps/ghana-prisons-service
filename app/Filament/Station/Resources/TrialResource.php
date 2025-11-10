@@ -72,6 +72,9 @@ class TrialResource extends Resource
                 TextColumn::make('offense')
                     ->badge()
                     ->label('Offense'),
+                      TextColumn::make('country_of_origin')
+                    ->badge()
+                    ->label('Nationality'),
                 TextColumn::make('admission_date')
                     ->label('Admitted On')
                     ->date(),

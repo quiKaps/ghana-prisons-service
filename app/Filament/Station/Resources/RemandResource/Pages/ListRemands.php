@@ -4,6 +4,9 @@ namespace App\Filament\Station\Resources\RemandResource\Pages;
 
 use Filament\Actions;
 use App\Models\RemandTrial;
+use Filament\Facades\Filament;
+use Filament\Actions\ImportAction;
+use Illuminate\Support\Facades\Auth;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,6 +35,15 @@ class ListRemands extends ListRecords
                 ->label('Admit Remand')
                 ->url(CreateRemandTrial::getUrl())
                 ->icon('heroicon-o-user-plus'),
+                ImportAction::make()
+                ->label('Import Remands')
+                ->icon('heroicon-o-arrow-up-tray')
+                ->color('info')
+                ->importer(\App\Filament\Imports\RemandImporter::class)
+                ->options([
+                    'station_id' => Auth::user()->station_id,
+                    'gender' => Auth::user()->station->category
+                ])
         ];
     }
 

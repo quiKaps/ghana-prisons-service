@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use App\Models\Scopes\FacilitiesScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[ScopedBy([FacilitiesScope::class])]
 
@@ -99,7 +100,7 @@ class RemandTrial extends Model
         return $query
             ->where('detention_type', $type)
             ->where('is_discharged', false)
-            ->where('country_of_origin', '!=', 'ghana');
+           ->whereNotIn(DB::raw('LOWER(country_of_origin)'), ['ghana', 'ghanaian']);
     }
 
     public function scopeExpiredWarrants(Builder $query, string $type): Builder

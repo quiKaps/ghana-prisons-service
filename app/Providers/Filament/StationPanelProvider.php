@@ -56,6 +56,7 @@ class StationPanelProvider extends PanelProvider
             ->theme(asset('css/filament/station/theme.css'))
             ->favicon(asset('gps-logo.png'))
             ->brandLogo(asset('gps-logo.png'))
+            ->databaseNotifications()
             ->brandLogoHeight('4rem')
             ->brandName(Auth::user()?->station?->name ?? 'Ghana Prisons Service Portal') //tab
             ->navigationGroups([

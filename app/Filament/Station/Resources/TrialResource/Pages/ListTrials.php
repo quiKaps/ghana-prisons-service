@@ -4,6 +4,8 @@ namespace App\Filament\Station\Resources\TrialResource\Pages;
 
 use Filament\Actions;
 use App\Models\RemandTrial;
+use Filament\Actions\ImportAction;
+use Illuminate\Support\Facades\Auth;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
@@ -34,6 +36,14 @@ class ListTrials extends ListRecords
                 ->label('Admit Trial')
                 ->url(CreateRemandTrial::getUrl())
                 ->icon('heroicon-o-user-plus'),
+                ImportAction::make()
+                ->label('Import Trials')
+                ->icon('heroicon-o-arrow-up-tray')
+                ->color('info')
+                ->importer(\App\Filament\Imports\TrialImporter::class)
+                ->options([
+                    'gender' => Auth::user()->station->category
+                ])
         ];
     }
 
