@@ -167,7 +167,7 @@ class InmateResource extends Resource
                     Forms\Components\TextInput::make('cell_id')
                         ->label('Block & Cell')
                         ->placeholder('Enter Block & Cell')
-                        ->required(),
+                        ,
                         
                     Forms\Components\FileUpload::make('warrant_document')
                         ->label('Warrant Document')

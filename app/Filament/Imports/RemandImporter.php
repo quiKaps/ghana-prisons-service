@@ -18,9 +18,8 @@ class RemandImporter extends Importer
   return [
             ImportColumn::make('cell_id')
             ->label('Block and Cell')
-                ->requiredMapping()
-                ->example('A-01')
-                ->rules(['required', 'max:255']),
+                ->rules(['nullable', 'max:255'])
+                ->example('A-01'),
             ImportColumn::make('serial_number')
                 ->requiredMapping()
                 ->label('Serial Number')
@@ -177,7 +176,7 @@ class RemandImporter extends Importer
             'station_id' => $stationId,
             'station' => $stationId, 
             'gender' => $gender,
-            'cell_id' => $this->data['cell_id'],
+            'cell_id' => $this->data['cell_id'] ?? null,
             'offense' => $this->data['offense'],
             'admission_date' => $this->data['admission_date'],
             'age_on_admission' => $this->data['age_on_admission'], 

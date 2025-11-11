@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('previous_offence')->nullable();
             $table->string('previous_station_id')->nullable();
             $table->foreignId('station_id')->nullable()->constrained('stations');
-            $table->string('cell_id');
+            $table->string('cell_id')->nullable();
             $table->string('court_of_committal')->nullable();
             // $table->date('EPD')->nullable();
             // $table->date('LPD')->nullable();

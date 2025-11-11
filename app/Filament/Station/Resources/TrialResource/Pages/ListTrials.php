@@ -40,10 +40,12 @@ class ListTrials extends ListRecords
                 ->label('Import Trials')
                 ->icon('heroicon-o-arrow-up-tray')
                 ->color('info')
+                ->visible(fn() => Auth::user()?->user_type === 'prison_admin')
                 ->importer(\App\Filament\Imports\TrialImporter::class)
                 ->options([
                     'gender' => Auth::user()->station->category
                 ])
+                
         ];
     }
 

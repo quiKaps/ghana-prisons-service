@@ -114,7 +114,7 @@ class RemandTrialResource extends Resource
                     Forms\Components\TextInput::make('cell_id')
                         ->label('Block & Cell')
                         ->placeholder('e.g. A-101')
-                        ->required(),
+                        ,
                     FileUpload::make('warrant')
                         ->label("Upload Warrant")
                         ->acceptedFileTypes(['application/pdf'])
