@@ -133,6 +133,7 @@
 
 .fi-modal-heading{
   @apply text-white;
+  @apply pb-3
 }
 
 .fi-modal-window{
@@ -141,6 +142,10 @@
 
 .fi-no-notification-body{
   @apply text-black
+}
+
+.fi-icon-btn{
+  @apply text-black;
 }
               
   /* Form focus rings */

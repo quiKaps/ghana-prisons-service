@@ -276,8 +276,8 @@ class TrialResource extends Resource
                     ])
             ])
                 ->label('Export Trials')
-                ->color('success')
-                ->icon('heroicon-o-arrow-down-tray')
+                ->color('green')
+                ->icon('heroicon-o-bars-arrow-down')
 
 
             ])
@@ -305,8 +305,8 @@ class TrialResource extends Resource
                     ])
             ])
                 ->label('Export Selected Trials')
-                ->color('success')
-                ->icon('heroicon-o-arrow-down-tray')
+                ->color('green')
+                ->icon('heroicon-o-bars-arrow-down')
 
 
 

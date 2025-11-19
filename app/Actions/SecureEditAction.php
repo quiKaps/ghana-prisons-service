@@ -3,8 +3,9 @@
 namespace App\Actions;
 
 use Filament\Tables\Actions\Action;
-use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 
 class SecureEditAction extends Action
@@ -25,7 +26,7 @@ class SecureEditAction extends Action
                     ->required(),
             ])
             ->action(function (array $data, $record) use ($routeName) {
-                if (! Hash::check($data['password'], auth()->user()->password)) {
+                if (! Hash::check($data['password'], Auth::user()->password)) {
                     Notification::make()
                         ->title('Incorrect Password')
                         ->body('You must confirm your password to edit this record.')

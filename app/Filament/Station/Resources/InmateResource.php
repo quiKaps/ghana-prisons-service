@@ -16,8 +16,10 @@ use App\Models\RemandTrial;
 use Illuminate\Support\Carbon;
 use Filament\Resources\Resource;
 use App\Actions\SecureEditAction;
+use Filament\Actions\StaticAction;
 use App\Actions\SecureDeleteAction;
 use Filament\Tables\Actions\Action;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\In;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Radio;
@@ -558,6 +560,7 @@ class InmateResource extends Resource
                 ])
                     ->modalHeading('Prisoner Transfer')
                     ->modalSubmitActionLabel('Transfer Prisoner')
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('brown'))
                     ->action(function (array $data, Inmate $record): void {
                     try {
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
@@ -578,9 +581,7 @@ class InmateResource extends Resource
                                 'date_transferred_out' => $data['date_of_transfer'],
                             ]);
                             //if use online, i will have to set inmate transfered in as 1 and station transfered from
-
                         });
-
                         Notification::make()
                             ->success()
                             ->title('Transfer Request Submitted')
@@ -590,8 +591,9 @@ class InmateResource extends Resource
                         Notification::make()
                             ->danger()
                             ->title('Transfer Failed')
-                            ->body('An error occurred: ' . $e->getMessage())
+                            ->body('An error occurred, please try again.')
                             ->send();
+                              Log::error('Transfer Error'. $e .'');
                     }
                     }),
                 //transfer action end
@@ -656,6 +658,7 @@ class InmateResource extends Resource
 
                     ->modalHeading('Special Discharge')
                     ->modalSubmitActionLabel('Discharge Prisoner')
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('brown'))
                     ->action(function (array $data, Inmate $record): void {
                     try {
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
@@ -687,8 +690,10 @@ class InmateResource extends Resource
                         Notification::make()
                             ->danger()
                             ->title('Discharge Failed')
-                            ->body('An error occurred: ' . $e->getMessage())
+                            ->body(': An error occurred, please try again later.')
                             ->send();
+
+                              Log::error('Discharge'. $e .'');
                     }
                     }),
                 // special discharge action end
@@ -751,6 +756,7 @@ class InmateResource extends Resource
 
                     ->modalHeading('Sentence Reduction')
                     ->modalSubmitActionLabel('Reduce Sentence')
+                   ->modalSubmitAction(fn (StaticAction $action) => $action->color('brown'))
                     ->action(function (array $data, Inmate $record): void {
                     try {
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
@@ -796,8 +802,10 @@ class InmateResource extends Resource
                         Notification::make()
                             ->danger()
                             ->title('Reduced Sentence Failed')
-                            ->body('An error occurred: ' . $e->getMessage()) // edit the error message
+                            ->body('An error occurred. Please try again.') // edit the error message
                             ->send();
+
+                              Log::error('Reduce Sentence Error'. $e .'');
                     }
                     }),
                 //sentence reduction action end
@@ -859,6 +867,7 @@ class InmateResource extends Resource
 
                     ->modalHeading('Additional Sentence')
                     ->modalSubmitActionLabel('Add Sentence')
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('brown'))
                     ->action(function (array $data, Inmate $record): void {
                     try {
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
@@ -885,8 +894,10 @@ class InmateResource extends Resource
                         Notification::make()
                             ->danger()
                             ->title('Additional Sentence Failed')
-                            ->body('An error occurred: ' . $e->getMessage()) // edit the error message
+                            ->body('An error occurred. Please try again later.') // edit the error message
                             ->send();
+
+                            Log::error('Additional Sentence Error'. $e .'');
                     }
                     }),
                 // additional sentence action end
@@ -961,6 +972,7 @@ class InmateResource extends Resource
                 ])
                     ->modalHeading('Convict Amnesty')
                     ->modalSubmitActionLabel('Grant Amnesty')
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('brown'))
                     ->action(function (array $data, Inmate $record): void {
                     try {
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
@@ -988,8 +1000,10 @@ class InmateResource extends Resource
                         Notification::make()
                             ->danger()
                             ->title('Amnesty Failed')
-                            ->body('An error occurred: ' . $e->getMessage()) // edit the error message
+                            ->body('An error occurred. Please try again') // edit the error message
                             ->send();
+
+                            Log::error('Amnesty Error'. $e .'');
                     }
                     }),
 
@@ -1147,8 +1161,8 @@ class InmateResource extends Resource
                         ])
                 ])
                     ->label('Export All Convicts')
-                    ->color('success')
-                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('green')
+                     ->icon('heroicon-o-bars-arrow-down')
             ])
             ->bulkActions([
             ExportBulkAction::make()->exports([
@@ -1232,8 +1246,6 @@ class InmateResource extends Resource
                             return 'No';
                         }),
                         Column::make('tribe')->heading('Tribe'),
-
-
                         Column::make('languages_spoken')
                             ->heading('Languages Spoken')
                             ->getStateUsing(function ($record) {
@@ -1241,7 +1253,6 @@ class InmateResource extends Resource
                                     $languages = is_array($record->languages_spoken)
                                         ? $record->languages_spoken
                                         : json_decode($record->languages_spoken, true);
-
                                     if (is_array($languages)) {
                                         return implode(', ', $languages);
                                     }
@@ -1249,19 +1260,11 @@ class InmateResource extends Resource
                                 return '';
                             }),
                         Column::make('hometown')->heading('Hometown'),
-
-
                         Column::make('married_status')->heading('Marital Status'),
-
                         Column::make('nationality')->heading('Country of Origin'),
-
-
                         Column::make('education_level')->heading('Education Background'),
-
                         Column::make('religion')->heading('Religious Background'),
-
                         Column::make('occupation')->heading('Occupation'),
-
                         Column::make('next_of_kin_name')->heading('Next of Kin Name'),
                         Column::make('next_of_kin_relationship')->heading('Next of Kin Relationship'),
                         Column::make('next_of_kin_contact')->heading('Contact of Next of Kin'),
@@ -1291,8 +1294,8 @@ class InmateResource extends Resource
                     ])
             ])
                 ->label('Export Selected Convicts')
-                ->color('success')
-                ->icon('heroicon-o-arrow-down-tray')
+                ->color('green')
+                ->icon('heroicon-o-bars-arrow-down')
             ]);
     }
 

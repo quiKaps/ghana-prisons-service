@@ -101,7 +101,7 @@ class RemandResource extends Resource
 
             ->actions([
 
-            //dischrge start
+            //discharge start
             Action::make('Discharge')
                     ->color('green')
                 ->hidden(fn(RemandTrial $record) => $record->is_discharged)
@@ -301,8 +301,8 @@ class RemandResource extends Resource
                     ])
             ])
                 ->label('Export Remands')
-                ->color('success')
-                    ->icon('heroicon-o-arrow-down-tray')
+                ->color('green')
+                    ->icon('heroicon-o-bars-arrow-down')
             ])
             ->bulkActions([
                 ExportBulkAction::make()->exports([
@@ -328,8 +328,8 @@ class RemandResource extends Resource
                 ])
             ])
                 ->label('Export Selected Remands')
-                ->color('success')
-                ->icon('heroicon-o-arrow-down-tray')
+                ->color('green')
+                 ->icon('heroicon-o-bars-arrow-down')
             ]);
     }
 

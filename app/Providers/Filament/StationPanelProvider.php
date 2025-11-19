@@ -21,6 +21,7 @@ use Filament\Http\Middleware\Authenticate;
 use App\Http\Middleware\PanelAccessControl;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Session\Middleware\StartSession;
+use App\Filament\Station\Resources\UserResource;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
 use App\Filament\Station\Resources\InmateResource;
@@ -75,14 +76,14 @@ class StationPanelProvider extends PanelProvider
                 ->url(fn(): string => CreateInmate::getUrl())
                 ->icon('heroicon-o-user-plus')
                 ->group('Convicts')
-                ->isActiveWhen(fn(): bool => request()->routeIs(CreateInmate::getRouteName()))
+                ->isActiveWhen(fn (): bool => request()->url() == InmateResource::getUrl('create'))
                 ->sort(3),
             NavigationItem::make('Add Users')
                 ->url(fn(): string => CreateUser::getUrl())
                 ->icon('heroicon-o-user-plus')
                 ->visible(fn() => Auth::user()?->user_type === 'prison_admin')
                 ->group('Facility Management')
-                ->isActiveWhen(fn() => request()->routeIs('filament.station.pages.create-user'))
+                ->isActiveWhen(fn (): bool => request()->url() === UserResource::getUrl('create'))
                 ->sort(3),
             NavigationItem::make('My Account')
                 ->group('Facility Management')

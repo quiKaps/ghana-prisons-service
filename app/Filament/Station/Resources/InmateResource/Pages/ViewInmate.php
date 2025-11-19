@@ -10,11 +10,14 @@ use App\Models\Sentence;
 use App\Models\Transfer;
 use App\Models\Discharge;
 use Filament\Actions\Action;
+use Illuminate\Support\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Actions\SecureEditAction;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\StaticAction;
 use Illuminate\Support\Facades\DB;
 use App\Actions\SecureDeleteAction;
+use Illuminate\Support\Facades\Log;
 use Filament\Forms\Components\Group;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
@@ -57,16 +60,16 @@ class ViewInmate extends ViewRecord
             //print action ends
             ActionGroup::make([
 
-                //transfer action
+ //transfer action
                 Action::make('transfer')
                     ->label('Transfer')
                     ->icon('heroicon-o-arrow-right-on-rectangle')
-                    ->color('green')
+                    ->color('success')
                     ->fillForm(fn(Inmate $record): array => [
                         'serial_number' => $record->serial_number,
                         'full_name' => $record->full_name,
-                        'sentence' => $record->latestSentenceByDate->sentence,
-                        'offence' => $record->latestSentenceByDate->offence,
+                    'sentence' => $record->latestSentenceByDate->sentence,
+                    'offence' => $record->latestSentenceByDate->offence,
                     ])->form([
                         Group::make()
                             ->columns(2)
@@ -92,66 +95,66 @@ class ViewInmate extends ViewRecord
                                     ->required()
                                     ->options(
                                         fn() => Station::withoutGlobalScopes()
-                                            ->where('id', '!=', Auth::user()->station_id)
+                                ->where('id', '!=', Auth::user()->station_id)
                                             ->pluck('name', 'id')
                                             ->toArray()
                                     )
                                     ->searchable(),
-                                TextInput::make('reason')
-                                    ->label('Reason for Transfer')
-                                    ->placeholder('Enter reason for transfer'),
-                            ])
+                        TextInput::make('reason')
+                            ->label('Reason for Transfer')
+                            ->placeholder('Enter reason for transfer'),
                     ])
+                ])
                     ->modalHeading('Prisoner Transfer')
                     ->modalSubmitActionLabel('Transfer Prisoner')
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('brown'))
                     ->action(function (array $data, Inmate $record): void {
-                        try {
-                            \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
-                                \App\Models\Transfer::create([
-                                    'inmate_id' => $record->id,
-                                    'from_station_id' => Auth::user()->station_id,
-                                    'to_station_id' => $data['station_transferred_to_id'],
-                                    'transfer_date' => $data['date_of_transfer'],
-                                    'status' => 'completed',
-                                    'reason' => $data['reason'],
-                                    'requested_by' => Auth::id(),
-                                    'approved_by' => null,
-                                    'rejected_by' => null,
-                                ]);
-                                $record->update([
-                                    'transferred_out' => true,
-                                    'station_transferred_to_id' => $data['station_transferred_to_id'],
-                                    'date_transferred_out' => $data['date_of_transfer'],
-                                ]);
+                    try {
+                        \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
+                            \App\Models\Transfer::create([
+                                'inmate_id' => $record->id,
+                                'from_station_id' => Auth::user()->station_id,
+                                'to_station_id' => $data['station_transferred_to_id'],
+                                'transfer_date' => $data['date_of_transfer'],
+                                'status' => 'completed',
+                                'reason' => $data['reason'],
+                                'requested_by' => Auth::id(),
+                                'approved_by' => null,
+                                'rejected_by' => null,
+                            ]);
+                            $record->update([
+                                'transferred_out' => true,
+                                'station_transferred_to_id' => $data['station_transferred_to_id'],
+                                'date_transferred_out' => $data['date_of_transfer'],
+                            ]);
                             //if use online, i will have to set inmate transfered in as 1 and station transfered from
-
                         });
-
-                            Notification::make()
-                                ->success()
-                                ->title('Transfer Request Submitted')
-                                ->body("The transfer request for {$record->full_name} has been submitted.")
-                                ->send();
-                        } catch (\Throwable $e) {
-                            Notification::make()
-                                ->danger()
-                                ->title('Transfer Failed')
-                                ->body('An error occurred: ' . $e->getMessage())
-                                ->send();
-                        }
+                        Notification::make()
+                            ->success()
+                            ->title('Transfer Request Submitted')
+                            ->body("The transfer request for {$record->full_name} has been submitted.")
+                            ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Transfer Failed')
+                            ->body('An error occurred, please try again.')
+                            ->send();
+                              Log::error('Transfer Error'. $e .'');
+                    }
                     }),
                 //transfer action end
 
-                // special discharge action
+                 // special discharge action
                 Action::make('special_discharge')
                     ->label('Special Discharge')
                     ->icon('heroicon-o-arrow-right-on-rectangle')
                     ->color('info')
                     ->fillForm(fn(Inmate $record): array => [
-                        'serial_number' => $record->serial_number,
-                        'full_name' => $record->full_name,
-                        'sentence' => $record->latestSentenceByDate->sentence,
-                        'offence' => $record->latestSentenceByDate->offence,
+                    'serial_number' => $record->serial_number,
+                    'full_name' => $record->full_name,
+                    'sentence' => $record->latestSentenceByDate->sentence,
+                    'offence' => $record->latestSentenceByDate->offence,
                     ])->form([
                         Group::make()
                             ->columns(2)
@@ -196,49 +199,53 @@ class ViewInmate extends ViewRecord
                                     ->previewable()
                                     ->uploadingMessage('Uploading discharge document...'),
 
-                        ])
+                            ])
 
-                ])
+                    ])
 
                     ->modalHeading('Special Discharge')
                     ->modalSubmitActionLabel('Discharge Prisoner')
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('brown'))
                     ->action(function (array $data, Inmate $record): void {
-                        try {
-                            \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
-                                \App\Models\Discharge::create([
+                    try {
+                        \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
+                            \App\Models\Discharge::create([
                                 'station_id' => $record->station_id,
                                 'inmate_id' => $record->id,
-                                    'discharge_type' => $data['mode_of_discharge'],
-                                    'discharge_date' => $data['date_of_discharge'],
-                                    //'reason' => $data['reason'],
-                                    'discharge_document' => $data['discharge_document'],
-                                    'discharged_by' => Auth::id(),
-                                ]);
+                                'discharge_type' => $data['mode_of_discharge'],
+                                'discharge_date' => $data['date_of_discharge'],
+                                //'reason' => $data['reason'],
+                                'discharge_document' => $data['discharge_document'],
+                                'discharged_by' => Auth::id(),
+                            ]);
 
-                                $record->update([
-                                    'is_discharged' => true,
-                                    'date_of_discharge' => $data['date_of_discharge'],
-                                ]);
+                            $record->update([
+                                'is_discharged' => true,
+                                'mode_of_discharge' => $data['mode_of_discharge'],
+                                'date_of_discharge' => $data['date_of_discharge'],
+                            ]);
 
-                                //if use online, i will have to set inmate transfered in as 1 and station transfered from
-                            });
+                            //if use online, i will have to set inmate transfered in as 1 and station transfered from
+                        });
 
-                            Notification::make()
-                                ->success()
-                                ->title('Discharge Successful')
-                                ->body("{$record->full_name} has been discharged successfully.")
-                                ->send();
-                        } catch (\Throwable $e) {
-                            Notification::make()
-                                ->danger()
-                                ->title('Discharge Failed')
-                                ->body('An error occurred: ' . $e->getMessage())
-                                ->send();
-                        }
+                        Notification::make()
+                            ->success()
+                            ->title('Discharge Successful')
+                            ->body("{$record->full_name} has been discharged successfully.")
+                            ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Discharge Failed')
+                            ->body(': An error occurred, please try again later.')
+                            ->send();
+
+                              Log::error('Discharge'. $e .'');
+                    }
                     }),
                 // special discharge action end
 
-                //sentence reduction action
+ //sentence reduction action
                 Action::make('sentence_reduction')
                     ->label('Sentence Reduction')
                     ->icon('heroicon-o-arrow-trending-down')
@@ -246,9 +253,9 @@ class ViewInmate extends ViewRecord
                     ->fillForm(fn(Inmate $record): array => [
                         'serial_number' => $record->serial_number,
                         'full_name' => $record->full_name,
-                        'sentence' => $record->latestSentenceByDate->sentence,
-                        'offence' => $record->latestSentenceByDate->offence,
-                        'date_of_sentence' => $record->sentences->first()->date_of_sentence
+                    'sentence' => $record->latestSentenceByDate->sentence,
+                    'offence' => $record->latestSentenceByDate->offence,
+                    'date_of_sentence' => Carbon::parse($record->sentences->first()->date_of_sentence)->format('Y-m-d')
                     ])->form([
                         Group::make()
                             ->columns(2)
@@ -268,50 +275,51 @@ class ViewInmate extends ViewRecord
                                     ->label('Reduced Sentence')
                                     ->placeholder('Enter Reduced Sentence')
                                     ->required(),
-                                TextInput::make('date_of_sentence')
+                        TextInput::make('date_of_sentence')
                             ->label('Date of Sentence')
-                                    ->placeholder('Enter Date Sentence')
-                                    ->readOnly(),
-                                TextInput::make('court_of_committal')
-                                    ->label('Appellate Court')
-                                    ->placeholder('Enter Appellate Court')
-                                    ->required(),
+                            ->placeholder('Enter Date Sentence')
+                            ->readOnly(),
+                        TextInput::make('court_of_committal')
+                            ->label('Appellate Court')
+                            ->placeholder('Enter Appellate Court')
+                            ->required(),
                                 DatePicker::make('EPD')
                                     ->label('EPD (Earliest Possible Date of Discharge)')
                                     ->required(),
                                 DatePicker::make('LPD')
                                     ->label('LPD (Latest Possible Date of Discharge)')
                                     ->required(),
-                            FileUpload::make('warrant_document')
-                                ->label('Upload Document')
-                                ->placeholder('Upload Warrant Document')
-                                ->visibility('private')
-                                ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
-                                ->openable()
-                                ->previewable()
-                                ->uploadingMessage('Uploading warrant document...'),
-                        ])
+                        FileUpload::make('warrant_document')
+                                    ->label('Upload Document')
+                            ->placeholder('Upload Warrant Document')
+                                    ->visibility('private')
+                                    ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
+                                    ->openable()
+                                    ->previewable()
+                            ->uploadingMessage('Uploading warrant document...'),
+                            ])
 
-                ])
+                    ])
 
                     ->modalHeading('Sentence Reduction')
                     ->modalSubmitActionLabel('Reduce Sentence')
+                   ->modalSubmitAction(fn (StaticAction $action) => $action->color('brown'))
                     ->action(function (array $data, Inmate $record): void {
-                        try {
-                            \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
-                                \App\Models\Sentence::create([
-                                    'inmate_id' => $record->id,
+                    try {
+                        \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
+                            \App\Models\Sentence::create([
+                                'inmate_id' => $record->id,
                                 'sentence' => $data['reduced_sentence'],
-                                    'offence' => $data['offence'],
-                                    'date_of_sentence' => $data['date_of_sentence'],
-                                    'total_sentence' => $data['reduced_sentence'], //this is redundant
-                                    'court_of_committal' => $data['court_of_committal'],
-                                    'EPD' =>  $data['EPD'],
-                                    'LPD' => $data['LPD'],
-                                    'warrant_document' => $data['warrant_document'],
-                                    'sentence_description' => 'Sentence Reduction',
-                                ]);
-                            });
+                                'offence' => $data['offence'],
+                                'date_of_sentence' => $data['date_of_sentence'],
+                                'total_sentence' => $data['reduced_sentence'], //this is redundant
+                                'court_of_committal' => $data['court_of_committal'],
+                                'EPD' =>  $data['EPD'],
+                                'LPD' => $data['LPD'],
+                                'warrant_document' => $data['warrant_document'],
+                                'sentence_description' => 'Sentence Reduction',
+                            ]);
+                        });
 
                         //check if EPD is today or past after sentence was reduced
 
@@ -333,16 +341,18 @@ class ViewInmate extends ViewRecord
                         }
 
                         Notification::make()
-                                ->success()
-                                ->title('Reduced Sentence Success')
-                                ->body("The reduced sentence for {$record->full_name} has been completed.")
-                                ->send();
-                        } catch (\Throwable $e) {
-                            Notification::make()
-                                ->danger()
-                            ->title('Reduced Sentence Failed')
-                            ->body('An error occurred: ' . $e->getMessage()) // edit the error message
+                            ->success()
+                            ->title('Reduced Sentence Success')
+                            ->body("The reduced sentence for {$record->full_name} has been completed.")
                             ->send();
+                    } catch (\Throwable $e) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Reduced Sentence Failed')
+                            ->body('An error occurred. Please try again.') // edit the error message
+                            ->send();
+
+                              Log::error('Reduce Sentence Error'. $e .'');
                     }
                     }),
                 //sentence reduction action end
@@ -367,43 +377,44 @@ class ViewInmate extends ViewRecord
                                     ->readonly(),
                                 TextInput::make('sentence')
                                     ->label('Sentence')
-                                    ->placeholder('Enter Sentence')
+                            ->placeholder('Enter Sentence')
                                     ->required(),
                                 TextInput::make('offence')
                                     ->label('Offence')
-                                    ->placeholder('Enter Offence')
+                            ->placeholder('Enter Offence')
                                     ->required(),
-                                TextInput::make('date_of_sentence')
-                                    ->label('Date_of_Sentence')
-                                    ->placeholder('Enter Date Sentence')
-                                    ->readOnly(),
-                                //rectify 
-                                TextInput::make('total_sentence')
-                                    ->label('Total Sentence')
-                                    ->placeholder('Enter Total Sentence') //should be the sum of the current sentence and the additional sentence
-                                    ->required(),
-                                TextInput::make('court_of_committal')
-                                    ->label('Court of Committal')
-                                    ->placeholder('Enter Court of Committal')
-                                    ->required(),
+                        TextInput::make('date_of_sentence')
+                            ->label('Date of Sentence')
+                            ->placeholder('Enter Date Sentence')
+                            ->readOnly(),
+                        //rectify 
+                        TextInput::make('total_sentence')
+                            ->label('Total Sentence')
+                            ->placeholder('Enter Total Sentence') //should be the sum of the current sentence and the additional sentence
+                            ->required(),
+                        TextInput::make('court_of_committal')
+                            ->label('Court of Committal')
+                            ->placeholder('Enter Court of Committal')
+                            ->required(),
                                 DatePicker::make('EPD')
                             ->label('EPD (Earliest Possible Date of Discharge)'),
                                 DatePicker::make('LPD')
                             ->label('LPD (Latest Possible Date of Discharge)'),
-                            FileUpload::make('warrant_document')
-                                ->label('Upload Document')
-                                ->placeholder('Upload Warrant Document')
-                                ->visibility('private')
-                                ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
-                                ->openable()
-                                ->previewable()
-                                ->uploadingMessage('Uploading warrant document...'),
-                        ])
+                        FileUpload::make('warrant_document')
+                                    ->label('Upload Document')
+                            ->placeholder('Upload Warrant Document')
+                                    ->visibility('private')
+                                    ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
+                                    ->openable()
+                                    ->previewable()
+                            ->uploadingMessage('Uploading warrant document...'),
+                            ])
 
-                ])
+                    ])
 
                     ->modalHeading('Additional Sentence')
                     ->modalSubmitActionLabel('Add Sentence')
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('brown'))
                     ->action(function (array $data, Inmate $record): void {
                     try {
                         \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
@@ -430,24 +441,27 @@ class ViewInmate extends ViewRecord
                         Notification::make()
                             ->danger()
                             ->title('Additional Sentence Failed')
-                            ->body('An error occurred: ' . $e->getMessage()) // edit the error message
+                            ->body('An error occurred. Please try again later.') // edit the error message
                             ->send();
+
+                            Log::error('Additional Sentence Error'. $e .'');
                     }
                     }),
                 // additional sentence action end
 
                 // amnesty action
-                //this form is for convicts who are comdemned to death or life imprisonment only show for those inmates)
+                //this form is for convicts who are condemned to death or life imprisonment only show for those inmates)
 
                 Action::make('amnesty')
                     ->label('Amnesty')
                     ->icon('heroicon-o-sparkles')
-                    ->color('blue')
+                    ->color('danger')
                     ->fillForm(fn(Inmate $record): array => [
                         'serial_number' => $record->serial_number,
                         'full_name' => $record->full_name,
-                        'sentence' => $record->latestSentenceByDate->sentence,
-                        'offence' => $record->latestSentenceByDate->offence,
+                    'sentence' => $record->latestSentenceByDate->sentence,
+                    'offence' => $record->latestSentenceByDate->offence,
+
                     ])->form([
                         Group::make()
                             ->columns(2)
@@ -459,68 +473,70 @@ class ViewInmate extends ViewRecord
                                     ->readonly(),
                                 TextInput::make('sentence')
                                     ->label('Sentence')
-                                    ->readOnly(),
+                            ->readOnly(),
                                 TextInput::make('offence')
                                     ->label('Offence')
-                                    ->readOnly(),
+                            ->readOnly(),
                                 Select::make('commutted_sentence')
                                     ->label('Commutted Sentence')
                                     ->live()
-                                    ->options([
-                                        'life' => 'Life',
-                                        '20yrs_ihl' => '20 Years',
-                                        'others' => 'Others',
-                                    ])
-                                    ->required(),
-                                Select::make('commutted_by')
-                                    ->label('Commuted By')
-                                    ->options([
-                                        'amnesty' => 'Amnesty',
-                                        'others' => 'Others',
-                                    ]),
-                                DatePicker::make('EPD')
-                                    ->label('EPD (Earliest Possible Date of Discharge)')
-                                    ->visible(fn(Get $get): bool => $get('commutted_sentence') == '20yrs_ihl')
-                                    // ->dehydrated(fn(Get $get) => $get('commutted_sentence') == '20yrs_ihl')
-                                    ->required(fn(Get $get): bool => $get('commutted_sentence') == '20yrs_ihl'),
-                                DatePicker::make('LPD')
-                                    ->label('LPD (Latest Possible Date of Discharge)')
-                                    ->visible(fn(Get $get): bool => $get('commutted_sentence') == '20yrs_ihl')
-                                    //->dehydrated(fn(Get $get) => $get('commutted_sentence') == '20yrs_ihl')
-                                    ->required(fn(Get $get): bool => $get('commutted_sentence') == '20yrs_ihl'),
+                            ->options([
+                                'life' => 'Life',
+                                '20yrs_ihl' => '20 Years',
+                                'others' => 'Others',
+                            ])
+                            ->required(),
+                        Select::make('commutted_by')
+                            ->label('Commuted By')
+                            ->options([
+                                'amnesty' => 'Amnesty',
+                                'others' => 'Others',
+                            ]),
+                        DatePicker::make('EPD')
+                            ->label('EPD (Earliest Possible Date of Discharge)')
+                            ->visible(fn(Get $get): bool => $get('commutted_sentence') == '20yrs_ihl')
+                            // ->dehydrated(fn(Get $get) => $get('commutted_sentence') == '20yrs_ihl')
+                            ->required(fn(Get $get): bool => $get('commutted_sentence') == '20yrs_ihl'),
+                        DatePicker::make('LPD')
+                            ->label('LPD (Latest Possible Date of Discharge)')
+                            ->visible(fn(Get $get): bool => $get('commutted_sentence') == '20yrs_ihl')
+                            //->dehydrated(fn(Get $get) => $get('commutted_sentence') == '20yrs_ihl')
+                            ->required(fn(Get $get): bool => $get('commutted_sentence') == '20yrs_ihl'),
                                 DatePicker::make('date_of_amnesty')
                                     ->label('Date of Amnesty')
                                     ->required()
                                     ->default(now()),
-                                FileUpload::make('amnesty_document')
+                        FileUpload::make('amnesty_document')
                                     ->label('Upload Document')
-                                    ->placeholder('Upload Document')
+                            ->placeholder('Upload Document')
                                     ->visibility('private')
                                     ->acceptedFileTypes(['application/pdf', 'png', 'jpg', 'jpeg'])
                                     ->openable()
                                     ->previewable()
-                                    ->uploadingMessage('Uploading document...'),
+                            ->uploadingMessage('Uploading document...'),
                             ])
 
-                    ])
+                ])
                     ->modalHeading('Convict Amnesty')
                     ->modalSubmitActionLabel('Grant Amnesty')
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->color('brown'))
                     ->action(function (array $data, Inmate $record): void {
-                        try {
-                            \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
-                                \App\Models\Sentence::create([
-                                    'inmate_id' => $record->id,
-                                    'sentence' => $data['commutted_sentence'],
-                                    'offence' => $data['offence'],
-                                    'commutted_sentence' => $data['commutted_sentence'],
-                                    'commutted_by' => $data['commutted_by'],
-                                    'EPD' => array_key_exists('EPD', $data) && $data['EPD'] !== '' ? $data['EPD'] : null,
-                                    'LPD' => array_key_exists('LPD', $data) && $data['LPD'] !== '' ? $data['LPD'] : null,
-                                    'date_of_amnesty' => $data['date_of_amnesty'],
-                                    'amnesty_document' => $data['amnesty_document'],
-                                    'sentence_description' => 'Amnesty',
-                                ]);
-                            });
+                    try {
+                        \Illuminate\Support\Facades\DB::transaction(function () use ($data, $record) {
+                            \App\Models\Sentence::create([
+                                'inmate_id' => $record->id,
+                                'sentence' => $data['commutted_sentence'],
+                                'offence' => $data['offence'],
+                                'commutted_sentence' => $data['commutted_sentence'],
+                                'total_sentence' => $data['commutted_sentence'],
+                                'commutted_by' => $data['commutted_by'],
+                                'EPD' => array_key_exists('EPD', $data) && $data['EPD'] !== '' ? $data['EPD'] : null,
+                                'LPD' => array_key_exists('LPD', $data) && $data['LPD'] !== '' ? $data['LPD'] : null,
+                                'date_of_amnesty' => $data['date_of_amnesty'],
+                                'amnesty_document' => $data['amnesty_document'],
+                                'sentence_description' => 'Amnesty',
+                            ]);
+                        });
 
                         Notification::make()
                             ->success()
@@ -531,10 +547,13 @@ class ViewInmate extends ViewRecord
                         Notification::make()
                             ->danger()
                             ->title('Amnesty Failed')
-                            ->body('An error occurred: ' . $e->getMessage()) // edit the error message
+                            ->body('An error occurred. Please try again') // edit the error message
                             ->send();
+
+                            Log::error('Amnesty Error'. $e .'');
                     }
                     }),
+
                 // amnesty action end
 
                 Actions\Action::make('edit')
