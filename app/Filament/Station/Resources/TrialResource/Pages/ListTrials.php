@@ -38,8 +38,8 @@ class ListTrials extends ListRecords
                 ->icon('heroicon-o-user-plus'),
                 ImportAction::make()
                 ->label('Import Trials')
-                ->icon('heroicon-o-arrow-up-tray')
-                ->color('info')
+                ->color('blue')
+                ->icon('heroicon-o-bars-arrow-up')
                 ->visible(fn() => Auth::user()?->user_type === 'prison_admin')
                 ->importer(\App\Filament\Imports\TrialImporter::class)
                 ->options([

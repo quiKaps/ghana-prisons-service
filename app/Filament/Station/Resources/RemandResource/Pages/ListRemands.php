@@ -37,8 +37,8 @@ class ListRemands extends ListRecords
                 ->icon('heroicon-o-user-plus'),
                 ImportAction::make()
                 ->label('Import Remands')
-                ->icon('heroicon-o-arrow-up-tray')
-                ->color('info')
+                ->color('blue')
+                ->icon('heroicon-o-bars-arrow-up')
                 ->importer(\App\Filament\Imports\RemandImporter::class)
                 ->options([
                     'station_id' => Auth::user()->station_id,

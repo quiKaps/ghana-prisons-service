@@ -5,10 +5,12 @@ namespace App\Filament\Station\Resources\InmateResource\Pages;
 use App\Filament\Station\Resources\InmateResource;
 use App\Models\Inmate;
 use Filament\Actions;
+use Filament\Actions\ImportAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Sabberworm\CSS\Property\Import;
 
 class ListInmates extends ListRecords
 {
@@ -28,35 +30,15 @@ class ListInmates extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label('Admit A Convict'),
-                 Actions\Action::make('edit')
-                    ->label('Import Convicts')
-                    ->icon('heroicon-o-arrow-up')
-                    ->color('info')
-                    ->modalWidth('md')
-                    ->modalHeading('Protected Data Access')
-                    ->modalDescription('This is a secure area of the application. Please confirm your password within the modal before continuing.')
-                    ->form([
-                        \Filament\Forms\Components\TextInput::make('password')
-                            ->label('Confirm Password')
-                            ->placeholder('Enter your password')
-                            ->password()
-                            ->required(),
-                    ])
-                    ->action(function (array $data, $record) {
-                        if (! \Illuminate\Support\Facades\Hash::check($data['password'], Auth::user()->password)) {
-                            \Filament\Notifications\Notification::make()
-                                ->title('Incorrect Password')
-                                ->body('You must confirm your password to edit this record.')
-                                ->danger()
-                                ->send();
-                            return;
-                        }
-                        return redirect()->route(
-                            'filament.station.resources.inmates.index',
-                           
-                        );
-                    }),
-              
+                ImportAction::make('Import Convicts')
+                ->label('Import Convicts')
+                ->color('blue')
+                ->icon('heroicon-o-bars-arrow-up')
+                ->options([
+                    'station_id' => Auth::user()->station_id,
+                    'gender' => Auth::user()->station->category
+                ])
+                ->importer(\App\Filament\Imports\ConvictImporter::class),
         ];
     }
 
