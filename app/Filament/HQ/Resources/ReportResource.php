@@ -29,7 +29,7 @@ class ReportResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-bar';
 
-    protected static ?string $navigationLabel = 'Reports';
+    protected static ?string $navigationLabel = 'Reportssss';
 
     protected static ?string $navigationGroup = 'Convicts';
 

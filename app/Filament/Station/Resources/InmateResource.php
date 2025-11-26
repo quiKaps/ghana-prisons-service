@@ -1050,7 +1050,7 @@ class InmateResource extends Resource
                             Column::make('latestSentenceByDate.date_of_sentence')
                                 ->heading('Date of Sentence')
                                 ->getStateUsing(function ($record) {
-                                    if ($record->latestSentenceByDate) {
+                                    if ($record?->latestSentenceByDate?->date_of_sentence) {
                                         return date_format($record->latestSentenceByDate->date_of_sentence, 'Y-m-d');
                                     }
                                     return '';
@@ -1058,7 +1058,7 @@ class InmateResource extends Resource
                             Column::make('latestSentenceByDate.EPD')
                                 ->heading('EPD')
                                 ->getStateUsing(function ($record) {
-                                    if ($record->latestSentenceByDate) {
+                                    if ($record?->latestSentenceByDate?->EPD) {
                                         return date_format($record->latestSentenceByDate->EPD, 'Y-m-d');
                                     }
                                     return '';
@@ -1066,7 +1066,7 @@ class InmateResource extends Resource
                             Column::make('latestSentenceByDate.LPD')
                                 ->heading('LPD')
                                 ->getStateUsing(function ($record) {
-                                    if ($record->latestSentenceByDate) {
+                                    if ($record?->latestSentenceByDate?->LPD) {
                                         return date_format($record->latestSentenceByDate->LPD, 'Y-m-d');
                                     }
                                     return '';
