@@ -74,11 +74,21 @@ class TransfersResource extends Resource
                     return 'No';
                 }),
             
-            // Tables\Columns\TextColumn::make('station_transferred_to_id')
-            //     ->label('Station Transfered To')
-            //     ->formatStateUsing(fn($state, Inmate $record) => $record->transferred_out)
-            //     ->visible(fn($state) => $state == true)
-            //     ->sortable(),
+            Tables\Columns\TextColumn::make('station.name')
+                ->label('Station Transferred To')
+                ->formatStateUsing(function ($state, Inmate $record) {
+        if (! $record || ! $record->transfers) {
+            return 'null-';
+        }
+
+        // If transfers is hasMany, get the latest
+        $latestTransfer = $record->transfers()->latest()->first();
+
+        return $latestTransfer?->toStation?->name ?? '-';
+    })
+                ->sortable(),
+                
+                
             Tables\Columns\TextColumn::make('latestSentenceByDate.sentence')
                     ->label('Sentence')
                     ->sortable()
