@@ -2,11 +2,14 @@
 
 namespace App\Filament\Station\Resources\ConvictDischargeResource\Pages;
 
+use App\Filament\Exports\ConvictDischargesExporter;
 use Filament\Actions;
 use App\Models\Inmate;
+use Filament\Actions\ExportAction;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Actions\Exports\Models\Export;
 use App\Filament\Station\Resources\ConvictDischargeResource;
 
 class ListConvictDischarges extends ListRecords
@@ -16,6 +19,18 @@ class ListConvictDischarges extends ListRecords
     protected ?string $heading = 'Convict Discharges';
 
     protected ?string $subheading = 'Manage and track convicts discharges.';
+
+     protected function getHeaderActions(): array
+    {
+        return [
+            ExportAction::make('export-inmates')
+                ->exporter(ConvictDischargesExporter::class)
+                ->label('Export Convicts Discharges')
+                 ->modifyQueryUsing(fn (Builder $query) => $query->where('is_discharged', true))
+                ->fileName(fn (Export $export): string => "convicts-discharges-{$export->getKey()}-export.csv")
+                ->color('green'),
+        ];
+    }
 
     public function getTabs(): array
     {

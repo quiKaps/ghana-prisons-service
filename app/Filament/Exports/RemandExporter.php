@@ -7,7 +7,7 @@ use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 
-class RemandTrialExporter extends Exporter
+class RemandExporter extends Exporter
 {
     protected static ?string $model = RemandTrial::class;
 

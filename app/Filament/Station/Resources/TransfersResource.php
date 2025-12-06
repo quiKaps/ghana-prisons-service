@@ -87,6 +87,21 @@ class TransfersResource extends Resource
         return $latestTransfer?->toStation?->name ?? '-';
     })
                 ->sortable(),
+
+                 Tables\Columns\TextColumn::make('transfers')
+                    ->label('Station Transferred From')
+                    ->formatStateUsing(function ($state, Inmate $record) {
+        if (! $record || ! $record->transfers) {
+            return 'null-';
+        }
+
+        // If transfers is hasMany, get the latest
+        $latestTransfer = $record->transfers()->latest()->first();
+
+        return $latestTransfer?->fromStation?->name ?? '-';
+    })
+                    ->sortable()
+                ->searchable(),
                 
                 
             Tables\Columns\TextColumn::make('latestSentenceByDate.sentence')

@@ -9,6 +9,7 @@ use App\Models\Discharge;
 use App\Helpers\FormHelper;
 use App\Models\RemandTrial;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Filament\Notifications\Notification;
@@ -32,6 +33,8 @@ class CreateInmate extends CreateRecord
                 ->send();
             $this->halt();
         }
+
+      
 
         $data['station_id'] = $user->station_id; // Current user station id
 
@@ -112,9 +115,29 @@ class CreateInmate extends CreateRecord
                 'discharge_type' => 'one-third remission',
                 'discharge_date' => today(),
                 //'reason' => $data['reason'],
-            ]);
-        }
-    }
+            ]);}
+
+
+            //Transfer-In Information
+        if(isset($data['transferred_in'])){
+          try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($data) {
+                            \App\Models\Transfer::create([
+                                'inmate_id' => $this->record->id,
+                                'from_station_id' => Auth::user()->station_id,
+                                'to_station_id' => $data['station_transferred_from_id'],
+                                'transfer_date' => $data['date_transferred_in'],
+                                'status' => 'completed',
+                                'reason' => $data['reason'],
+                                'requested_by' => Auth::id(),
+                                'approved_by' => null,
+                                'rejected_by' => null,
+                            ]);
+                        });
+          } catch (\Throwable $e) {
+            Log::error('Transfer Error'. $e .'');
+          }
+    }}
 
     protected function getRedirectUrl(): string
     {
