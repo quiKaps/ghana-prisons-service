@@ -16,30 +16,50 @@ class TrialExporter extends Exporter
         return [
             ExportColumn::make('id')
                 ->label('ID'),
-            ExportColumn::make('station.name'),
-            ExportColumn::make('cell_id'),
-            ExportColumn::make('serial_number'),
-            ExportColumn::make('picture'),
-            ExportColumn::make('full_name'),
-            ExportColumn::make('gender'),
-            ExportColumn::make('offense'),
-            ExportColumn::make('admission_date'),
-            ExportColumn::make('age_on_admission'),
-            ExportColumn::make('court'),
-            ExportColumn::make('detention_type'),
-            ExportColumn::make('next_court_date'),
-            ExportColumn::make('warrant'),
-            ExportColumn::make('country_of_origin'),
-            ExportColumn::make('police_station'),
-            ExportColumn::make('police_officer'),
-            ExportColumn::make('police_contact'),
-            ExportColumn::make('re_admission_date'),
-            ExportColumn::make('is_discharged'),
-            ExportColumn::make('mode_of_discharge'),
-            ExportColumn::make('discharged_by'),
-            ExportColumn::make('date_of_discharge'),
-            ExportColumn::make('created_at'),
-            ExportColumn::make('updated_at'),
+            ExportColumn::make('station.name')
+               ->label('Station'),
+            ExportColumn::make('cell_id')
+            ->label('Cell Number'),
+            ExportColumn::make('serial_number')
+                ->label('Serial Number'),
+            ExportColumn::make('picture')
+                ->label('Picture'),
+            ExportColumn::make('full_name')
+                ->label('Full Name'),
+            ExportColumn::make('gender')
+                ->label('Gender'),
+            ExportColumn::make('offense')
+                ->label('Offense'),
+            ExportColumn::make('admission_date')
+                ->label('Admission Date'),
+            ExportColumn::make('age_on_admission')
+                ->label('Age on Admission'),
+            ExportColumn::make('court')
+                ->label('Court'),
+            ExportColumn::make('detention_type')
+                ->label('Detention Type'),
+            ExportColumn::make('next_court_date')
+                ->label('Next Court Date'),
+            ExportColumn::make('warrant')
+                ->label('Warrant'),
+            ExportColumn::make('country_of_origin')
+                ->label('Country of Origin'),
+            ExportColumn::make('police_station')
+                ->label('Police Station'),
+            ExportColumn::make('police_officer')
+                ->label('Police Officer'),
+            ExportColumn::make('police_contact')
+                ->label('Police Contact'),
+            ExportColumn::make('re_admission_date')
+                ->label('Re-admission Date'),
+            ExportColumn::make('is_discharged')
+                ->label('Is Discharged'),
+            ExportColumn::make('mode_of_discharge')
+                ->label('Mode of Discharge'),
+            ExportColumn::make('discharged_by')
+                ->label('Discharged By'),
+            ExportColumn::make('date_of_discharge')
+                ->label('Date of Discharge'),
         ];
     }
 

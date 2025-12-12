@@ -1024,6 +1024,7 @@ class InmateResource extends Resource
                 ExportAction::make()->exports([
                     ExcelExport::make()
                         //->queue()->withChunkSize(100)
+                        ->modifyQueryUsing(fn(Builder $query) => $query->where('is_discharged', false))
                         ->withFilename(Auth::user()->station->name . ' - ' . now()->format('Y-m-d') . ' - export')
                         ->withColumns([
                             Column::make('station.name')->heading('Station'),
@@ -1119,19 +1120,11 @@ class InmateResource extends Resource
                                     return '';
                                 }),
                             Column::make('hometown')->heading('Hometown'),
-
-
                             Column::make('married_status')->heading('Marital Status'),
-
                             Column::make('nationality')->heading('Country of Origin'),
-
-
                             Column::make('education_level')->heading('Education Background'),
-
                             Column::make('religion')->heading('Religious Background'),
-
                             Column::make('occupation')->heading('Occupation'),
-
                             Column::make('next_of_kin_name')->heading('Next of Kin Name'),
                             Column::make('next_of_kin_relationship')->heading('Next of Kin Relationship'),
                             Column::make('next_of_kin_contact')->heading('Contact of Next of Kin'),
@@ -1168,6 +1161,7 @@ class InmateResource extends Resource
             ExportBulkAction::make()->exports([
                 ExcelExport::make()
                     //->queue()->withChunkSize(100)
+                    ->modifyQueryUsing(fn(Builder $query) => $query->where('is_discharged', false))
                     ->withFilename(Auth::user()->station->name . ' - ' . now()->format('Y-m-d') . ' - export')
                     ->withColumns([
                         Column::make('station.name')->heading('Station'),
