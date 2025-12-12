@@ -68,11 +68,11 @@ class TransfersResource extends Resource
                     $activeTab = request()->query('activeTab');
                     
                     if ($record->transferred_out) {
-                        return 'Transferred Out on ' . Carbon::parse($record->date_transferred_out)->format('Y-m-d');
+                        return 'Transferred Out on ' . Carbon::parse($record->date_transferred_out)->format('jS M, Y');
                     }
                     
                     if ($record->transferred_in) {
-                        return 'Transferred In on ' . Carbon::parse($record->date_transferred_in)->format('Y-m-d');
+                        return 'Transferred In on ' . Carbon::parse($record->date_transferred_in)->format('jS M, Y');
                     }
                     
                     return 'No';
