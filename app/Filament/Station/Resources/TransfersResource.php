@@ -48,8 +48,6 @@ class TransfersResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-
-
             ->columns([
                 Tables\Columns\TextColumn::make('serial_number')
                     ->label('Serial Number')
@@ -66,18 +64,16 @@ class TransfersResource extends Resource
                 ->color('info')
                 ->formatStateUsing(function (Inmate $record) {
                     $activeTab = request()->query('activeTab');
-                    
+
                     if ($record->transferred_out) {
                         return 'Transferred Out on ' . Carbon::parse($record->date_transferred_out)->format('jS M, Y');
                     }
-                    
+
                     if ($record->transferred_in) {
                         return 'Transferred In on ' . Carbon::parse($record->date_transferred_in)->format('jS M, Y');
                     }
-                    
                     return 'No';
                 }),
-            
             Tables\Columns\TextColumn::make('station.name')
                 ->label('Station Transferred To')
                 ->formatStateUsing(function ($state, Inmate $record) {
@@ -106,8 +102,6 @@ class TransfersResource extends Resource
     })
                     ->sortable()
                 ->searchable(),
-                
-                
             Tables\Columns\TextColumn::make('latestSentenceByDate.sentence')
                     ->label('Sentence')
                     ->sortable()

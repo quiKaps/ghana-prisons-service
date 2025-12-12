@@ -1024,7 +1024,7 @@ class InmateResource extends Resource
                 ExportAction::make()->exports([
                     ExcelExport::make()
                         //->queue()->withChunkSize(100)
-                        ->modifyQueryUsing(fn(Builder $query) => $query->where('is_discharged', false))
+                        ->modifyQueryUsing(fn( $query) => $query->where('is_discharged', false)->where('transferred_out', false))
                         ->withFilename(Auth::user()->station->name . ' - ' . now()->format('Y-m-d') . ' - export')
                         ->withColumns([
                             Column::make('station.name')->heading('Station'),
@@ -1103,8 +1103,6 @@ class InmateResource extends Resource
                                 return 'No';
                             }),
                             Column::make('tribe')->heading('Tribe'),
-
-
                             Column::make('languages_spoken')
                                 ->heading('Languages Spoken')
                                 ->getStateUsing(function ($record) {
@@ -1156,12 +1154,12 @@ class InmateResource extends Resource
                     ->label('Export All Convicts')
                     ->color('green')
                      ->icon('heroicon-o-bars-arrow-down')
-            ])
+                        ])
             ->bulkActions([
             ExportBulkAction::make()->exports([
                 ExcelExport::make()
                     //->queue()->withChunkSize(100)
-                    ->modifyQueryUsing(fn(Builder $query) => $query->where('is_discharged', false))
+                    ->modifyQueryUsing(fn(Builder $query) => $query->where('is_discharged', false)->where('transferred_out', false))
                     ->withFilename(Auth::user()->station->name . ' - ' . now()->format('Y-m-d') . ' - export')
                     ->withColumns([
                         Column::make('station.name')->heading('Station'),

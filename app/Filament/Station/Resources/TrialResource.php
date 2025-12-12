@@ -258,7 +258,7 @@ class TrialResource extends Resource
                 ExcelExport::make()
                     //->queue()->withChunkSize(100)
                     ->withFilename(Auth::user()->station->name . ' - ' . now()->format('Y-m-d') . ' - export')
-                    ->modifyQueryUsing(fn(Builder $query) => $query->where('detention_type', DetentionTypeEnum::TRIAL)->where('is_discharged', false))
+                    ->modifyQueryUsing(fn($query) => $query->where('detention_type', DetentionTypeEnum::TRIAL)->where('is_discharged', false))
                     ->withColumns([
                         Column::make('station.name')->heading('Station'),
                         Column::make('serial_number')->heading('Serial Number'),
@@ -287,7 +287,7 @@ class TrialResource extends Resource
                 ExportBulkAction::make()->exports([
                     ExcelExport::make()
                         //->queue()->withChunkSize(100)
-                    ->modifyQueryUsing(fn(Builder $query) => $query->where('detention_type', DetentionTypeEnum::TRIAL)->where('is_discharged', false))
+                    ->modifyQueryUsing(fn($query) => $query->where('detention_type', DetentionTypeEnum::TRIAL)->where('is_discharged', false))
                     ->withFilename(Auth::user()->station->name . ' - ' . now()->format('Y-m-d') . ' - export')
                     ->withColumns([
                     Column::make('station.name')->heading('Station'),
