@@ -65,12 +65,16 @@ class TransfersResource extends Resource
                 ->badge()
                 ->color('info')
                 ->formatStateUsing(function (Inmate $record) {
-                    if ($record->transferred_in) {
-                        return 'Transferred In on ' . Carbon::parse($record->date_transferred_in)->format('Y-m-d');
-                    }
+                    $activeTab = request()->query('activeTab');
+                    
                     if ($record->transferred_out) {
                         return 'Transferred Out on ' . Carbon::parse($record->date_transferred_out)->format('Y-m-d');
                     }
+                    
+                    if ($record->transferred_in) {
+                        return 'Transferred In on ' . Carbon::parse($record->date_transferred_in)->format('Y-m-d');
+                    }
+                    
                     return 'No';
                 }),
             
