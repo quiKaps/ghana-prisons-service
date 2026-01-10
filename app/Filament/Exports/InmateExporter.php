@@ -59,8 +59,6 @@ class InmateExporter extends Exporter
             ExportColumn::make('date_of_discharge'),
             ExportColumn::make('mode_of_discharge'),
             ExportColumn::make('is_discharged'),
-            ExportColumn::make('created_at'),
-            ExportColumn::make('updated_at'),
         ];
     }
 

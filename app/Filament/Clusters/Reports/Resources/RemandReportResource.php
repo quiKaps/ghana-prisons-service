@@ -1,48 +1,35 @@
 <?php
 
-namespace App\Filament\Station\Resources;
+namespace App\Filament\Clusters\Reports\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
-use App\Models\Inmate;
-use App\Models\Report;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\RemandTrial;
+use App\Models\RemandReport;
 use Filament\Resources\Resource;
-use App\Models\InmateRemandUnion;
-use Filament\Actions\ExportAction;
+use App\Filament\Clusters\Reports;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Support\Facades\Auth;
-use Filament\Tables\Columns\TextColumn;
-use App\Filament\Exports\InmateExporter;
 use Filament\Tables\Enums\FiltersLayout;
-use pxlrbt\FilamentExcel\Columns\Column;
 use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Filters\SelectFilter;
-// use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Station\Resources\InmateResource;
-// use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Station\Resources\RemandTrialResource;
-use App\Filament\Station\Resources\ReportResource\Pages;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-use App\Filament\Station\Resources\ReportResource\RelationManagers;
+use App\Filament\Clusters\Reports\Resources\RemandReportResource\Pages;
+use App\Filament\Clusters\Reports\Resources\RemandReportResource\RelationManagers;
 
-class ReportResource extends Resource
+class RemandReportResource extends Resource
 {
-    protected static ?string $model = InmateRemandUnion::class;
+    protected static ?string $model = RemandTrial::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-bar';
+        protected static ?string $navigationLabel = 'Remand Reports';
 
-    protected static ?string $navigationLabel = 'Reports';
 
-    protected static ?string $navigationGroup = 'Convicts';
+   // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $modelLabel = 'Reports';
-
-    protected ?string $subheading = 'Access and download all prisoner data';
+    protected static ?string $cluster = Reports::class;
 
     public static function form(Form $form): Form
     {
@@ -68,25 +55,13 @@ class ReportResource extends Resource
                     ->label("Name of Prisoner")
                     ->searchable()
                     ->sortable(),
-            Tables\Columns\TextColumn::make('gender')
-                ->label("Gender")
-                ->searchable()
-                ->sortable(),
             Tables\Columns\TextColumn::make('admission_date')
                 ->label("Date of Admission")
                 ->date()
                 ->searchable()
                 ->sortable(),
-            TextColumn::make('detention_type')
-                ->label('Detention Type')
-                ->sortable()
-                ->badge()
-                ->color(fn($state) => match (trim($state ?? '') ?: 'convict') {
-                    'remand' => 'info',
-                    'trial' => 'warning',
-                    'convict' => 'gray',
-                }),
-                Tables\Columns\TextColumn::make('age_on_admission')
+           
+        Tables\Columns\TextColumn::make('age_on_admission')
                     ->label('Age on Admission')
                     ->sortable(),
             Tables\Columns\TextColumn::make('court')
@@ -95,13 +70,7 @@ class ReportResource extends Resource
                 ->sortable(),
             ])
             ->filters([
-            SelectFilter::make('detention_type')
-                ->label('Detention Type')
-                ->options([
-                    'convict' => 'Convict',
-                    'remand' => 'Remand',
-                    'trial' => 'Trial',
-                ]),
+           
             Filter::make('admission_date')->columnSpanFull()
                 ->form([
 
@@ -127,39 +96,25 @@ class ReportResource extends Resource
             Action::make('Profile')
                 ->color('gray')
                 ->icon('heroicon-o-user')
-                ->label('Profile')
                 ->button()
+                ->label('Profile')
                 ->color('blue')
-                ->url(function (InmateRemandUnion $record) {
-                    if ($record->detention_type === 'convict') {
-                        // It's an inmate → ConvictResource
-                        return InmateResource::getUrl('view', ['record' => $record->unique_id]);
-                    }
-
-                // It's a remand/trial → TrialResource
-                return RemandTrialResource::getUrl('view', ['record' => $record->unique_id]);
-            })
+               ->url(fn(RemandTrial $record) => route('filament.station.resources.remand-trials.view', [
+                        'record' => $record->getKey(),
+                    ])),
             ])->bulkActions([
                
         ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListReports::route('/'),
+            'index' => Pages\ManageRemandReports::route('/'),
         ];
     }
 
-    //show resource navigation to only prison_admin
-    public static function shouldRegisterNavigation(): bool
+     public static function shouldRegisterNavigation(): bool
     {
         $user = Auth::user();
         return $user?->user_type === 'prison_admin';

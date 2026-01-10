@@ -1194,7 +1194,7 @@ class InmateResource extends Resource
                         Column::make('latestSentenceByDate.EPD')
                             ->heading('EPD')
                             ->getStateUsing(function ($record) {
-                                if ($record->latestSentenceByDate) {
+                                if ($record?->latestSentenceByDate?->EPD) {
                                     return date_format($record->latestSentenceByDate->EPD, 'Y-m-d');
                                 }
                                 return '';

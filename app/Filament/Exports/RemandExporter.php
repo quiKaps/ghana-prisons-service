@@ -31,8 +31,6 @@ class RemandExporter extends Exporter
             ExportColumn::make('police_station'),
             ExportColumn::make('police_officer'),
             ExportColumn::make('police_contact'),
-            ExportColumn::make('created_at'),
-            ExportColumn::make('updated_at'),
         ];
     }
 

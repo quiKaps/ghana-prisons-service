@@ -54,8 +54,7 @@ class StationPanelProvider extends PanelProvider
             ->topNavigation(fn() => Auth::user()?->user_type === 'officer')
             ->sidebarCollapsibleOnDesktop()
             //->viteTheme('resources/css/filament/station/theme.css')
-            ->theme(asset('css/filament/station/theme.css'))
-            ->favicon(asset('gps-logo.png'))
+->theme(asset('css/filament/station/theme.css') . '?v=' . filemtime(public_path('css/filament/station/theme.css')))            ->favicon(asset('gps-logo.png'))
             ->brandLogo(asset('gps-logo.png'))
             ->databaseNotifications()
             ->brandLogoHeight('4rem')
@@ -97,11 +96,11 @@ class StationPanelProvider extends PanelProvider
                 ->group('Remand and Trials')
                 ->isActiveWhen(fn() => request()->url() === RemandTrialResource::getUrl('create'))
                 ->sort(3),
-
         ])
             ->discoverResources(in: app_path('Filament/Station/Resources'), for: 'App\\Filament\\Station\\Resources')
             ->discoverPages(in: app_path('Filament/Station/Pages'), for: 'App\\Filament\\Station\\Pages')
             ->pages([])
+            ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
             ->discoverWidgets(in: app_path('Filament/Station/Widgets'), for: 'App\\Filament\\Station\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
